@@ -8,12 +8,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { CSSProperties, useState } from "react";
 import { Loader2Icon } from "lucide-react";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createSupabaseClient } from "@/lib/supabase-client";
+import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 
 type Props = {
   disabled?: boolean;
@@ -23,7 +22,7 @@ type Props = {
 
 type Provider = "google";
 
-export function OAuthLoginCard({ disabled = false, style = {} }: Props) {
+export function OAuthSignInCard({ disabled = false, style = {} }: Props) {
   const supabaseClient = createSupabaseClient();
 
   const [loading, setLoading] = useState(false);
@@ -41,6 +40,9 @@ export function OAuthLoginCard({ disabled = false, style = {} }: Props) {
       provider,
       options: {
         redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(redirectUrl)}`,
+        queryParams: {
+          hd: "ucsb.edu", // Restrict to UCSB Google accounts
+        },
       },
     });
 

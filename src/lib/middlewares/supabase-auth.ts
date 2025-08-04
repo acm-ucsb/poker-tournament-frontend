@@ -41,12 +41,12 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
+    !request.nextUrl.pathname.startsWith("/signin") &&
     !request.nextUrl.pathname.startsWith("/auth")
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user, potentially respond by redirecting the user to the signin page
     const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
+    url.pathname = "/auth/signin";
     return NextResponse.redirect(url);
   }
 
