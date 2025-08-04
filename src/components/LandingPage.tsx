@@ -59,7 +59,7 @@ export default function MarketingPage() {
                         ) : auth.user ? (
                           <>Dashboard</>
                         ) : (
-                          "Sign Up & Compete"
+                          "Sign In & Compete"
                         )}
                       </Button>
                     </Link>
@@ -131,7 +131,7 @@ export default function MarketingPage() {
                 <Card className="h-full flex flex-col gap-3">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Users className="w-6 h-6" /> Sign Up
+                      <Users className="w-6 h-6" /> Sign In
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-grow">
