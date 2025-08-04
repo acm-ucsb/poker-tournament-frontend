@@ -41,7 +41,6 @@ export function OAuthLoginCard({ disabled = false, style = {} }: Props) {
       provider,
       options: {
         redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(redirectUrl)}`,
-        // redirectTo: `${location.origin}/auth/callback`,
       },
     });
 
