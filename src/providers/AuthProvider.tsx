@@ -11,7 +11,8 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { createSupabaseClient } from "@/lib/supabase-client";
+import { createSupabaseClient } from "@/lib/supabase/supabase-client";
+import { toast } from "sonner";
 
 type AuthContextType = {
   user: User | null;
@@ -95,9 +96,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
             if (res.error) throw new Error(res.error.message);
 
             router.replace("/");
+
             // reset session and user state
             setSession(null);
             setUser(null);
+
+            // send toast
+            toast("Signed out successfully", {
+              description: "You have been signed out.",
+              duration: 5000,
+              action: {
+                label: "Sign in",
+                onClick: () => {
+                  router.push("/auth/signin");
+                },
+              },
+            });
           })
           .catch(async (err) => {
             const { error } = await supabase.auth.refreshSession();

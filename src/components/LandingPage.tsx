@@ -15,14 +15,14 @@ import { Bot, Loader2Icon, Trophy, Users } from "lucide-react";
 import { FannedCardsIcon } from "./FannedCardsIcon";
 import { useAuth } from "@/providers/AuthProvider";
 
-export default function MarketingPage() {
+export default function LandingPage() {
   const auth = useAuth();
 
   return (
     <div className="flex flex-col">
-      <main className="">
-        <section className="flex items-center justify-center min-h-screen w-full bg-gradient-to-b from-gray-800 to-background">
-          <div className="container px-8 md:px-10 flex flex-col items-center">
+      <main>
+        <section className="flex items-center justify-center min-h-screen w-full bg-gradient-to-b from-[#001509] to-background px-6">
+          <div className="container md:px-10 flex flex-col items-center">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div className="flex flex-col justify-center space-y-4">
                 <motion.div
@@ -45,7 +45,7 @@ export default function MarketingPage() {
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
                     <Link
-                      href={auth.user ? "/dashboard" : "/auth/login"}
+                      href={auth.user ? "/dashboard" : "/auth/signin"}
                       style={{
                         pointerEvents: auth.loadingAuth ? "none" : "auto",
                       }}
@@ -112,9 +112,9 @@ export default function MarketingPage() {
 
         <section
           id="how-it-works"
-          className="flex justify-center w-full py-12 md:py-24 lg:py-32"
+          className="flex justify-center w-full py-12 md:py-24 lg:py-32 px-6"
         >
-          <div className="container px-4 md:px-6 flex flex-col items-center">
+          <div className="container md:px-6 flex flex-col items-center">
             <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
               How It Works
             </h2>
@@ -124,31 +124,30 @@ export default function MarketingPage() {
             <div className="grid items-stretch justify-center gap-3 sm:max-w-4xl sm:grid-cols-2 md:gap-4 lg:max-w-5xl lg:grid-cols-3 mt-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex"
               >
-                <Card className="h-full flex flex-col gap-3">
+                <Card className="h-full w-full flex flex-col gap-3">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="w-6 h-6" /> Sign In
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-grow">
-                    <p>
-                      Create an account and get assigned to a random table and
-                      seat.
-                    </p>
+                    <p>Create an account using your UCSB google account.</p>
                   </CardContent>
                 </Card>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="flex"
               >
-                <Card className="h-full flex flex-col gap-3">
+                <Card className="h-full w-full flex flex-col gap-3">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Bot className="w-6 h-6" /> Upload Your Bot
@@ -156,19 +155,20 @@ export default function MarketingPage() {
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <p>
-                      Upload your poker bot's code. We provide an API for your
-                      bot to interact with the game.
+                      Upload your poker bot's code in the dashboard. You can
+                      only join the tournament once your bot is uploaded.
                     </p>
                   </CardContent>
                 </Card>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
                 className="flex"
               >
-                <Card className="h-full flex flex-col gap-3">
+                <Card className="h-full w-full flex flex-col gap-3">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Trophy className="w-6 h-6" /> Compete
@@ -176,8 +176,9 @@ export default function MarketingPage() {
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <p>
-                      Games start automatically when enough players have joined.
-                      Watch the action in real-time!
+                      Games start automatically and your bot will be randomly
+                      assigned to a table and seat. Watch the action in
+                      real-time!
                     </p>
                   </CardContent>
                 </Card>
@@ -188,16 +189,16 @@ export default function MarketingPage() {
 
         <section
           id="rules"
-          className="flex justify-center w-full py-12 md:py-24 lg:py-32 bg-muted/50"
+          className="flex justify-center w-full py-12 md:py-24 lg:py-32 bg-muted/50 px-6"
         >
-          <div className="container flex flex-col items-center w-full px-4 md:px-6">
+          <div className="container flex flex-col items-center w-full md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
               Rules & FAQ
             </h2>
             <div className="w-full max-w-3xl mt-10">
               <Tabs defaultValue="rules">
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="rules">Tournament Rules</TabsTrigger>
+                  <TabsTrigger value="rules">Rules</TabsTrigger>
                   <TabsTrigger value="faq">FAQ</TabsTrigger>
                   <TabsTrigger value="prizes">Prizes</TabsTrigger>
                 </TabsList>
@@ -208,7 +209,7 @@ export default function MarketingPage() {
                       <AccordionContent>
                         The tournament will be played as a series of No-Limit
                         Texas Hold'em games. Tables will automatically try to
-                        maintain 9 players. As players are eliminated, tables
+                        maintain 8 players. As players are eliminated, tables
                         will be balanced until the final table is reached.
                       </AccordionContent>
                     </AccordionItem>
@@ -225,8 +226,7 @@ export default function MarketingPage() {
                       <AccordionTrigger>Starting the Game</AccordionTrigger>
                       <AccordionContent>
                         A game at a table will automatically start once a
-                        sufficient number of players at that table have uploaded
-                        their bots.
+                        sufficient number of players have joined.
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
@@ -250,7 +250,7 @@ export default function MarketingPage() {
                       </AccordionTrigger>
                       <AccordionContent>
                         After signing up, you will have access to a dashboard
-                        where you can upload your bot's code as a single file.
+                        where you can upload your bot's code.
                       </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
@@ -281,12 +281,6 @@ export default function MarketingPage() {
           </div>
         </section>
       </main>
-
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <p className="text-muted-foreground">
-          UCSB ACM Development Branch Poker Tournament
-        </p>
-      </footer>
     </div>
   );
 }
