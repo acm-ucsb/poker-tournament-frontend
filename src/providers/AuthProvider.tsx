@@ -95,6 +95,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             if (res.error) throw new Error(res.error.message);
 
             router.replace("/");
+            // reset session and user state
+            setSession(null);
+            setUser(null);
           })
           .catch(async (err) => {
             const { error } = await supabase.auth.refreshSession();
