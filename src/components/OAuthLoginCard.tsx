@@ -40,8 +40,8 @@ export function OAuthLoginCard({ disabled = false, style = {} }: Props) {
     supabaseClient.auth.signInWithOAuth({
       provider,
       options: {
-        // redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(redirectUrl)}`,
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(redirectUrl)}`,
+        // redirectTo: `${location.origin}/auth/callback`,
       },
     });
 
