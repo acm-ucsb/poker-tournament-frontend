@@ -21,7 +21,7 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col">
       <main>
-        <section className="flex items-center justify-center min-h-screen w-full bg-gradient-to-b from-[#001509] to-background px-6">
+        <section className="flex items-center justify-center min-h-screen w-full bg-gradient-to-br from-[#001509] to-background px-6">
           <div className="container md:px-10 flex flex-col items-center">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div className="flex flex-col justify-center space-y-4">
@@ -30,7 +30,13 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  <h1
+                    className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl text-white"
+                    style={{
+                      textShadow:
+                        "4px 4px 3px rgba(244, 244, 244, 0.30), 8px 8px 10px rgba(255,255,255,0.3)",
+                    }}
+                  >
                     UCSB ACM Development Branch Poker Tournament
                   </h1>
                   <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
