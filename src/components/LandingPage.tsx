@@ -21,7 +21,7 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col">
       <main>
-        <section className="flex items-center justify-center min-h-screen w-full bg-gradient-to-br from-[#001509] to-background px-6">
+        <section className="flex items-center justify-center min-h-screen w-full bg-gradient-to-b from-[#001509] to-background px-6">
           <div className="container md:px-10 flex flex-col items-center">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div className="flex flex-col justify-center space-y-4">

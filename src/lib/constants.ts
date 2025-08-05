@@ -1,4 +1,7 @@
 export const HEADER_HEIGHT_PX = 80 as const;
+export const HEADER_AVATAR_SIZE_PX = 36 as const;
+
+export const DEFAULT_SIGNIN_REDIRECT_URL = "/dashboard" as const;
 
 export const HEX_OPACITY_POSTFIX = {
   100: "FF",

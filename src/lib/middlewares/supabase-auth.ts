@@ -44,9 +44,11 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/signin") &&
     !request.nextUrl.pathname.startsWith("/auth")
   ) {
-    // no user, potentially respond by redirecting the user to the signin page
+    // no user, redirect to signin with original URL in the "redirect" query param
     const url = request.nextUrl.clone();
     url.pathname = "/auth/signin";
+    const original = request.nextUrl.pathname + request.nextUrl.search;
+    url.searchParams.set("redirect", original);
     return NextResponse.redirect(url);
   }
 

@@ -13,6 +13,7 @@ import { Loader2Icon } from "lucide-react";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
+import { DEFAULT_SIGNIN_REDIRECT_URL } from "@/lib/constants";
 
 type Props = {
   disabled?: boolean;
@@ -29,7 +30,7 @@ export function OAuthSignInCard({ disabled = false, style = {} }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const redirectUrl = (searchParams.get("redirect") as string) || "/";
+  const redirectUrl = searchParams.get("redirect") as string;
 
   const isDisabled = disabled || loading;
 
