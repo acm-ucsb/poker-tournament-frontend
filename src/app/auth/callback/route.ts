@@ -22,9 +22,7 @@ export async function GET(request: Request) {
     }
   }
 
-  // send a 403 response if the code is invalid or missing
-  return NextResponse.json(
-    { error: "Invalid or missing code" },
-    { status: 403 }
+  return NextResponse.redirect(
+    `${origin}/auth/signin?error="PKCE Flow Failed. Please contact support."`
   );
 }
