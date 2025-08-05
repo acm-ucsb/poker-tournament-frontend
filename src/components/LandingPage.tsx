@@ -14,6 +14,8 @@ import { motion } from "framer-motion";
 import { Bot, Loader2Icon, Trophy, Users } from "lucide-react";
 import { FannedCardsIcon } from "./FannedCardsIcon";
 import { useAuth } from "@/providers/AuthProvider";
+import { TEAM_MAX_MEMBERS } from "@/lib/constants";
+import { IconUsersGroup } from "@tabler/icons-react";
 
 export default function LandingPage() {
   const auth = useAuth();
@@ -127,7 +129,7 @@ export default function LandingPage() {
             <p className="max-w-[900px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto text-center mt-4">
               A simple process to get your bot in the game.
             </p>
-            <div className="grid items-stretch justify-center gap-3 sm:max-w-4xl sm:grid-cols-2 md:gap-4 lg:max-w-5xl lg:grid-cols-3 mt-12">
+            <div className="grid items-stretch justify-center gap-3 sm:max-w-4xl sm:grid-cols-2 md:gap-4 lg:max-w-5xl mt-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -156,6 +158,28 @@ export default function LandingPage() {
                 <Card className="h-full w-full flex flex-col gap-3">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
+                      <IconUsersGroup className="w-6 h-6" /> Create or Join a
+                      Team
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <p>
+                      Make sure all your teammates join the same team. Max{" "}
+                      {TEAM_MAX_MEMBERS} members per team.
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="flex"
+              >
+                <Card className="h-full w-full flex flex-col gap-3">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
                       <Bot className="w-6 h-6" /> Upload Your Bot
                     </CardTitle>
                   </CardHeader>
@@ -171,7 +195,7 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
                 className="flex"
               >
                 <Card className="h-full w-full flex flex-col gap-3">
@@ -182,9 +206,8 @@ export default function LandingPage() {
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <p>
-                      Games start automatically and your bot will be randomly
-                      assigned to a table and seat. Watch the action in
-                      real-time!
+                      Watch your bot compete in real-time against other bots.
+                      Prizes will be awarded to the top-performing bots.
                     </p>
                   </CardContent>
                 </Card>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Session, User } from "@supabase/supabase-js";
+import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import {
   createContext,
   ReactNode,
@@ -87,19 +87,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
     updateUserSession();
   }, []);
 
-  //   useEffect(() => {
-  //     const { data: authListener } = supabase.auth.onAuthStateChange(
-  //       async (event: AuthChangeEvent, currentSession: Session | null) => {
-  //         if (event !== "SIGNED_IN") {
-  //           updateUserSession();
-  //         }
-  //       }
-  //     );
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event: AuthChangeEvent, currentSession: Session | null) => {
+        if (event === "INITIAL_SESSION") {
+          // If the event is initial session AND the last_sign_in_at is within the last 5 seconds, we can send a notification
+          if (
+            event === "INITIAL_SESSION" &&
+            new Date(currentSession?.user?.last_sign_in_at || "").getTime() >
+              Date.now() - 5000
+          ) {
+            toast.success("Signed in successfully!", { richColors: true });
+          }
+        }
+      }
+    );
 
-  //     return () => {
-  //       authListener?.subscription.unsubscribe();
-  //     };
-  //   }, []);
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
 
   // store session, user, updateUserSession, and signOut function in context
   const value = useMemo(

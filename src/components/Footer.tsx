@@ -7,7 +7,7 @@ export function Footer() {
       style={{ height: HEADER_HEIGHT_PX }}
     >
       <p className="text-muted-foreground">
-        UCSB ACM Development Branch Poker Tournament
+        Made by UCSB's ACM Development Branch
       </p>
     </footer>
   );
