@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
+import { Session, User } from "@supabase/supabase-js";
 import {
   createContext,
   ReactNode,
@@ -40,7 +40,6 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -53,13 +52,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   async function updateUserSession() {
     const {
       data: { user },
+      error: userError,
     } = await supabase.auth.getUser();
     setUser(user);
 
     const {
       data: { session },
+      error: sessionError,
     } = await supabase.auth.getSession();
     setSession(session);
+
+    if (userError?.code === "user_not_found") {
+      console.log("Error fetching user/session");
+      toast.error("Authentication failed, please sign in again.", {
+        richColors: true,
+      });
+
+      setUser(null);
+      setSession(null);
+
+      supabase.auth
+        .signOut({ scope: "local" })
+        .then(() => router.replace("/"))
+        .catch((err) => {
+          console.error("Error signing out:", err);
+        });
+    }
+
     setLoadingAuth(false);
   }
 
@@ -102,15 +121,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setUser(null);
 
             // send toast
-            toast("Signed out successfully", {
-              description: "You have been signed out.",
-              duration: 5000,
-              action: {
-                label: "Sign in",
-                onClick: () => {
-                  router.push("/auth/signin");
-                },
-              },
+            toast.success("Signed out successfully", {
+              richColors: true,
             });
           })
           .catch(async (err) => {

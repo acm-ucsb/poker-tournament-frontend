@@ -1,6 +1,10 @@
 "use client";
 
-import { HEADER_HEIGHT_PX, HEX_OPACITY_POSTFIX } from "@/lib/constants";
+import {
+  HEADER_AVATAR_SIZE_PX,
+  HEADER_HEIGHT_PX,
+  HEX_OPACITY_POSTFIX,
+} from "@/lib/constants";
 import { useAuth } from "@/providers/AuthProvider";
 import { useViewportSize, useWindowScroll } from "@mantine/hooks";
 import { Loader2Icon } from "lucide-react";
@@ -38,7 +42,7 @@ export function Header() {
             className="select-none cursor-pointer text-3xl font-bold"
             style={{
               backgroundImage:
-                "linear-gradient(135deg, hsl(151, 76%, 32%), hsl(185, 96%, 10%))",
+                "linear-gradient(135deg, hsl(151, 76%, 28%), hsl(151, 96%, 70%))",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -46,13 +50,17 @@ export function Header() {
             acm.
           </span>
         </Link>
-        <div className="w-10 h-10 self-center">
-          {auth.loadingAuth ? (
-            <IconUserCircle size={"100%"} />
-          ) : (
+        <div className="flex justify-center items-center w-10 h-10 self-center">
+          {!auth.loadingAuth && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar style={{ width: 40, height: 40 }}>
+                <Avatar
+                  className="cursor-pointer"
+                  style={{
+                    width: HEADER_AVATAR_SIZE_PX,
+                    height: HEADER_AVATAR_SIZE_PX,
+                  }}
+                >
                   <AvatarImage src={auth.user?.user_metadata.picture} />
                   <AvatarFallback>
                     {auth.user ? <IconUserCircle size={"100%"} /> : null}
@@ -66,6 +74,7 @@ export function Header() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
+                    className="cursor-pointer"
                     variant="destructive"
                     onClick={() => auth.signOut()}
                   >
