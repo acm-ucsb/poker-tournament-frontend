@@ -2,17 +2,15 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/providers/AuthProvider";
 import { useData } from "@/providers/DataProvider";
 import { IconUsersGroup } from "@tabler/icons-react";
-import { Clipboard, LinkIcon, Loader2Icon, Settings2 } from "lucide-react";
+import { Clipboard, LinkIcon, Settings2 } from "lucide-react";
 import Link from "next/link";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +20,7 @@ import { z } from "zod";
 import { joinTeam } from "@/lib/server-actions/joinTeam";
 import { useState } from "react";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
+import { createTeam } from "@/lib/server-actions/createTeam";
 
 const formSchemaTeamId = z.object({
   teamId: z.uuid({ error: "Invalid team ID" }),
@@ -65,12 +64,11 @@ export function StepOne() {
       teamId: data.teamId,
     });
 
-    mutate(); // Refresh data after joining team
-
     if (response.success) {
       toast.success("Successfully joined the team!", {
         richColors: true,
       });
+      mutate(); // Refresh data after joining team
     } else {
       toast.error(response.error?.message || "Failed to join team", {
         richColors: true,
@@ -79,13 +77,31 @@ export function StepOne() {
 
     // reset states
     formTeamId.reset();
+    formTeamName.reset();
     setTeamIdSubmitLoading(false);
   };
 
   const onSubmitTeamName = async (data: z.infer<typeof formSchemaTeamName>) => {
     setTeamNameSubmitLoading(true);
 
+    const response = await createTeam({
+      teamName: data.teamName,
+    });
+
+    if (response.success) {
+      toast.success("Team created successfully!", {
+        description: "Make sure to invite your teammates!",
+        richColors: true,
+      });
+      mutate(); // Refresh data after creating team
+    } else {
+      toast.error(response.error?.message || "Failed to create team", {
+        richColors: true,
+      });
+    }
+
     // reset states
+    formTeamId.reset();
     formTeamName.reset();
     setTeamNameSubmitLoading(false);
   };

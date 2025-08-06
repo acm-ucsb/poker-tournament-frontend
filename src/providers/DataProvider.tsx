@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { useAuth } from "./AuthProvider";
 
 type TableStatus = "not_started" | "active" | "waiting" | "inactive";
 type UserType = "bot" | "human";
@@ -63,6 +64,7 @@ type DataProviderProps = {
 };
 
 export function DataProvider({ children }: DataProviderProps) {
+  const auth = useAuth();
   const supabase = createSupabaseClient();
 
   const {
@@ -75,33 +77,34 @@ export function DataProvider({ children }: DataProviderProps) {
       .from("users")
       .select(
         `
-        id,
-        created_at,
-        name,
-        is_admin,
-        type,
-        team:teams!users_team_id_fkey (
           id,
           created_at,
-          has_submitted_code,
-          num_chips,
           name,
-          table:tables (
+          is_admin,
+          type,
+          team:teams!users_team_id_fkey (
             id,
             created_at,
-            status
-          ),
-          owner:users!teams_team_owner_id_fkey (
-            id,
-            created_at,
+            has_submitted_code,
+            num_chips,
             name,
-            is_admin,
-            type
+            table:tables (
+              id,
+              created_at,
+              status
+            ),
+            owner:users!teams_owner_id_fkey (
+              id,
+              created_at,
+              name,
+              is_admin,
+              type
+            )
           )
-        )
-      `
+        `
       )
-      .single(),
+      .eq("id", auth.user?.id)
+      .maybeSingle(),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,

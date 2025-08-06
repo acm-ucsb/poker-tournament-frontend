@@ -1,8 +1,8 @@
 export type ServerActionResponse<T> = {
   success: boolean;
   status?: number; // Optional status code for errors
-  data: T | null;
-  error: {
+  data?: T | null;
+  error?: {
     code: string;
     message: string;
     details?: any;
@@ -12,8 +12,11 @@ export type ServerActionResponse<T> = {
 // New error class for better error handling
 type Code =
   | "TEAM_NOT_FOUND"
+  | "TEAM_ALREADY_EXISTS"
   | "ALREADY_IN_TEAM"
-  | "USER_NOT_AUTHORIZED"
+  | "UNAUTHORIZED"
+  | "INTERNAL_SERVER_ERROR"
+  | "FORBIDDEN"
   | "UNKNOWN_ERROR";
 
 type ConstructorParams = {
