@@ -44,7 +44,7 @@ export default function LandingPage() {
                   </h1>
                   <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
                     Upload your poker bot, watch it compete in real-time, and
-                    claim victory.
+                    compete for prizes
                   </p>
                 </motion.div>
                 <div className="flex flex-col justify-center gap-3 mt-6 w-full">

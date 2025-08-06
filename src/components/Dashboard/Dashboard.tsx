@@ -21,9 +21,7 @@ export function Dashboard({}) {
       />
       {/* Dashboard content */}
       <section className="flex flex-col mt-6">
-        <h1 className="flex items-center gap-1.5 text-2xl font-bold mb-4">
-          Dashboard
-        </h1>
+        <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
         <ActionSteps
           loading={isLoading || auth.loadingAuth}
           steps={[
@@ -31,7 +29,7 @@ export function Dashboard({}) {
               title: "Create or join a team",
               description: `Make sure all your teammates join the same team. Max ${TEAM_MAX_MEMBERS} members per team.`,
               children: <StepOne />,
-              disabled: !auth.user?.email?.includes("ucsb.edu"), // User must have a ucsb.edu email
+              // disabled: !auth.user?.email?.includes("ucsb.edu"), // TODO: re enable User must have a ucsb.edu email
               completed: !!data?.team,
             },
             {

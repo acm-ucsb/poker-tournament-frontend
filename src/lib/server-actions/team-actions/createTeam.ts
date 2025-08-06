@@ -1,16 +1,16 @@
 "use server";
 
-import { createSupabaseServerClient } from "../supabase/supabase-server";
-import { ServerActionError, ServerActionResponse } from "./types";
+import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
+import { ServerActionError, ServerActionResponse } from "../types";
 
 type Params = {
-  teamId: string;
+  teamName: string;
 };
 
-export async function joinTeam(
+export async function createTeam(
   params: Params
-): Promise<ServerActionResponse<null>> {
-  const { teamId } = params;
+): Promise<ServerActionResponse<Team>> {
+  const { teamName } = params;
 
   try {
     const supabase = await createSupabaseServerClient();
@@ -20,14 +20,13 @@ export async function joinTeam(
 
     if (!user) {
       throw new ServerActionError({
-        message: "You must be logged in to join a team.",
+        message: "You must be logged in to create a team.",
         code: "UNAUTHORIZED",
         status: 401,
       });
     }
 
-    // Security checks
-    // Check if user is already part of a team
+    // check if user is already part of a team
     const { data: existingTeam } = await supabase
       .from("users")
       .select("team_id")
@@ -38,41 +37,49 @@ export async function joinTeam(
     if (existingTeam.team_id) {
       throw new ServerActionError({
         message: "You are already in a team.",
-        code: "ALREADY_IN_TEAM",
+        code: "BAD_REQUEST",
         status: 400,
       });
     }
 
-    // Check if team exists
-    const { data: team } = await supabase
+    // check if team with the same name already exists
+    const { data: existingTeamByName } = await supabase
       .from("teams")
       .select("*")
-      .eq("id", teamId)
+      .eq("name", teamName)
       .single();
 
-    if (!team) {
+    if (existingTeamByName) {
       throw new ServerActionError({
-        message: "Team not found",
-        code: "TEAM_NOT_FOUND",
+        message:
+          "Team with this name already exists. Please choose another name.",
+        code: "BAD_REQUEST",
         status: 400,
       });
     }
 
-    // Add user to team
+    // create new team + add user to it
+    const { data: newTeam } = await supabase
+      .from("teams")
+      .insert({ name: teamName, owner_id: user.id })
+      .select("*")
+      .single()
+      .throwOnError();
+
     await supabase
       .from("users")
-      .update({
-        team_id: team.id,
-      })
+      .update({ team_id: newTeam.id })
       .eq("id", user.id)
       .throwOnError();
 
     return {
       success: true,
-      data: null,
+      data: newTeam,
       error: null,
+      status: 200,
     };
   } catch (error) {
+    console.log(error);
     if (error instanceof ServerActionError) {
       return {
         success: false,

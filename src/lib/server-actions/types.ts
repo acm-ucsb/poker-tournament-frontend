@@ -11,9 +11,8 @@ export type ServerActionResponse<T> = {
 
 // New error class for better error handling
 type Code =
-  | "TEAM_NOT_FOUND"
-  | "TEAM_ALREADY_EXISTS"
-  | "ALREADY_IN_TEAM"
+  | "BAD_REQUEST"
+  | "NOT_FOUND"
   | "UNAUTHORIZED"
   | "INTERNAL_SERVER_ERROR"
   | "FORBIDDEN"

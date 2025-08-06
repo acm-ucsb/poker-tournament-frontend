@@ -14,6 +14,7 @@ import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useAuth } from "./AuthProvider";
+import { Loader2 } from "lucide-react";
 
 type TableStatus = "not_started" | "active" | "waiting" | "inactive";
 type UserType = "bot" | "human";
@@ -125,7 +126,17 @@ export function DataProvider({ children }: DataProviderProps) {
     [data, isLoading, error, mutate]
   );
 
-  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+  return (
+    <DataContext.Provider value={value}>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-screen">
+          <Loader2 className="animate-spin text-green-300" size={40} />
+        </div>
+      ) : (
+        children
+      )}
+    </DataContext.Provider>
+  );
 }
 
 export const useData = () => {

@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,10 +19,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { joinTeam } from "@/lib/server-actions/joinTeam";
+import { joinTeam, createTeam } from "@/lib/server-actions/index";
 import { useState } from "react";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
-import { createTeam } from "@/lib/server-actions/createTeam";
 
 const formSchemaTeamId = z.object({
   teamId: z.uuid({ error: "Invalid team ID" }),
@@ -92,6 +93,7 @@ export function StepOne() {
       toast.success("Team created successfully!", {
         description: "Make sure to invite your teammates!",
         richColors: true,
+        duration: 10000,
       });
       mutate(); // Refresh data after creating team
     } else {
@@ -194,12 +196,12 @@ export function StepOne() {
               className="md:col-span-3 min-w-40 grow"
             >
               {data.team.owner.id === auth.user?.id ? (
-                <Button className=" bg-orange-200 hover:bg-[#ffc889] w-full">
+                <Button className="w-full">
                   <Settings2 />
                   Manage Team
                 </Button>
               ) : (
-                <Button className="bg-green-200 hover:bg-[#99f5b9] w-full">
+                <Button className="bg-green-100 hover:bg-[#c7fad9] w-full">
                   <IconUsersGroup />
                   View Team
                 </Button>
@@ -207,7 +209,8 @@ export function StepOne() {
             </Link>
             <div className="flex gap-2 w-full md:col-span-2">
               <Button
-                className="min-w-24 grow bg-gray-200 hover:bg-gray-300"
+                className="min-w-24 grow"
+                variant={"outline"}
                 onClick={() => {
                   const teamId = data.team.id;
                   const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
@@ -220,7 +223,8 @@ export function StepOne() {
                 Copy Invite Link
               </Button>
               <Button
-                className="min-w-24 grow bg-gray-200 hover:bg-gray-300"
+                className="min-w-24 grow"
+                variant={"outline"}
                 onClick={() => {
                   const teamId = data.team.id;
 
