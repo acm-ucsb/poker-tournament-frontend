@@ -5,8 +5,12 @@ import { ActionSteps } from "../Actions/ActionSteps";
 import { useData } from "@/providers/DataProvider";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import { StepOne } from "./Steps/StepOne";
+import { useAuth } from "@/providers/AuthProvider";
+import { StepTwo } from "./Steps/StepTwo";
+import { StepThree } from "./Steps/StepThree";
 
 export function Dashboard({}) {
+  const auth = useAuth();
   const { data, isLoading, error } = useData();
 
   return (
@@ -21,28 +25,31 @@ export function Dashboard({}) {
           Dashboard
         </h1>
         <ActionSteps
+          loading={isLoading || auth.loadingAuth}
           steps={[
             {
-              order: 1,
               title: "Create or join a team",
               description: `Make sure all your teammates join the same team. Max ${TEAM_MAX_MEMBERS} members per team.`,
               children: <StepOne />,
+              disabled: !auth.user?.email?.includes("ucsb.edu"), // User must have a ucsb.edu email
+              completed: !!data?.team,
             },
             {
-              order: 2,
               title: "Submit your bot code",
               description:
-                "Upload your poker bot code. You must submit your code in order to participate in the tournament.",
-              children: <div>Step 2 content</div>,
-              disabled: !data?.team, // Disabled if not in a team (step 1)
+                "You must submit your code in order to participate in the tournament.",
+              children: <StepTwo />,
+              disabled: !data?.team || data?.type === "human", // Disabled if not in a team (step 1)
+              completed: !!data?.team?.has_submitted_code,
             },
             {
-              order: 3,
               title: "Review tournament rules",
               description:
-                "Make sure you understand the tournament rules and regulations before participating.",
-              children: <div>Step 3 content</div>,
-              disabled: !data?.team || !data.team.has_submitted_code, // Disabled if not in a team (step 1) or if bot code is not submitted (step 2)
+                "Make sure you understand the tournament rules before participating.",
+              children: <StepThree />,
+              disabled:
+                (!data?.team || !data.team.has_submitted_code) &&
+                data?.type === "bot", // Disabled if not in a team (step 1) or if bot code is not submitted (step 2)
             },
           ]}
         />

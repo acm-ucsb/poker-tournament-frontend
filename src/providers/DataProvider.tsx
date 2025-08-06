@@ -15,12 +15,14 @@ import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 
 type TableStatus = "not_started" | "active" | "waiting" | "inactive";
+type UserType = "bot" | "human";
 
 type Data = {
   id: string;
   created_at: string;
   name: string;
   is_admin: boolean;
+  type: UserType;
   team: {
     id: string;
     created_at: string;
@@ -66,6 +68,7 @@ export function DataProvider({ children }: DataProviderProps) {
         created_at,
         name,
         is_admin,
+        type,
         team:teams (
           id,
           created_at,
