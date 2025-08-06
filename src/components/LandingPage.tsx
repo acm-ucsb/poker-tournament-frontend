@@ -16,6 +16,7 @@ import { FannedCardsIcon } from "./FannedCardsIcon";
 import { useAuth } from "@/providers/AuthProvider";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import { IconUsersGroup } from "@tabler/icons-react";
+import { ButtonWrapper } from "./ButtonWrapper";
 
 export default function LandingPage() {
   const auth = useAuth();
@@ -58,18 +59,13 @@ export default function LandingPage() {
                         pointerEvents: auth.loadingAuth ? "none" : "auto",
                       }}
                     >
-                      <Button size="xl" className="w-full">
-                        {auth.loadingAuth ? (
-                          <Loader2Icon
-                            className="animate-spin"
-                            style={{ width: 28, height: 28 }}
-                          />
-                        ) : auth.user ? (
-                          <>Dashboard</>
-                        ) : (
-                          "Sign In & Compete"
-                        )}
-                      </Button>
+                      <ButtonWrapper
+                        size="xl"
+                        className="w-full"
+                        disabled={auth.loadingAuth}
+                      >
+                        {auth.user ? <>Dashboard</> : "Sign In & Compete"}
+                      </ButtonWrapper>
                     </Link>
                   </motion.div>
                   <div className="grid grid-cols-2 gap-3 w-full">

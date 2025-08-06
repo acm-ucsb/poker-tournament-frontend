@@ -28,10 +28,18 @@ type Data = {
     created_at: string;
     has_submitted_code: boolean;
     num_chips: number;
+    name: string;
     table: {
       id: string;
       created_at: string;
       status: TableStatus;
+    };
+    owner: {
+      id: string;
+      created_at: string;
+      name: string;
+      is_admin: boolean;
+      type: UserType;
     };
   };
 };
@@ -40,12 +48,14 @@ type DataContextType = {
   data: Data | null;
   isLoading: boolean;
   error: string | null;
+  mutate: () => void;
 };
 
 const DataContext = createContext<DataContextType>({
   data: null,
   isLoading: false,
   error: null,
+  mutate: () => {},
 });
 
 type DataProviderProps = {
@@ -59,6 +69,7 @@ export function DataProvider({ children }: DataProviderProps) {
     data: fetchedData,
     isLoading,
     error: fetchError,
+    mutate,
   } = useQuery<Data>(
     supabase
       .from("users")
@@ -69,15 +80,23 @@ export function DataProvider({ children }: DataProviderProps) {
         name,
         is_admin,
         type,
-        team:teams (
+        team:teams!users_team_id_fkey (
           id,
           created_at,
           has_submitted_code,
           num_chips,
+          name,
           table:tables (
             id,
             created_at,
             status
+          ),
+          owner:users!teams_team_owner_id_fkey (
+            id,
+            created_at,
+            name,
+            is_admin,
+            type
           )
         )
       `
@@ -98,8 +117,9 @@ export function DataProvider({ children }: DataProviderProps) {
       data,
       isLoading,
       error,
+      mutate,
     }),
-    [data, isLoading, error]
+    [data, isLoading, error, mutate]
   );
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

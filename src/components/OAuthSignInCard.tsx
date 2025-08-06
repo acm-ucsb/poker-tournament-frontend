@@ -14,6 +14,7 @@ import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 import { DEFAULT_SIGNIN_REDIRECT_URL } from "@/lib/constants";
+import { ButtonWrapper } from "./ButtonWrapper";
 
 type Props = {
   disabled?: boolean;
@@ -59,19 +60,16 @@ export function OAuthSignInCard({ disabled = false, style = {} }: Props) {
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex-col gap-2">
-        <Button
+        <ButtonWrapper
           variant="destructive"
           className="w-full gap-0"
           disabled={isDisabled}
+          loading={loading}
           onClick={() => handleOAuth("google")}
         >
-          {loading ? (
-            <Loader2Icon className="animate-spin" />
-          ) : (
-            <IconBrandGoogle />
-          )}
+          <IconBrandGoogle />
           <span className="ml-2">Sign in with Google</span>
-        </Button>
+        </ButtonWrapper>
         <Button
           className="w-full"
           variant={"outline"}

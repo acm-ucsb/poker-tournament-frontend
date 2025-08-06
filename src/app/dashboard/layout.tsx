@@ -6,11 +6,7 @@ export const metadata: Metadata = {
   description: "Your tournament dashboard",
 };
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div
       className="flex flex-col px-6"
