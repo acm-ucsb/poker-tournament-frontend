@@ -1,4 +1,4 @@
-type UserType = "user" | "bot";
+type UserType = "human" | "bot";
 type TableStatus = "not_started" | "active" | "waiting" | "inactive";
 
 type User = {

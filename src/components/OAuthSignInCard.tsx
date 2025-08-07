@@ -46,7 +46,7 @@ export function OAuthSignInCard({ disabled = false, style = {} }: Props) {
       options: {
         redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(redirectUrl)}`,
         queryParams: {
-          // hd: "ucsb.edu", // Restrict to UCSB Google accounts
+          hd: "ucsb.edu", // Restrict to UCSB Google accounts
         },
       },
     });

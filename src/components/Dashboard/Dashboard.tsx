@@ -29,7 +29,7 @@ export function Dashboard({}) {
               title: "Create or join a team",
               description: `Make sure all your teammates join the same team. Max ${TEAM_MAX_MEMBERS} members per team.`,
               children: <StepOne />,
-              // disabled: !auth.user?.email?.includes("ucsb.edu"), // TODO: re enable User must have a ucsb.edu email
+              disabled: !auth.user?.email?.includes("ucsb.edu"), // User must have a ucsb.edu email
               completed: !!data?.team,
             },
             {
