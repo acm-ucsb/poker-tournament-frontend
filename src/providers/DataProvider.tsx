@@ -1,6 +1,6 @@
 "use client";
 
-import { Session, User } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import {
   createContext,
   ReactNode,
@@ -16,38 +16,22 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
 
-type TableStatus = "not_started" | "active" | "waiting" | "inactive";
-type UserType = "bot" | "human";
-
-type Data = {
-  id: string;
-  created_at: string;
-  name: string;
-  is_admin: boolean;
-  type: UserType;
-  team: {
-    id: string;
-    created_at: string;
-    has_submitted_code: boolean;
-    num_chips: number;
-    name: string;
-    table: {
-      id: string;
-      created_at: string;
-      status: TableStatus;
-    };
-    owner: {
-      id: string;
-      created_at: string;
-      name: string;
-      is_admin: boolean;
-      type: UserType;
-    };
+type UserData = User & {
+  team: Team & {
+    table: Table;
+    owner: User;
   };
 };
 
+type TeamData = {
+  id: string;
+  name: string;
+  members: User[];
+};
+
 type DataContextType = {
-  data: Data | null;
+  data: UserData | null;
+  teamData: TeamData | null;
   isLoading: boolean;
   error: string | null;
   mutate: () => void;
@@ -55,6 +39,7 @@ type DataContextType = {
 
 const DataContext = createContext<DataContextType>({
   data: null,
+  teamData: null,
   isLoading: false,
   error: null,
   mutate: () => {},
@@ -70,19 +55,16 @@ export function DataProvider({ children }: DataProviderProps) {
 
   const {
     data: fetchedData,
-    isLoading,
+    isLoading: isLoadingUserData,
     error: fetchError,
-    mutate,
-  } = useQuery<Data>(
-    supabase
-      .from("users")
-      .select(
-        `
-          id,
-          created_at,
-          name,
-          is_admin,
-          type,
+    mutate: mutateUser,
+  } = useQuery<UserData>(
+    auth.user
+      ? supabase
+          .from("users")
+          .select(
+            `
+          *,
           team:teams!users_team_id_fkey (
             id,
             created_at,
@@ -95,17 +77,41 @@ export function DataProvider({ children }: DataProviderProps) {
               status
             ),
             owner:users!teams_owner_id_fkey (
-              id,
-              created_at,
-              name,
-              is_admin,
-              type
+              *
             )
           )
         `
-      )
-      .eq("id", auth.user?.id)
-      .maybeSingle(),
+          )
+          .eq("id", auth.user?.id)
+          .maybeSingle()
+      : null,
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    }
+  );
+
+  const {
+    data: fetchedTeamData,
+    isLoading: isLoadingTeamData,
+    error: fetchTeamError,
+    mutate: mutateTeam,
+  } = useQuery<TeamData>(
+    auth.user
+      ? supabase
+          .from("teams")
+          .select(
+            `
+          id,
+          name,
+          members:users!users_team_id_fkey(
+            *
+          )
+        `
+          )
+          .eq("id", fetchedData?.team?.id)
+          .maybeSingle()
+      : null,
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
@@ -115,20 +121,35 @@ export function DataProvider({ children }: DataProviderProps) {
   const data = fetchedData ?? null;
   const error = fetchError?.message ?? null;
 
+  const teamData = fetchedTeamData ?? null;
+  const teamError = fetchTeamError?.message ?? null;
+
   // store session, user, updateUserSession, and signOut function in context
   const value = useMemo(
     () => ({
       data,
-      isLoading,
-      error,
-      mutate,
+      teamData,
+      isLoading: isLoadingUserData || isLoadingTeamData,
+      error: error || teamError,
+      mutate: () => {
+        mutateUser();
+        mutateTeam();
+      },
     }),
-    [data, isLoading, error, mutate]
+    [
+      data,
+      teamData,
+      isLoadingUserData,
+      error,
+      teamError,
+      mutateUser,
+      mutateTeam,
+    ]
   );
 
   return (
     <DataContext.Provider value={value}>
-      {isLoading ? (
+      {value.isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <Loader2 className="animate-spin text-green-300" size={40} />
         </div>

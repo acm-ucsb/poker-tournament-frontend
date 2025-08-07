@@ -5,6 +5,7 @@ type User = {
   id: string;
   created_at: string;
   name: string;
+  email: string;
   is_admin: boolean;
   type: UserType;
   team_id: string | null;

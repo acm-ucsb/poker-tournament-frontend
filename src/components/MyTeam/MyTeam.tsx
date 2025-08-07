@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { deleteTeam, joinTeam, renameTeam } from "@/lib/server-actions/index";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Clipboard, LinkIcon, Loader2 } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,10 +15,8 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
@@ -35,6 +33,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from "../ui/alert-dialog";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { UserCard } from "./UserCard";
 
 const formRenameTeam = z.object({
   teamName: z
@@ -52,7 +58,7 @@ export function MyTeam({}) {
   const router = useRouter();
   const params = useSearchParams();
 
-  const { data, mutate } = useData();
+  const { data, teamData, mutate } = useData();
 
   // Rename form hooks/submit method
   const [renameSubmitLoading, setRenameSubmitLoading] = useState(false);
@@ -138,6 +144,9 @@ export function MyTeam({}) {
 
   // If the user is not in a team, redirect to dashboard
   useEffect(() => {
+    if (!auth.user) {
+      return;
+    }
     if (!data?.team && !teamInviteId) {
       router.replace("/dashboard");
       toast.error(
@@ -168,17 +177,15 @@ export function MyTeam({}) {
       />
       {/* Team Information */}
       <section className="flex flex-col mt-6">
-        <h2 className="text-2xl font-bold mb-4">My Team</h2>
+        <h2 className="text-2xl font-bold mb-2">My Team</h2>
 
-        {data?.team.owner.id === auth.user?.id ? (
+        {data?.team.owner.id === auth.user?.id && (
           <>
-            <h3 className="text-lg font-semibold text-[1.25rem]">
-              Team Settings
-            </h3>
-            <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-semibold my-3">Team Settings</h3>
+            <div className="flex flex-col gap-3">
               <Form {...formRename}>
                 <form onSubmit={formRename.handleSubmit(onSubmitRename)}>
-                  <h4 className="text-md mt-2 mb-1 font-medium">Rename Team</h4>
+                  <h4 className="text-md mb-1 font-medium">Rename Team</h4>
                   <p className="mt-0 text-gray-300 text-sm">
                     Enter a new name for your team. This will be visible to
                     everyone.
@@ -240,11 +247,49 @@ export function MyTeam({}) {
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-
-            {/* Manage Teammates: remove teammates */}
-            <h3 className="text-lg font-semibold my-2">Manage Teammates</h3>
           </>
-        ) : null}
+        )}
+
+        {/* Manage Teammates: remove teammates */}
+        <h3 className="text-lg font-semibold my-3">
+          {data?.team.owner.id === auth.user?.id ? "Manage" : "Your"} Teammates
+        </h3>
+        <div className="flex flex-col gap-2">
+          {teamData
+            ? teamData.members.map((member) => (
+                <UserCard key={member.id} member={member} />
+              ))
+            : null}
+        </div>
+        <div className="flex gap-2 w-full mt-3">
+          <Button
+            className="min-w-24 grow"
+            variant={"outline"}
+            onClick={() => {
+              const teamId = data.team.id;
+              const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
+
+              navigator.clipboard.writeText(teamInviteLink);
+              toast.success("Invite link copied to clipboard");
+            }}
+          >
+            <LinkIcon />
+            Copy Invite Link
+          </Button>
+          <Button
+            className="min-w-24 grow"
+            variant={"outline"}
+            onClick={() => {
+              const teamId = data.team.id;
+
+              navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
+              toast.success("Team ID copied to clipboard");
+            }}
+          >
+            <Clipboard />
+            Copy Team ID
+          </Button>
+        </div>
       </section>
     </main>
   );
