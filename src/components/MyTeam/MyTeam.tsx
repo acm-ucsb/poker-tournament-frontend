@@ -206,6 +206,10 @@ export function MyTeam({}) {
                                   ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                                   : ""
                               }
+                              autoCapitalize="off"
+                              autoComplete="off"
+                              spellCheck="false"
+                              autoCorrect="off"
                             />
                           </FormControl>
                           <FormMessage />

@@ -126,7 +126,14 @@ export function StepOne() {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormControl>
-                        <Input placeholder="Enter team ID" {...field} />
+                        <Input
+                          {...field}
+                          placeholder="Enter team ID"
+                          autoCapitalize="off"
+                          autoComplete="off"
+                          spellCheck="false"
+                          autoCorrect="off"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -161,7 +168,14 @@ export function StepOne() {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormControl>
-                        <Input placeholder="Enter team name" {...field} />
+                        <Input
+                          {...field}
+                          placeholder="Enter team name"
+                          autoCapitalize="off"
+                          autoComplete="off"
+                          spellCheck="false"
+                          autoCorrect="off"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -194,6 +208,8 @@ export function StepOne() {
             <p className="mt-0 text-red-300 text-sm">
               You can no longer change your team or join another team since you
               have already submitted code for the tournament.
+              <br />
+              You can still rename your team and view team members.
             </p>
           )}
           <div className="grid *:grid-cols-1 md:grid-cols-5 gap-2 mt-2">
@@ -216,7 +232,7 @@ export function StepOne() {
                   Manage Team
                 </Button>
               ) : (
-                <Button className="bg-green-100 hover:bg-[#c7fad9] w-full">
+                <Button className="bg-[hsl(131,84%,90%)] hover:bg-[hsl(131,84%,84%)] w-full">
                   <IconUsersGroup />
                   View Team
                 </Button>
