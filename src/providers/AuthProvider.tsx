@@ -90,15 +90,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, currentSession: Session | null) => {
-        if (event === "INITIAL_SESSION") {
-          // If the event is initial session AND the last_sign_in_at is within the last 5 seconds, we can send a notification
-          if (
-            event === "INITIAL_SESSION" &&
-            new Date(currentSession?.user?.last_sign_in_at || "").getTime() >
-              Date.now() - 5000
-          ) {
-            toast.success("Signed in successfully!", { richColors: true });
-          }
+        // If the event is initial session AND the last_sign_in_at is within the last 5 seconds, we can send a notification
+        if (
+          event === "INITIAL_SESSION" &&
+          new Date(currentSession?.user?.last_sign_in_at || "").getTime() >
+            Date.now() - 5000
+        ) {
+          toast.success("Signed in successfully!", { richColors: true });
         }
       }
     );

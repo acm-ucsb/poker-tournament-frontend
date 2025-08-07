@@ -57,6 +57,19 @@ export async function joinTeam(
         status: 400,
       });
     }
+    // check if max players limit is reached
+    const { count: playerCount } = await supabase
+      .from("users")
+      .select("*", { count: "exact" })
+      .eq("team_id", teamId);
+
+    if (!playerCount || playerCount >= team.max_players) {
+      throw new ServerActionError({
+        message: "Team is already full",
+        code: "BAD_REQUEST",
+        status: 400,
+      });
+    }
 
     // Add user to team
     await supabase

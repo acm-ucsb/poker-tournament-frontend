@@ -36,8 +36,8 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
-          <Toaster position="top-center" />
         </AppProvider>
+        <Toaster position="top-center" />
       </body>
     </html>
   );
