@@ -51,6 +51,15 @@ export async function deleteTeam(
       });
     }
 
+    // check if team has submitted code
+    if (team.has_submitted_code) {
+      throw new ServerActionError({
+        message: "You cannot delete a team that has submitted code.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     // delete the team
     await supabase.from("teams").delete().eq("id", teamId).throwOnError();
 

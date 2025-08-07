@@ -67,7 +67,8 @@ export function UserCard({ member }: Props) {
           </CardDescription>
         </div>
         {data?.team.owner.id === auth.user?.id &&
-          member.id !== auth.user?.id && (
+          member.id !== auth.user?.id &&
+          !data?.team.has_submitted_code && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant={"destructive"}>Remove</Button>

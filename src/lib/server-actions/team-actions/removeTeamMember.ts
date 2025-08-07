@@ -58,6 +58,16 @@ export async function removeTeamMember(params: Params) {
         status: 403,
       });
     }
+
+    // check if team has submitted code
+    if (team.has_submitted_code) {
+      throw new ServerActionError({
+        message: "You cannot remove a member after code submission.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     // check if userId is part of the team
     const { data: userInTeam, error: userInTeamError } = await supabase
       .from("users")

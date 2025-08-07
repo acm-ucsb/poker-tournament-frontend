@@ -190,13 +190,28 @@ export function StepOne() {
             </span>
             of team <strong>{data.team.name}</strong>
           </p>
+          {data.team.has_submitted_code && (
+            <p className="mt-0 text-red-300 text-sm">
+              You can no longer change your team or join another team since you
+              have already submitted code for the tournament.
+            </p>
+          )}
           <div className="grid *:grid-cols-1 md:grid-cols-5 gap-2 mt-2">
             <Link
               href={`/dashboard/myteam`}
               className="md:col-span-3 min-w-40 grow"
+              style={{
+                gridColumn: data.team.has_submitted_code
+                  ? "span 5 / span 5"
+                  : undefined,
+              }}
             >
-              {data.team.owner.id === auth.user?.id ? (
-                <Button className="w-full">
+              {data.team.owner.id === auth.user?.id &&
+              !data.team.has_submitted_code ? (
+                <Button
+                  className="w-full"
+                  disabled={data.team.has_submitted_code}
+                >
                   <Settings2 />
                   Manage Team
                 </Button>
@@ -207,35 +222,39 @@ export function StepOne() {
                 </Button>
               )}
             </Link>
-            <div className="flex gap-2 w-full md:col-span-2">
-              <Button
-                className="min-w-24 grow"
-                variant={"outline"}
-                onClick={() => {
-                  const teamId = data.team.id;
-                  const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
+            {!data.team.has_submitted_code && (
+              <div className="flex gap-2 w-full md:col-span-2">
+                <Button
+                  className="min-w-24 grow"
+                  variant={"outline"}
+                  onClick={() => {
+                    const teamId = data.team.id;
+                    const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
 
-                  navigator.clipboard.writeText(teamInviteLink);
-                  toast.success("Invite link copied to clipboard");
-                }}
-              >
-                <LinkIcon />
-                Copy Invite Link
-              </Button>
-              <Button
-                className="min-w-24 grow"
-                variant={"outline"}
-                onClick={() => {
-                  const teamId = data.team.id;
+                    navigator.clipboard.writeText(teamInviteLink);
+                    toast.success("Invite link copied to clipboard");
+                  }}
+                  disabled={data.team.has_submitted_code}
+                >
+                  <LinkIcon />
+                  Copy Invite Link
+                </Button>
+                <Button
+                  className="min-w-24 grow"
+                  variant={"outline"}
+                  onClick={() => {
+                    const teamId = data.team.id;
 
-                  navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
-                  toast.success("Team ID copied to clipboard");
-                }}
-              >
-                <Clipboard />
-                Copy Team ID
-              </Button>
-            </div>
+                    navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
+                    toast.success("Team ID copied to clipboard");
+                  }}
+                  disabled={data.team.has_submitted_code}
+                >
+                  <Clipboard />
+                  Copy Team ID
+                </Button>
+              </div>
+            )}
           </div>
         </>
       )}

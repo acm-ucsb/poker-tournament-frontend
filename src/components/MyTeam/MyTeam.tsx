@@ -222,37 +222,44 @@ export function MyTeam({}) {
                   </div>
                 </form>
               </Form>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant={"destructive"} className="w-full">
-                    Delete Team
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      this team and all its data, including any code submitted.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteTeam}>
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              {!data.team.has_submitted_code && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant={"destructive"} className="w-full">
+                      Delete Team
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete this team and all its data, including any code
+                        submitted.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteTeam}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
           </>
         )}
 
         {/* Manage Teammates: remove teammates */}
         <h3 className="text-lg font-semibold my-3">
-          {data?.team.owner.id === auth.user?.id ? "Manage" : "Your"} Teammates
+          {data?.team.owner.id === auth.user?.id &&
+          !data?.team.has_submitted_code
+            ? "Manage"
+            : "Your"}{" "}
+          Teammates
         </h3>
         <div className="flex flex-col gap-2">
           {teamData
@@ -261,35 +268,37 @@ export function MyTeam({}) {
               ))
             : null}
         </div>
-        <div className="flex gap-2 w-full mt-3">
-          <Button
-            className="min-w-24 grow"
-            variant={"outline"}
-            onClick={() => {
-              const teamId = data.team.id;
-              const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
+        {!data.team.has_submitted_code && (
+          <div className="flex gap-2 w-full mt-3">
+            <Button
+              className="min-w-24 grow"
+              variant={"outline"}
+              onClick={() => {
+                const teamId = data.team.id;
+                const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
 
-              navigator.clipboard.writeText(teamInviteLink);
-              toast.success("Invite link copied to clipboard");
-            }}
-          >
-            <LinkIcon />
-            Copy Invite Link
-          </Button>
-          <Button
-            className="min-w-24 grow"
-            variant={"outline"}
-            onClick={() => {
-              const teamId = data.team.id;
+                navigator.clipboard.writeText(teamInviteLink);
+                toast.success("Invite link copied to clipboard");
+              }}
+            >
+              <LinkIcon />
+              Copy Invite Link
+            </Button>
+            <Button
+              className="min-w-24 grow"
+              variant={"outline"}
+              onClick={() => {
+                const teamId = data.team.id;
 
-              navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
-              toast.success("Team ID copied to clipboard");
-            }}
-          >
-            <Clipboard />
-            Copy Team ID
-          </Button>
-        </div>
+                navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
+                toast.success("Team ID copied to clipboard");
+              }}
+            >
+              <Clipboard />
+              Copy Team ID
+            </Button>
+          </div>
+        )}
       </section>
     </main>
   );
