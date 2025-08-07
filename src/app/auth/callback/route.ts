@@ -15,7 +15,12 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+    // prints the user access token for some debugging purposes
+    if (data.session) {
+      console.log("access_token:", data.session.access_token);
+    }
 
     if (!error) {
       return NextResponse.redirect(`${origin}${redirectTo}`);
