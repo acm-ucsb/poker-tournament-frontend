@@ -14,6 +14,8 @@ import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 import { DEFAULT_SIGNIN_REDIRECT_URL } from "@/lib/constants";
+import { ButtonWrapper } from "./ButtonWrapper";
+import { useAuth } from "@/providers/AuthProvider";
 
 type Props = {
   disabled?: boolean;
@@ -24,6 +26,8 @@ type Props = {
 type Provider = "google";
 
 export function OAuthSignInCard({ disabled = false, style = {} }: Props) {
+  const auth = useAuth();
+
   const supabaseClient = createSupabaseClient();
 
   const [loading, setLoading] = useState(false);
@@ -32,7 +36,7 @@ export function OAuthSignInCard({ disabled = false, style = {} }: Props) {
 
   const redirectUrl = searchParams.get("redirect") as string;
 
-  const isDisabled = disabled || loading;
+  const isDisabled = disabled || loading || !!auth.user;
 
   const handleOAuth = async (provider: Provider) => {
     setLoading(true);
@@ -59,19 +63,22 @@ export function OAuthSignInCard({ disabled = false, style = {} }: Props) {
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex-col gap-2">
-        <Button
+        <ButtonWrapper
           variant="destructive"
           className="w-full gap-0"
           disabled={isDisabled}
+          loading={loading || auth.loadingAuth}
           onClick={() => handleOAuth("google")}
         >
-          {loading ? (
-            <Loader2Icon className="animate-spin" />
+          {!!auth.user ? (
+            <span>You're signed in as {auth.user.email}</span>
           ) : (
-            <IconBrandGoogle />
+            <>
+              <IconBrandGoogle />
+              <span className="ml-2">Sign in with Google</span>
+            </>
           )}
-          <span className="ml-2">Sign in with Google</span>
-        </Button>
+        </ButtonWrapper>
         <Button
           className="w-full"
           variant={"outline"}

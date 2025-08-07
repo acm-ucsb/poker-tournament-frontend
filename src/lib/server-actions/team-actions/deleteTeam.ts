@@ -1,0 +1,96 @@
+"use server";
+
+import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
+import { ServerActionError, ServerActionResponse } from "../types";
+
+type Params = {
+  teamId: string;
+};
+
+export async function deleteTeam(
+  params: Params
+): Promise<ServerActionResponse<null>> {
+  const { teamId } = params;
+
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new ServerActionError({
+        message: "You must be logged in to join a team.",
+        code: "UNAUTHORIZED",
+        status: 401,
+      });
+    }
+
+    // check if team with team id exists
+    const { data: team } = await supabase
+      .from("teams")
+      .select("*")
+      .eq("id", teamId)
+      .single()
+      .throwOnError();
+
+    if (!team) {
+      throw new ServerActionError({
+        message: "Team not found",
+        code: "BAD_REQUEST",
+        status: 400,
+      });
+    }
+
+    // check if user is the owner of the team
+    if (team.owner_id !== user.id) {
+      throw new ServerActionError({
+        message: "You are not the owner of this team.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
+    // check if team has submitted code
+    if (team.has_submitted_code) {
+      throw new ServerActionError({
+        message: "You cannot delete a team that has submitted code.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
+    // delete the team
+    await supabase.from("teams").delete().eq("id", teamId).throwOnError();
+
+    return {
+      success: true,
+      data: null,
+      status: 200,
+      error: null,
+    };
+  } catch (error) {
+    if (error instanceof ServerActionError) {
+      return {
+        success: false,
+        status: error.status,
+        error: {
+          code: error.code,
+          message: error.message,
+        },
+        data: null,
+      };
+    }
+
+    return {
+      success: false,
+      status: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+        details: error,
+      },
+      data: null,
+    };
+  }
+}

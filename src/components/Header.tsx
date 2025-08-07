@@ -42,12 +42,12 @@ export function Header() {
             className="select-none cursor-pointer text-3xl font-bold"
             style={{
               backgroundImage:
-                "linear-gradient(135deg, hsl(151, 76%, 28%), hsl(151, 96%, 70%))",
+                "linear-gradient(160deg, hsl(149, 90%, 12%), hsl(149, 90%, 80%))",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
           >
-            acm.
+            acm.dev
           </span>
         </Link>
         <div className="flex justify-center items-center w-10 h-10 self-center">

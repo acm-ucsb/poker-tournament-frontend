@@ -74,7 +74,7 @@ export const FannedCardsIcon = (props: React.SVGProps<SVGSVGElement>) => {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 100 100"
       {...props}
-      className="transform-gpu"
+      className="transform-gpu select-none pointer-events-none"
     >
       <defs>
         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
