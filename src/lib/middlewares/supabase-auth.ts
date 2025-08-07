@@ -29,6 +29,12 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // print out on update session
+  console.log(
+    "access token:",
+    (await supabase.auth.getSession()).data.session?.access_token
+  );
+
   // Do not run code between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
