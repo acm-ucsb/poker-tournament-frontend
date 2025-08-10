@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
+import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 
 type UserData = User & {
   team: Team & {
@@ -32,6 +33,7 @@ type TeamData = {
 type DataContextType = {
   data: UserData | null;
   teamData: TeamData | null;
+  tourneyData: Tournament | null;
   isLoading: boolean;
   error: string | null;
   mutate: () => void;
@@ -40,6 +42,7 @@ type DataContextType = {
 const DataContext = createContext<DataContextType>({
   data: null,
   teamData: null,
+  tourneyData: null,
   isLoading: false,
   error: null,
   mutate: () => {},
@@ -64,23 +67,23 @@ export function DataProvider({ children }: DataProviderProps) {
           .from("users")
           .select(
             `
-          *,
-          team:teams!users_team_id_fkey (
-            id,
-            created_at,
-            has_submitted_code,
-            num_chips,
-            name,
-            table:tables (
-              id,
-              created_at,
-              status
-            ),
-            owner:users!teams_owner_id_fkey (
-              *
-            )
-          )
-        `
+              *,
+              team:teams!users_team_id_fkey (
+                id,
+                created_at,
+                has_submitted_code,
+                num_chips,
+                name,
+                table:tables (
+                  id,
+                  created_at,
+                  status
+                ),
+                owner:users!teams_owner_id_fkey (
+                  *
+                )
+              )
+            `
           )
           .eq("id", auth.user?.id)
           .maybeSingle()
@@ -97,19 +100,38 @@ export function DataProvider({ children }: DataProviderProps) {
     error: fetchTeamError,
     mutate: mutateTeam,
   } = useQuery<TeamData>(
-    auth.user
+    auth.user && fetchedData?.team
       ? supabase
           .from("teams")
           .select(
             `
-          id,
-          name,
-          members:users!users_team_id_fkey(
-            *
-          )
-        `
+              id,
+              name,
+              members:users!users_team_id_fkey(
+                *
+              )
+            `
           )
           .eq("id", fetchedData?.team?.id)
+          .maybeSingle()
+      : null,
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    }
+  );
+
+  const {
+    data: fetchedTourneyData,
+    isLoading: isLoadingTourneyData,
+    error: fetchTourneyError,
+    mutate: mutateTourney,
+  } = useQuery<Tournament>(
+    auth.user
+      ? supabase
+          .from("tournaments")
+          .select("*")
+          .eq("id", UCSB_POKER_TOURNEY_ID)
           .maybeSingle()
       : null,
     {
@@ -124,26 +146,36 @@ export function DataProvider({ children }: DataProviderProps) {
   const teamData = fetchedTeamData ?? null;
   const teamError = fetchTeamError?.message ?? null;
 
+  const tourneyData = fetchedTourneyData ?? null;
+  const tourneyError = fetchTourneyError?.message ?? null;
+
   // store session, user, updateUserSession, and signOut function in context
   const value = useMemo(
     () => ({
       data,
       teamData,
-      isLoading: isLoadingUserData || isLoadingTeamData,
-      error: error || teamError,
+      tourneyData,
+      isLoading: isLoadingUserData || isLoadingTeamData || isLoadingTourneyData,
+      error: error || teamError || tourneyError,
       mutate: () => {
         mutateUser();
         mutateTeam();
+        mutateTourney();
       },
     }),
     [
       data,
       teamData,
+      tourneyData,
       isLoadingUserData,
+      isLoadingTeamData,
+      isLoadingTourneyData,
       error,
       teamError,
+      tourneyError,
       mutateUser,
       mutateTeam,
+      mutateTourney,
     ]
   );
 

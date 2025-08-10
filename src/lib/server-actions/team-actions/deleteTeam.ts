@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
+import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 
 type Params = {
   teamId: string;
@@ -51,10 +52,17 @@ export async function deleteTeam(
       });
     }
 
-    // check if team has submitted code
-    if (team.has_submitted_code) {
+    // check if tournaments.teams_disabled is true
+    const { data: tournament } = await supabase
+      .from("tournaments")
+      .select("teams_disabled")
+      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .single()
+      .throwOnError();
+
+    if (tournament?.teams_disabled) {
       throw new ServerActionError({
-        message: "You cannot delete a team that has submitted code.",
+        message: "Team changes have been disabled for this tournament.",
         code: "FORBIDDEN",
         status: 403,
       });

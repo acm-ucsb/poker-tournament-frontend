@@ -7,6 +7,9 @@ export const TEAM_MAX_MEMBERS = 4 as const;
 export const TEAM_NAME_MIN_LENGTH = 3 as const;
 export const TEAM_NAME_MAX_LENGTH = 25 as const;
 
+export const UCSB_POKER_TOURNEY_ID =
+  "f6fd507b-42fb-4fba-a0d3-e9ded05aeca5" as const; // hard code for now, implement different tournaments later
+
 export const HEX_OPACITY_POSTFIX = {
   100: "FF",
   99: "FC",

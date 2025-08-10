@@ -1,5 +1,6 @@
 type UserType = "human" | "bot";
 type TableStatus = "not_started" | "active" | "waiting" | "inactive";
+type TournamentStatus = "not_started" | "active" | "completed";
 
 type User = {
   id: string;
@@ -25,4 +26,13 @@ type Table = {
   id: string;
   created_at: string;
   status: TableStatus;
+};
+
+type Tournament = {
+  id: string;
+  created_at: string;
+  name: string;
+  status: TournamentStatus;
+  teams_disabled: boolean;
+  submissions_disabled: boolean;
 };

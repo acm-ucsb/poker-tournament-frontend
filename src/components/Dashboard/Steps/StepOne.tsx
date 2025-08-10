@@ -40,7 +40,7 @@ const formSchemaTeamName = z.object({
 
 export function StepOne() {
   const auth = useAuth();
-  const { data, mutate } = useData();
+  const { data, tourneyData, mutate } = useData();
 
   const [teamIdSubmitLoading, setTeamIdSubmitLoading] = useState(false);
   const [teamNameSubmitLoading, setTeamNameSubmitLoading] = useState(false);
@@ -204,10 +204,10 @@ export function StepOne() {
             </span>
             of team <strong>{data.team.name}</strong>
           </p>
-          {data.team.has_submitted_code && (
+          {tourneyData?.teams_disabled && (
             <p className="mt-0 text-red-300 text-sm">
-              You can no longer change your team or join another team since you
-              have already submitted code for the tournament.
+              You can no longer change your team or join another team as the
+              team period has ended.
               <br />
               You can still rename your team and view team members.
             </p>
@@ -217,16 +217,16 @@ export function StepOne() {
               href={`/dashboard/myteam`}
               className="md:col-span-3 min-w-40 grow"
               style={{
-                gridColumn: data.team.has_submitted_code
+                gridColumn: tourneyData?.teams_disabled
                   ? "span 5 / span 5"
                   : undefined,
               }}
             >
               {data.team.owner.id === auth.user?.id &&
-              !data.team.has_submitted_code ? (
+              !tourneyData?.teams_disabled ? (
                 <Button
                   className="w-full"
-                  disabled={data.team.has_submitted_code}
+                  disabled={tourneyData?.teams_disabled}
                 >
                   <Settings2 />
                   Manage Team
@@ -238,7 +238,7 @@ export function StepOne() {
                 </Button>
               )}
             </Link>
-            {!data.team.has_submitted_code && (
+            {!tourneyData?.teams_disabled && (
               <div className="flex gap-2 w-full md:col-span-2">
                 <Button
                   className="min-w-24 grow"
@@ -250,7 +250,7 @@ export function StepOne() {
                     navigator.clipboard.writeText(teamInviteLink);
                     toast.success("Invite link copied to clipboard");
                   }}
-                  disabled={data.team.has_submitted_code}
+                  disabled={tourneyData?.teams_disabled}
                 >
                   <LinkIcon />
                   Copy Invite Link
@@ -264,7 +264,7 @@ export function StepOne() {
                     navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
                     toast.success("Team ID copied to clipboard");
                   }}
-                  disabled={data.team.has_submitted_code}
+                  disabled={tourneyData?.teams_disabled}
                 >
                   <Clipboard />
                   Copy Team ID

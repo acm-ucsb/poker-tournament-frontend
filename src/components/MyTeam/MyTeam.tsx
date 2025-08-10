@@ -5,7 +5,12 @@ import { useData } from "@/providers/DataProvider";
 import { BreadcrumbBuilder } from "../BreadcrumbBuilder";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { deleteTeam, joinTeam, renameTeam } from "@/lib/server-actions/index";
+import {
+  deleteTeam,
+  joinTeam,
+  removeTeamMember,
+  renameTeam,
+} from "@/lib/server-actions/index";
 import { toast } from "sonner";
 import { Clipboard, LinkIcon, Loader2 } from "lucide-react";
 
@@ -33,13 +38,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from "../ui/alert-dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 import { UserCard } from "./UserCard";
 
 const formRenameTeam = z.object({
@@ -58,10 +56,11 @@ export function MyTeam({}) {
   const router = useRouter();
   const params = useSearchParams();
 
-  const { data, teamData, mutate } = useData();
+  const { data, teamData, tourneyData, mutate } = useData();
 
   // Rename form hooks/submit method
   const [renameSubmitLoading, setRenameSubmitLoading] = useState(false);
+
   const formRename = useForm<z.infer<typeof formRenameTeam>>({
     resolver: zodResolver(formRenameTeam),
     defaultValues: {
@@ -115,6 +114,29 @@ export function MyTeam({}) {
       mutate(); // Refresh data
     } else {
       toast.error(response.error?.message || "Failed to delete team", {
+        richColors: true,
+      });
+    }
+  };
+
+  // Leave team method
+  const handleLeaveTeam = async () => {
+    if (!data?.team || !auth.user) return;
+
+    // Call server action to remove member
+    const response = await removeTeamMember({
+      teamId: data.team.id,
+      userId: auth.user.id,
+    });
+
+    if (response.success) {
+      toast.success("Successfully left the team!", {
+        richColors: true,
+      });
+      router.push("/dashboard");
+      mutate(); // Refresh data
+    } else {
+      toast.error(response.error?.message || "Failed to leave team", {
         richColors: true,
       });
     }
@@ -226,7 +248,7 @@ export function MyTeam({}) {
                   </div>
                 </form>
               </Form>
-              {!data.team.has_submitted_code && (
+              {!tourneyData?.teams_disabled && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant={"destructive"} className="w-full">
@@ -259,20 +281,54 @@ export function MyTeam({}) {
 
         {/* Manage Teammates: remove teammates */}
         <h3 className="text-lg font-semibold my-3">
-          {data?.team.owner.id === auth.user?.id &&
-          !data?.team.has_submitted_code
+          {data?.team.owner.id === auth.user?.id && !tourneyData?.teams_disabled
             ? "Manage"
             : "Your"}{" "}
           Teammates
         </h3>
         <div className="flex flex-col gap-2">
           {teamData
-            ? teamData.members.map((member) => (
-                <UserCard key={member.id} member={member} />
-              ))
+            ? teamData.members
+                .slice()
+                .sort((a, b) => {
+                  // Owner first
+                  if (a.id === data.team.owner.id) return -1;
+                  if (b.id === data.team.owner.id) return 1;
+                  // Current user next
+                  if (auth.user && a.id === auth.user.id) return -1;
+                  if (auth.user && b.id === auth.user.id) return 1;
+                  // Then alphabetical
+                  return a.name.localeCompare(b.name);
+                })
+                .map((member) => <UserCard key={member.id} member={member} />)
             : null}
         </div>
-        {!data.team.has_submitted_code && (
+        {data?.team.owner.id !== auth.user?.id &&
+          !tourneyData?.teams_disabled && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant={"destructive"} className="mt-3">
+                  Leave Team
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action will remove you from the team. You can be
+                    re-invited later.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLeaveTeam}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        {!tourneyData?.teams_disabled && (
           <div className="flex gap-2 w-full mt-3">
             <Button
               className="min-w-24 grow"
