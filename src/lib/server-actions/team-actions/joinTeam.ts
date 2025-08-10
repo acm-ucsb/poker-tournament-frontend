@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
+import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 
 type Params = {
   teamId: string;
@@ -63,7 +64,7 @@ export async function joinTeam(
       .select("*", { count: "exact" })
       .eq("team_id", teamId);
 
-    if (!playerCount || playerCount >= team.max_players) {
+    if (!playerCount || playerCount >= TEAM_MAX_MEMBERS) {
       throw new ServerActionError({
         message: "Team is already full",
         code: "BAD_REQUEST",

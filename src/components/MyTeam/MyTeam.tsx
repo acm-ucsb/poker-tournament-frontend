@@ -39,6 +39,7 @@ import {
   AlertDialogHeader,
 } from "../ui/alert-dialog";
 import { UserCard } from "./UserCard";
+import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 
 const formRenameTeam = z.object({
   teamName: z
@@ -328,37 +329,39 @@ export function MyTeam({}) {
               </AlertDialogContent>
             </AlertDialog>
           )}
-        {!tourneyData?.teams_disabled && (
-          <div className="flex gap-2 w-full mt-3">
-            <Button
-              className="min-w-24 grow"
-              variant={"outline"}
-              onClick={() => {
-                const teamId = data.team.id;
-                const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
+        {!tourneyData?.teams_disabled &&
+          teamData &&
+          teamData?.members.length < TEAM_MAX_MEMBERS && (
+            <div className="flex gap-2 w-full mt-3">
+              <Button
+                className="min-w-24 grow"
+                variant={"outline"}
+                onClick={() => {
+                  const teamId = data.team.id;
+                  const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
 
-                navigator.clipboard.writeText(teamInviteLink);
-                toast.success("Invite link copied to clipboard");
-              }}
-            >
-              <LinkIcon />
-              Copy Invite Link
-            </Button>
-            <Button
-              className="min-w-24 grow"
-              variant={"outline"}
-              onClick={() => {
-                const teamId = data.team.id;
+                  navigator.clipboard.writeText(teamInviteLink);
+                  toast.success("Invite link copied to clipboard");
+                }}
+              >
+                <LinkIcon />
+                Copy Invite Link
+              </Button>
+              <Button
+                className="min-w-24 grow"
+                variant={"outline"}
+                onClick={() => {
+                  const teamId = data.team.id;
 
-                navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
-                toast.success("Team ID copied to clipboard");
-              }}
-            >
-              <Clipboard />
-              Copy Team ID
-            </Button>
-          </div>
-        )}
+                  navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
+                  toast.success("Team ID copied to clipboard");
+                }}
+              >
+                <Clipboard />
+                Copy Team ID
+              </Button>
+            </div>
+          )}
       </section>
     </main>
   );

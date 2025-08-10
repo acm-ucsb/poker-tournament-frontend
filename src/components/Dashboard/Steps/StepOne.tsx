@@ -22,6 +22,7 @@ import { z } from "zod";
 import { joinTeam, createTeam } from "@/lib/server-actions/index";
 import { useState } from "react";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
+import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 
 const formSchemaTeamId = z.object({
   teamId: z.uuid({ error: "Invalid team ID" }),
@@ -40,7 +41,7 @@ const formSchemaTeamName = z.object({
 
 export function StepOne() {
   const auth = useAuth();
-  const { data, tourneyData, mutate } = useData();
+  const { data, teamData, tourneyData, mutate } = useData();
 
   const [teamIdSubmitLoading, setTeamIdSubmitLoading] = useState(false);
   const [teamNameSubmitLoading, setTeamNameSubmitLoading] = useState(false);
@@ -217,9 +218,11 @@ export function StepOne() {
               href={`/dashboard/myteam`}
               className="md:col-span-3 min-w-40 grow"
               style={{
-                gridColumn: tourneyData?.teams_disabled
-                  ? "span 5 / span 5"
-                  : undefined,
+                gridColumn:
+                  tourneyData?.teams_disabled ||
+                  (teamData && teamData?.members?.length >= TEAM_MAX_MEMBERS)
+                    ? "span 5 / span 5"
+                    : undefined,
               }}
             >
               {data.team.owner.id === auth.user?.id &&
@@ -238,39 +241,41 @@ export function StepOne() {
                 </Button>
               )}
             </Link>
-            {!tourneyData?.teams_disabled && (
-              <div className="flex gap-2 w-full md:col-span-2">
-                <Button
-                  className="min-w-24 grow"
-                  variant={"outline"}
-                  onClick={() => {
-                    const teamId = data.team.id;
-                    const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
+            {!tourneyData?.teams_disabled &&
+              teamData &&
+              teamData.members?.length < TEAM_MAX_MEMBERS && (
+                <div className="flex gap-2 w-full md:col-span-2">
+                  <Button
+                    className="min-w-24 grow"
+                    variant={"outline"}
+                    onClick={() => {
+                      const teamId = data.team.id;
+                      const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
 
-                    navigator.clipboard.writeText(teamInviteLink);
-                    toast.success("Invite link copied to clipboard");
-                  }}
-                  disabled={tourneyData?.teams_disabled}
-                >
-                  <LinkIcon />
-                  Copy Invite Link
-                </Button>
-                <Button
-                  className="min-w-24 grow"
-                  variant={"outline"}
-                  onClick={() => {
-                    const teamId = data.team.id;
+                      navigator.clipboard.writeText(teamInviteLink);
+                      toast.success("Invite link copied to clipboard");
+                    }}
+                    disabled={tourneyData?.teams_disabled}
+                  >
+                    <LinkIcon />
+                    Copy Invite Link
+                  </Button>
+                  <Button
+                    className="min-w-24 grow"
+                    variant={"outline"}
+                    onClick={() => {
+                      const teamId = data.team.id;
 
-                    navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
-                    toast.success("Team ID copied to clipboard");
-                  }}
-                  disabled={tourneyData?.teams_disabled}
-                >
-                  <Clipboard />
-                  Copy Team ID
-                </Button>
-              </div>
-            )}
+                      navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
+                      toast.success("Team ID copied to clipboard");
+                    }}
+                    disabled={tourneyData?.teams_disabled}
+                  >
+                    <Clipboard />
+                    Copy Team ID
+                  </Button>
+                </div>
+              )}
           </div>
         </>
       )}
