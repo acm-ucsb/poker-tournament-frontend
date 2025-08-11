@@ -20,9 +20,15 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { joinTeam, createTeam } from "@/lib/server-actions/index";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
+import moment from "moment";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const formSchemaTeamId = z.object({
   teamId: z.uuid({ error: "Invalid team ID" }),
@@ -45,6 +51,7 @@ export function StepOne() {
 
   const [teamIdSubmitLoading, setTeamIdSubmitLoading] = useState(false);
   const [teamNameSubmitLoading, setTeamNameSubmitLoading] = useState(false);
+  const [deadlinePassed, setDeadlinePassed] = useState(false);
 
   const formTeamId = useForm<z.infer<typeof formSchemaTeamId>>({
     resolver: zodResolver(formSchemaTeamId),
@@ -108,6 +115,31 @@ export function StepOne() {
     formTeamName.reset();
     setTeamNameSubmitLoading(false);
   };
+
+  useEffect(() => {
+    if (tourneyData?.teams_deadline) {
+      const deadline = moment(tourneyData.teams_deadline);
+      const now = moment();
+
+      setDeadlinePassed(now.isAfter(deadline));
+
+      if (deadline.isAfter(now)) {
+        const timeoutDuration = deadline.diff(now);
+        const timer = setTimeout(() => {
+          setDeadlinePassed(true);
+          mutate();
+          toast.info(
+            "Team change deadline has passed. You can no longer change your team or join another team.",
+            {
+              richColors: true,
+            }
+          );
+        }, timeoutDuration);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [tourneyData?.teams_deadline, mutate]);
 
   return (
     <section className="flex flex-col gap-0.5">
@@ -205,13 +237,29 @@ export function StepOne() {
             </span>
             of team <strong>{data.team.name}</strong>
           </p>
-          {tourneyData?.teams_disabled && (
+          {deadlinePassed ? (
             <p className="mt-0 text-red-300 text-sm">
               You can no longer change your team or join another team as the
-              team period has ended.
-              <br />
-              You can still rename your team and view team members.
+              team period has ended. Your team can still be renamed.
             </p>
+          ) : (
+            tourneyData?.teams_deadline && (
+              <Tooltip>
+                <TooltipTrigger className="w-max">
+                  <p className="mt-0 text-red-300 text-sm">
+                    Team changes end on{" "}
+                    {moment(tourneyData?.teams_deadline).format(
+                      "MMMM Do YYYY, h:mm:ss a"
+                    )}
+                    .
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Team changes end{" "}
+                  {moment(tourneyData?.teams_deadline).fromNow()}
+                </TooltipContent>
+              </Tooltip>
+            )
           )}
           <div className="grid *:grid-cols-1 md:grid-cols-5 gap-2 mt-2">
             <Link
@@ -219,18 +267,14 @@ export function StepOne() {
               className="md:col-span-3 min-w-40 grow"
               style={{
                 gridColumn:
-                  tourneyData?.teams_disabled ||
+                  deadlinePassed ||
                   (teamData && teamData?.members?.length >= TEAM_MAX_MEMBERS)
                     ? "span 5 / span 5"
                     : undefined,
               }}
             >
-              {data.team.owner.id === auth.user?.id &&
-              !tourneyData?.teams_disabled ? (
-                <Button
-                  className="w-full"
-                  disabled={tourneyData?.teams_disabled}
-                >
+              {data.team.owner.id === auth.user?.id && !deadlinePassed ? (
+                <Button className="w-full" disabled={deadlinePassed}>
                   <Settings2 />
                   Manage Team
                 </Button>
@@ -241,7 +285,7 @@ export function StepOne() {
                 </Button>
               )}
             </Link>
-            {!tourneyData?.teams_disabled &&
+            {!deadlinePassed &&
               teamData &&
               teamData.members?.length < TEAM_MAX_MEMBERS && (
                 <div className="flex gap-2 w-full md:col-span-2">
@@ -255,7 +299,7 @@ export function StepOne() {
                       navigator.clipboard.writeText(teamInviteLink);
                       toast.success("Invite link copied to clipboard");
                     }}
-                    disabled={tourneyData?.teams_disabled}
+                    disabled={deadlinePassed}
                   >
                     <LinkIcon />
                     Copy Invite Link
@@ -269,7 +313,7 @@ export function StepOne() {
                       navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
                       toast.success("Team ID copied to clipboard");
                     }}
-                    disabled={tourneyData?.teams_disabled}
+                    disabled={deadlinePassed}
                   >
                     <Clipboard />
                     Copy Team ID

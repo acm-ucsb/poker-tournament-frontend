@@ -28,13 +28,9 @@ export function StepTwo() {
           .
         </p>
         <p className="mt-0 text-red-300 text-sm">
-          Once you submit any code, you will{" "}
-          <strong className="underline">not</strong> be able to change your team
-          or join another team. Make sure all your teammates are registered on
-          your team before submitting.
-          <br />
-          You can still rename your team and view team members. You can
-          re-submit your code at any time before the submission deadline.
+          Once you submit your code, you will be able to view your previous
+          submission and re-submit your code at any time before the submission
+          deadline.
         </p>
       </div>
       <div className="flex flex-col gap-2">

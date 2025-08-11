@@ -40,6 +40,7 @@ import {
 } from "../ui/alert-dialog";
 import { UserCard } from "./UserCard";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
+import moment from "moment";
 
 const formRenameTeam = z.object({
   teamName: z
@@ -61,6 +62,8 @@ export function MyTeam({}) {
 
   // Rename form hooks/submit method
   const [renameSubmitLoading, setRenameSubmitLoading] = useState(false);
+  const [deleteTeamLoading, setDeleteTeamLoading] = useState(false);
+  const [leaveTeamLoading, setLeaveTeamLoading] = useState(false);
 
   const formRename = useForm<z.infer<typeof formRenameTeam>>({
     resolver: zodResolver(formRenameTeam),
@@ -105,6 +108,8 @@ export function MyTeam({}) {
   const handleDeleteTeam = async () => {
     if (!data?.team) return;
 
+    setDeleteTeamLoading(true);
+
     const response = await deleteTeam({ teamId: data.team.id });
 
     if (response.success) {
@@ -118,11 +123,15 @@ export function MyTeam({}) {
         richColors: true,
       });
     }
+
+    setDeleteTeamLoading(false);
   };
 
   // Leave team method
   const handleLeaveTeam = async () => {
     if (!data?.team || !auth.user) return;
+
+    setLeaveTeamLoading(true);
 
     // Call server action to remove member
     const response = await removeTeamMember({
@@ -141,6 +150,8 @@ export function MyTeam({}) {
         richColors: true,
       });
     }
+
+    setLeaveTeamLoading(false);
   };
 
   // Check if user is invited to a team via URL
@@ -249,12 +260,16 @@ export function MyTeam({}) {
                   </div>
                 </form>
               </Form>
-              {!tourneyData?.teams_disabled && (
+              {!moment().isAfter(moment(tourneyData?.teams_deadline)) && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant={"destructive"} className="w-full">
+                    <ButtonWrapper
+                      loading={deleteTeamLoading}
+                      variant={"destructive"}
+                      className="w-full"
+                    >
                       Delete Team
-                    </Button>
+                    </ButtonWrapper>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
@@ -282,7 +297,8 @@ export function MyTeam({}) {
 
         {/* Manage Teammates: remove teammates */}
         <h3 className="text-lg font-semibold my-3">
-          {data?.team.owner.id === auth.user?.id && !tourneyData?.teams_disabled
+          {data?.team.owner.id === auth.user?.id &&
+          !moment().isAfter(moment(tourneyData?.teams_deadline))
             ? "Manage"
             : "Your"}{" "}
           Teammates
@@ -305,12 +321,16 @@ export function MyTeam({}) {
             : null}
         </div>
         {data?.team.owner.id !== auth.user?.id &&
-          !tourneyData?.teams_disabled && (
+          !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant={"destructive"} className="mt-3">
+                <ButtonWrapper
+                  loading={leaveTeamLoading}
+                  variant={"destructive"}
+                  className="mt-3"
+                >
                   Leave Team
-                </Button>
+                </ButtonWrapper>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -329,7 +349,7 @@ export function MyTeam({}) {
               </AlertDialogContent>
             </AlertDialog>
           )}
-        {!tourneyData?.teams_disabled &&
+        {!moment().isAfter(moment(tourneyData?.teams_deadline)) &&
           teamData &&
           teamData?.members.length < TEAM_MAX_MEMBERS && (
             <div className="flex gap-2 w-full mt-3">

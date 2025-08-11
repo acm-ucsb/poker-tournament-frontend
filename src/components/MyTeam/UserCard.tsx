@@ -17,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { ButtonWrapper } from "../ButtonWrapper";
+import moment from "moment";
 
 type Props = {
   member: User;
@@ -77,10 +78,14 @@ export function UserCard({ member }: Props) {
         </div>
         {data?.team.owner.id === auth.user?.id &&
           member.id !== auth.user?.id &&
-          !tourneyData?.teams_disabled && (
+          !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <ButtonWrapper variant={"destructive"} loading={removeLoading}>
+                <ButtonWrapper
+                  className="w-24"
+                  variant={"destructive"}
+                  loading={removeLoading}
+                >
                   Remove
                 </ButtonWrapper>
               </AlertDialogTrigger>

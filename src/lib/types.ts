@@ -33,6 +33,6 @@ type Tournament = {
   created_at: string;
   name: string;
   status: TournamentStatus;
-  teams_disabled: boolean;
-  submissions_disabled: boolean;
+  teams_deadline: string;
+  submissions_deadline: string;
 };

@@ -79,7 +79,6 @@ export async function createTeam(
       status: 200,
     };
   } catch (error) {
-    console.log(error);
     if (error instanceof ServerActionError) {
       return {
         success: false,
