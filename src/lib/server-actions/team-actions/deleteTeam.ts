@@ -2,8 +2,12 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import {
+  BACKEND_ENGINE_BASE_URL,
+  UCSB_POKER_TOURNEY_ID,
+} from "@/lib/constants";
 import moment from "moment";
+import axios from "axios";
 
 type Params = {
   teamId: string;
@@ -19,8 +23,11 @@ export async function deleteTeam(
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-    if (!user) {
+    if (!user || !session) {
       throw new ServerActionError({
         message: "You must be logged in to join a team.",
         code: "UNAUTHORIZED",
@@ -68,6 +75,16 @@ export async function deleteTeam(
         status: 403,
       });
     }
+
+    // delete the code associated with the team
+    await axios.delete(`${BACKEND_ENGINE_BASE_URL}/submission`, {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      validateStatus: function (status) {
+        return true; // Don't throw errors for any status code, just handle them manually
+      },
+    });
 
     // delete the team
     await supabase.from("teams").delete().eq("id", teamId).throwOnError();

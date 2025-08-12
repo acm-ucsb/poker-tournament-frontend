@@ -70,17 +70,6 @@ export async function getSubmission(): Promise<
       status: 200,
       error: null,
     };
-
-    // return {
-    //   success: false,
-    //   data: null,
-    //   status: 400,
-    //   error: {
-    //     code: "FILE_NOT_SAVED",
-    //     message: "There was an error submitting your code.",
-    //     details: "Please try signing in again or try later.",
-    //   },
-    // };
   } catch (error) {
     console.log(error);
     if (error instanceof ServerActionError) {
