@@ -1,17 +1,17 @@
 "use client";
 
 import { BreadcrumbBuilder } from "../BreadcrumbBuilder";
-import { ActionSteps } from "@/components/actions/ActionSteps";
+import { ActionSteps } from "@/components/Actions/ActionSteps";
 import { useData } from "@/providers/DataProvider";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
-import { StepOne } from "@/components/Dashboard/steps/StepOne";
+import { StepOne } from "@/components/Dashboard/Steps/StepOne";
 import { useAuth } from "@/providers/AuthProvider";
-import { StepTwo } from "@/components/Dashboard/steps/StepTwo";
-import { StepThree } from "@/components/Dashboard/steps/StepThree";
+import { StepTwo } from "@/components/Dashboard/Steps/StepTwo";
+import { StepThree } from "@/components/Dashboard/Steps/StepThree";
 
 export function Dashboard({}) {
   const auth = useAuth();
-  const { data, isLoading, error } = useData();
+  const { data, isLoading } = useData();
 
   return (
     <main className="flex flex-col w-full max-w-7xl self-center">
