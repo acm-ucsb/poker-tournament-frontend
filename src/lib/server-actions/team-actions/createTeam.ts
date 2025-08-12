@@ -2,6 +2,8 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
+import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import moment from "moment";
 
 type Params = {
   teamName: string;
@@ -29,6 +31,22 @@ export async function createTeam(
     if (!user.email?.includes("@ucsb.edu")) {
       throw new ServerActionError({
         message: "You must use a UCSB email to create a team.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
+    // check if tournaments.teams_deadline has passed
+    const { data: tournament } = await supabase
+      .from("tournaments")
+      .select("teams_deadline")
+      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .single()
+      .throwOnError();
+
+    if (moment().isAfter(moment(tournament?.teams_deadline))) {
+      throw new ServerActionError({
+        message: "Team changes have been disabled for this tournament.",
         code: "FORBIDDEN",
         status: 403,
       });

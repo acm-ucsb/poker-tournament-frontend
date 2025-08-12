@@ -2,7 +2,10 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { BACKEND_ENGINE_BASE_URL } from "@/lib/constants";
+import {
+  BACKEND_ENGINE_BASE_URL,
+  UCSB_POKER_TOURNEY_ID,
+} from "@/lib/constants";
 import axios from "axios";
 
 type Params = {
@@ -38,6 +41,26 @@ export async function createSubmission(
         code: "FORBIDDEN",
         status: 403,
       });
+    }
+
+    // check if deadline has passed
+    const { data: tournament } = await supabase
+      .from("tournaments")
+      .select("submission_deadline")
+      .eq("id", UCSB_POKER_TOURNEY_ID)
+      .single()
+      .throwOnError();
+
+    if (tournament && tournament.submission_deadline) {
+      const deadline = new Date(tournament.submission_deadline);
+      const now = new Date();
+      if (now > deadline) {
+        throw new ServerActionError({
+          message: "The deadline to submit code has passed.",
+          code: "FORBIDDEN",
+          status: 403,
+        });
+      }
     }
 
     const newFormData = new FormData();

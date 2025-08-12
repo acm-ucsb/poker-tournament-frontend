@@ -45,7 +45,6 @@ const submissionSchema = z.object({
 });
 
 export function StepTwo() {
-  const auth = useAuth();
   const { data, tourneyData, mutate } = useData();
   const [submittingCode, setSubmittingCode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);

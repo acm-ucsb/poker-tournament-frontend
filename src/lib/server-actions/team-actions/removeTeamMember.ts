@@ -36,6 +36,22 @@ export async function removeTeamMember(params: Params) {
       });
     }
 
+    // check if tournaments.teams_deadline has passed
+    const { data: tournament } = await supabase
+      .from("tournaments")
+      .select("teams_deadline")
+      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .single()
+      .throwOnError();
+
+    if (moment().isAfter(moment(tournament?.teams_deadline))) {
+      throw new ServerActionError({
+        message: "Team changes have been disabled for this tournament.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     const { data: team, error: teamError } = await supabase
       .from("teams")
       .select("*")
@@ -65,22 +81,6 @@ export async function removeTeamMember(params: Params) {
       throw new ServerActionError({
         message: "You are not the owner of this team.",
         code: "UNAUTHORIZED",
-        status: 403,
-      });
-    }
-
-    // check if tournaments.teams_deadline has passed
-    const { data: tournament } = await supabase
-      .from("tournaments")
-      .select("teams_deadline")
-      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
-      .single()
-      .throwOnError();
-
-    if (moment().isAfter(moment(tournament?.teams_deadline))) {
-      throw new ServerActionError({
-        message: "Team changes have been disabled for this tournament.",
-        code: "FORBIDDEN",
         status: 403,
       });
     }

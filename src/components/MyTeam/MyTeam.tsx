@@ -194,11 +194,7 @@ export function MyTeam({}) {
   }, []);
 
   if (!data?.team || teamInviteId) {
-    return (
-      <div className="flex flex-col items-center justify-center w-full grow">
-        <Loader2 className="animate-spin text-green-300" size={40} />
-      </div>
-    );
+    return null;
   }
 
   return (

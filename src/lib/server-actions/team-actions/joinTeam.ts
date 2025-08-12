@@ -2,7 +2,8 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { TEAM_MAX_MEMBERS } from "@/lib/constants";
+import { TEAM_MAX_MEMBERS, UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import moment from "moment";
 
 type Params = {
   teamId: string;
@@ -36,6 +37,22 @@ export async function joinTeam(
     }
 
     // Security checks
+    // check if tournaments.teams_deadline has passed
+    const { data: tournament } = await supabase
+      .from("tournaments")
+      .select("teams_deadline")
+      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .single()
+      .throwOnError();
+
+    if (moment().isAfter(moment(tournament?.teams_deadline))) {
+      throw new ServerActionError({
+        message: "Team changes have been disabled for this tournament.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     // Check if user is already part of a team
     const { data: existingTeam } = await supabase
       .from("users")
@@ -66,6 +83,7 @@ export async function joinTeam(
         status: 400,
       });
     }
+
     // check if max players limit is reached
     const { count: playerCount } = await supabase
       .from("users")
