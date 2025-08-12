@@ -1,9 +1,9 @@
 import { IconChevronDown } from "@tabler/icons-react";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Step } from "./types";
-import { ActionStepDropdown } from "./ActionStepDropdown";
 import { CheckCircleIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Step } from "./types";
+import { ActionStepDropdown } from "./ActionStepDropdown";
 
 type Props = {
   step: Step;

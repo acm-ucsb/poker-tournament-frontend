@@ -1,13 +1,13 @@
 "use client";
 
 import { BreadcrumbBuilder } from "../BreadcrumbBuilder";
-import { ActionSteps } from "../Actions/ActionSteps";
+import { ActionSteps } from "../actions/ActionSteps";
 import { useData } from "@/providers/DataProvider";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
-import { StepOne } from "./Steps/StepOne";
+import { StepOne } from "./steps/StepOne";
 import { useAuth } from "@/providers/AuthProvider";
-import { StepTwo } from "./Steps/StepTwo";
-import { StepThree } from "./Steps/StepThree";
+import { StepTwo } from "./steps/StepTwo";
+import { StepThree } from "./steps/StepThree";
 
 export function Dashboard({}) {
   const auth = useAuth();

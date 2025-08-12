@@ -41,6 +41,7 @@ import {
 import { UserCard } from "./UserCard";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import moment from "moment";
+import Link from "next/link";
 
 const formRenameTeam = z.object({
   teamName: z
@@ -352,7 +353,7 @@ export function MyTeam({}) {
         {!moment().isAfter(moment(tourneyData?.teams_deadline)) &&
           teamData &&
           teamData?.members.length < TEAM_MAX_MEMBERS && (
-            <div className="flex gap-2 w-full mt-3">
+            <div className="flex flex-wrap gap-2 w-full mt-3">
               <Button
                 className="min-w-24 grow"
                 variant={"outline"}
@@ -382,6 +383,13 @@ export function MyTeam({}) {
               </Button>
             </div>
           )}
+        {data?.team?.has_submitted_code && (
+          <Link href="/dashboard/myteam/submission" className="w-full mt-2">
+            <Button variant="outline" className="w-full">
+              View Submission
+            </Button>
+          </Link>
+        )}
       </section>
     </main>
   );

@@ -182,7 +182,7 @@ export function DataProvider({ children }: DataProviderProps) {
   return (
     <DataContext.Provider value={value}>
       {/* Only show loader if not on home page and no data is available */}
-      {value.isLoading && location.pathname !== "/" && (!data || !teamData) ? (
+      {auth.user && (!data || !tourneyData) ? (
         <div className="flex items-center justify-center h-screen">
           <Loader2 className="animate-spin text-green-300" size={40} />
         </div>

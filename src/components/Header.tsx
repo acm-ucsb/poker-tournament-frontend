@@ -7,11 +7,10 @@ import {
 } from "@/lib/constants";
 import { useAuth } from "@/providers/AuthProvider";
 import { useViewportSize, useWindowScroll } from "@mantine/hooks";
-import { Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { Avatar } from "./ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { IconUser, IconUserCircle } from "@tabler/icons-react";
+import { IconUserCircle } from "@tabler/icons-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +27,7 @@ export function Header() {
 
   return (
     <header
-      className="flex w-full px-6 py-5 items-center justify-center fixed transition-all duration-300 ease-in-out"
+      className="flex w-full px-6 py-5 items-center justify-center fixed transition-all duration-300 ease-in-out z-50"
       style={{
         height: HEADER_HEIGHT_PX,
         boxShadow: scroll.y > 20 ? "0 2px 4px rgba(0, 0, 0, 0.3)" : "none",

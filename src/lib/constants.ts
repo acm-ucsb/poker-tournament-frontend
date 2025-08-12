@@ -1,11 +1,16 @@
+export const BACKEND_ENGINE_BASE_URL =
+  "https://poker-backend.ddns.net" as const;
+
 export const HEADER_HEIGHT_PX = 80 as const;
 export const HEADER_AVATAR_SIZE_PX = 36 as const;
 
 export const DEFAULT_SIGNIN_REDIRECT_URL = "/dashboard" as const;
 
-export const TEAM_MAX_MEMBERS = 2 as const;
+export const TEAM_MAX_MEMBERS = 4 as const;
 export const TEAM_NAME_MIN_LENGTH = 3 as const;
 export const TEAM_NAME_MAX_LENGTH = 25 as const;
+
+export const SUBMISSION_MAX_FILE_SIZE = 10485760 as const; // 10 MB (10 * 1024 * 1024 bytes)
 
 export const UCSB_POKER_TOURNEY_ID =
   "f6fd507b-42fb-4fba-a0d3-e9ded05aeca5" as const; // hard code for now, implement different tournaments later
