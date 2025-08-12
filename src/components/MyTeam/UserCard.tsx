@@ -16,6 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { ButtonWrapper } from "../ButtonWrapper";
+import moment from "moment";
 
 type Props = {
   member: User;
@@ -23,7 +25,7 @@ type Props = {
 
 export function UserCard({ member }: Props) {
   const auth = useAuth();
-  const { data, mutate } = useData();
+  const { data, tourneyData, mutate } = useData();
   const [removeLoading, setRemoveLoading] = useState(false);
 
   // Remove member method
@@ -59,7 +61,15 @@ export function UserCard({ member }: Props) {
           <CardTitle className="flex items-center gap-1">
             {member.name}{" "}
             <span className="text-sm text-gray-400">
-              {member.id === auth.user?.id && "(you)"}
+              {member.id === auth.user?.id &&
+                member.id !== data?.team.owner.id &&
+                "(you)"}
+              {member.id === auth.user?.id &&
+                member.id === data?.team.owner.id &&
+                "(you, owner)"}
+              {member.id !== auth.user?.id &&
+                member.id === data?.team.owner.id &&
+                "(owner)"}
             </span>
           </CardTitle>
           <CardDescription className="text-sm mt-1">
@@ -68,10 +78,16 @@ export function UserCard({ member }: Props) {
         </div>
         {data?.team.owner.id === auth.user?.id &&
           member.id !== auth.user?.id &&
-          !data?.team.has_submitted_code && (
+          !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant={"destructive"}>Remove</Button>
+                <ButtonWrapper
+                  className="w-24"
+                  variant={"destructive"}
+                  loading={removeLoading}
+                >
+                  Remove
+                </ButtonWrapper>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>

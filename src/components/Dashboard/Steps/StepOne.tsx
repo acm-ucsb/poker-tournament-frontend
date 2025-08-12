@@ -20,8 +20,15 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { joinTeam, createTeam } from "@/lib/server-actions/index";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
+import { TEAM_MAX_MEMBERS } from "@/lib/constants";
+import moment from "moment";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const formSchemaTeamId = z.object({
   teamId: z.uuid({ error: "Invalid team ID" }),
@@ -40,10 +47,11 @@ const formSchemaTeamName = z.object({
 
 export function StepOne() {
   const auth = useAuth();
-  const { data, mutate } = useData();
+  const { data, teamData, tourneyData, mutate } = useData();
 
   const [teamIdSubmitLoading, setTeamIdSubmitLoading] = useState(false);
   const [teamNameSubmitLoading, setTeamNameSubmitLoading] = useState(false);
+  const [deadlinePassed, setDeadlinePassed] = useState(false);
 
   const formTeamId = useForm<z.infer<typeof formSchemaTeamId>>({
     resolver: zodResolver(formSchemaTeamId),
@@ -108,6 +116,31 @@ export function StepOne() {
     setTeamNameSubmitLoading(false);
   };
 
+  useEffect(() => {
+    if (tourneyData?.teams_deadline) {
+      const deadline = moment(tourneyData.teams_deadline);
+      const now = moment();
+
+      setDeadlinePassed(now.isAfter(deadline));
+
+      if (deadline.isAfter(now)) {
+        const timeoutDuration = deadline.diff(now);
+        const timer = setTimeout(() => {
+          setDeadlinePassed(true);
+          mutate();
+          toast.info(
+            "Team change deadline has passed. You can no longer change your team or join another team.",
+            {
+              richColors: true,
+            }
+          );
+        }, timeoutDuration);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [tourneyData?.teams_deadline, mutate]);
+
   return (
     <section className="flex flex-col gap-0.5">
       {!data?.team ? (
@@ -126,7 +159,14 @@ export function StepOne() {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormControl>
-                        <Input placeholder="Enter team ID" {...field} />
+                        <Input
+                          {...field}
+                          placeholder="Enter team ID"
+                          autoCapitalize="off"
+                          autoComplete="off"
+                          spellCheck="false"
+                          autoCorrect="off"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -161,7 +201,14 @@ export function StepOne() {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormControl>
-                        <Input placeholder="Enter team name" {...field} />
+                        <Input
+                          {...field}
+                          placeholder="Enter team name"
+                          autoCapitalize="off"
+                          autoComplete="off"
+                          spellCheck="false"
+                          autoCorrect="off"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -190,71 +237,89 @@ export function StepOne() {
             </span>
             of team <strong>{data.team.name}</strong>
           </p>
-          {data.team.has_submitted_code && (
+          {deadlinePassed ? (
             <p className="mt-0 text-red-300 text-sm">
-              You can no longer change your team or join another team since you
-              have already submitted code for the tournament.
+              You can no longer change your team or join another team as the
+              team period has ended. Your team can still be renamed.
             </p>
+          ) : (
+            tourneyData?.teams_deadline && (
+              <Tooltip>
+                <TooltipTrigger className="w-max">
+                  <p className="mt-0 text-red-300 text-sm">
+                    Team changes end on{" "}
+                    {moment(tourneyData?.teams_deadline).format(
+                      "MMMM Do YYYY, h:mm:ss a"
+                    )}
+                    .
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Team changes end{" "}
+                  {moment(tourneyData?.teams_deadline).fromNow()}
+                </TooltipContent>
+              </Tooltip>
+            )
           )}
           <div className="grid *:grid-cols-1 md:grid-cols-5 gap-2 mt-2">
             <Link
               href={`/dashboard/myteam`}
               className="md:col-span-3 min-w-40 grow"
               style={{
-                gridColumn: data.team.has_submitted_code
-                  ? "span 5 / span 5"
-                  : undefined,
+                gridColumn:
+                  deadlinePassed ||
+                  (teamData && teamData?.members?.length >= TEAM_MAX_MEMBERS)
+                    ? "span 5 / span 5"
+                    : undefined,
               }}
             >
-              {data.team.owner.id === auth.user?.id &&
-              !data.team.has_submitted_code ? (
-                <Button
-                  className="w-full"
-                  disabled={data.team.has_submitted_code}
-                >
+              {data.team.owner.id === auth.user?.id && !deadlinePassed ? (
+                <Button className="w-full" disabled={deadlinePassed}>
                   <Settings2 />
                   Manage Team
                 </Button>
               ) : (
-                <Button className="bg-green-100 hover:bg-[#c7fad9] w-full">
+                <Button className="bg-[hsl(131,84%,90%)] hover:bg-[hsl(131,84%,84%)] w-full">
                   <IconUsersGroup />
                   View Team
                 </Button>
               )}
             </Link>
-            {!data.team.has_submitted_code && (
-              <div className="flex gap-2 w-full md:col-span-2">
-                <Button
-                  className="min-w-24 grow"
-                  variant={"outline"}
-                  onClick={() => {
-                    const teamId = data.team.id;
-                    const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
+            {!deadlinePassed &&
+              teamData &&
+              teamData.members?.length < TEAM_MAX_MEMBERS && (
+                <div className="flex gap-2 w-full md:col-span-2">
+                  <Button
+                    className="min-w-24 grow"
+                    variant={"outline"}
+                    onClick={() => {
+                      const teamId = data.team.id;
+                      const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
 
-                    navigator.clipboard.writeText(teamInviteLink);
-                    toast.success("Invite link copied to clipboard");
-                  }}
-                  disabled={data.team.has_submitted_code}
-                >
-                  <LinkIcon />
-                  Copy Invite Link
-                </Button>
-                <Button
-                  className="min-w-24 grow"
-                  variant={"outline"}
-                  onClick={() => {
-                    const teamId = data.team.id;
+                      navigator.clipboard.writeText(teamInviteLink);
+                      toast.success("Invite link copied to clipboard");
+                    }}
+                    disabled={deadlinePassed}
+                  >
+                    <LinkIcon />
+                    Copy Invite Link
+                  </Button>
+                  <Button
+                    className="min-w-24 grow"
+                    variant={"outline"}
+                    onClick={() => {
+                      const teamId = data.team.id;
 
-                    navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
-                    toast.success("Team ID copied to clipboard");
-                  }}
-                  disabled={data.team.has_submitted_code}
-                >
-                  <Clipboard />
-                  Copy Team ID
-                </Button>
-              </div>
-            )}
+                      navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
+                      toast.success("Team ID copied to clipboard");
+                    }}
+                    disabled={deadlinePassed}
+                  >
+                    <Clipboard />
+                    Copy Team ID
+                  </Button>
+                </div>
+              )}
           </div>
         </>
       )}

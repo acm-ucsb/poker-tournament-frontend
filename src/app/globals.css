@@ -123,3 +123,11 @@
     scroll-behavior: smooth;
   }
 }
+
+.shiki-container pre {
+  padding: 1rem;
+  border-radius: calc(var(--radius) - 2px);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  font-size: 10pt;
+}

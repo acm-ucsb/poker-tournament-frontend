@@ -1,5 +1,4 @@
-import { useViewportSize } from "@mantine/hooks";
-import React, { useRef, useState, useLayoutEffect, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 type ActionStepDropdownProps = {
   isOpen?: boolean;

@@ -3,6 +3,8 @@
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError } from "../types";
 import { supabaseAdmin } from "@/lib/supabase/supabase-admin";
+import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import moment from "moment";
 
 type Params = {
   teamId: string;
@@ -26,8 +28,38 @@ export async function removeTeamMember(params: Params) {
       });
     }
 
-    // check if user is removing themselves
-    if (user.id === userId) {
+    if (!user.email?.includes("@ucsb.edu")) {
+      throw new ServerActionError({
+        message: "You must use a UCSB email to remove a team member.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
+    // check if tournaments.teams_deadline has passed
+    const { data: tournament } = await supabase
+      .from("tournaments")
+      .select("teams_deadline")
+      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .single()
+      .throwOnError();
+
+    if (moment().isAfter(moment(tournament?.teams_deadline))) {
+      throw new ServerActionError({
+        message: "Team changes have been disabled for this tournament.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
+    const { data: team, error: teamError } = await supabase
+      .from("teams")
+      .select("*")
+      .eq("id", teamId)
+      .single();
+
+    // check if user is removing themselves and they are owner
+    if (user.id === userId && user.id === team.owner_id) {
       throw new ServerActionError({
         message: "You cannot remove yourself from the team.",
         code: "BAD_REQUEST",
@@ -36,12 +68,6 @@ export async function removeTeamMember(params: Params) {
     }
 
     // check if team exists
-    const { data: team, error: teamError } = await supabase
-      .from("teams")
-      .select("*")
-      .eq("id", teamId)
-      .single();
-
     if (teamError || !team) {
       throw new ServerActionError({
         message: "Team not found.",
@@ -50,20 +76,11 @@ export async function removeTeamMember(params: Params) {
       });
     }
 
-    // check if current user is owner of the team
-    if (user.id !== team.owner_id) {
+    // check if current user is owner of the team and they are removing someone other than themselves
+    if (user.id !== team.owner_id && user.id !== userId) {
       throw new ServerActionError({
         message: "You are not the owner of this team.",
         code: "UNAUTHORIZED",
-        status: 403,
-      });
-    }
-
-    // check if team has submitted code
-    if (team.has_submitted_code) {
-      throw new ServerActionError({
-        message: "You cannot remove a member after code submission.",
-        code: "FORBIDDEN",
         status: 403,
       });
     }
@@ -85,14 +102,12 @@ export async function removeTeamMember(params: Params) {
     }
 
     // Remove user from team
-    const test = await supabaseAdmin
+    await supabaseAdmin
       .from("users")
       .update({ team_id: null })
       .eq("id", userId)
       .eq("team_id", teamId)
       .throwOnError();
-
-    console.log(test);
 
     return {
       success: true,
