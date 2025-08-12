@@ -27,6 +27,14 @@ export async function joinTeam(
       });
     }
 
+    if (!user.email?.includes("@ucsb.edu")) {
+      throw new ServerActionError({
+        message: "You must use a UCSB email to join a team.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     // Security checks
     // Check if user is already part of a team
     const { data: existingTeam } = await supabase

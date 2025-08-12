@@ -28,6 +28,14 @@ export async function removeTeamMember(params: Params) {
       });
     }
 
+    if (!user.email?.includes("@ucsb.edu")) {
+      throw new ServerActionError({
+        message: "You must use a UCSB email to remove a team member.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     const { data: team, error: teamError } = await supabase
       .from("teams")
       .select("*")
@@ -94,7 +102,7 @@ export async function removeTeamMember(params: Params) {
     }
 
     // Remove user from team
-    const test = await supabaseAdmin
+    await supabaseAdmin
       .from("users")
       .update({ team_id: null })
       .eq("id", userId)

@@ -26,6 +26,14 @@ export async function createTeam(
       });
     }
 
+    if (!user.email?.includes("@ucsb.edu")) {
+      throw new ServerActionError({
+        message: "You must use a UCSB email to create a team.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     // check if user is already part of a team
     const { data: existingTeam } = await supabase
       .from("users")

@@ -27,6 +27,14 @@ export async function renameTeam(
       });
     }
 
+    if (!user.email?.includes("@ucsb.edu")) {
+      throw new ServerActionError({
+        message: "You must use a UCSB email to rename a team.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     // check if team with team id exists
     const { data: team } = await supabase
       .from("teams")

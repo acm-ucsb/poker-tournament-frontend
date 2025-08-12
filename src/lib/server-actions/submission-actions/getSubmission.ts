@@ -26,13 +26,19 @@ export async function getSubmission(): Promise<
 
     if (!user || !session) {
       throw new ServerActionError({
-        message: "You must be logged in to submit code.",
+        message: "You must be logged in to fetch submissions.",
         code: "UNAUTHORIZED",
         status: 401,
       });
     }
 
-    console.log(session.access_token);
+    if (!user.email?.includes("@ucsb.edu")) {
+      throw new ServerActionError({
+        message: "You must use a UCSB email to fetch submissions.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
 
     const res = await axios.get(`${BACKEND_ENGINE_BASE_URL}/submission`, {
       headers: {

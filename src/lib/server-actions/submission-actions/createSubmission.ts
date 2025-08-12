@@ -32,6 +32,14 @@ export async function createSubmission(
       });
     }
 
+    if (!user.email?.includes("@ucsb.edu")) {
+      throw new ServerActionError({
+        message: "You must use a UCSB email to submit code.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     const newFormData = new FormData();
     newFormData.append("file", file);
 
