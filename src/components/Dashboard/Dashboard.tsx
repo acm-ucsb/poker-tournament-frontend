@@ -8,13 +8,22 @@ import { StepOne } from "@/components/Dashboard/Steps/StepOne";
 import { useAuth } from "@/providers/AuthProvider";
 import { StepTwo } from "@/components/Dashboard/Steps/StepTwo";
 import { StepThree } from "@/components/Dashboard/Steps/StepThree";
+import { StepFour } from "./Steps/StepFour";
+import { useLocalStorage } from "@mantine/hooks";
 
 export function Dashboard({}) {
   const auth = useAuth();
   const { data, isLoading } = useData();
 
+  const [hasAcknowledgedRules] = useLocalStorage({
+    key: "ack-tournament-rules",
+    defaultValue: false,
+    deserialize: (value) => value === "true",
+    serialize: (value) => (value ? "true" : "false"),
+  });
+
   return (
-    <main className="flex flex-col w-full max-w-7xl self-center">
+    <main className="flex flex-col w-full max-w-7xl self-center pb-6">
       <BreadcrumbBuilder
         previousPages={[{ title: "Home", link: "/" }]}
         currentPage={{ title: "Dashboard", link: "/dashboard" }}
@@ -43,11 +52,19 @@ export function Dashboard({}) {
             {
               title: "Review tournament rules",
               description:
-                "Make sure you understand the tournament rules before participating.",
+                "Please review our tournament rules before participating.",
               children: <StepThree />,
               disabled:
                 (!data?.team || !data.team.has_submitted_code) &&
                 data?.type === "bot", // Disabled if not in a team (step 1) or if bot code is not submitted (step 2)
+              completed: hasAcknowledgedRules, // Completed if rules are acknowledged
+            },
+            {
+              title: "View tournament tables",
+              description:
+                "Join your assigned table or spectate other games in the tournament.",
+              children: <StepFour />,
+              disabled: !hasAcknowledgedRules,
             },
           ]}
         />

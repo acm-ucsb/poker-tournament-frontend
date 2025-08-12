@@ -16,6 +16,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
 import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import { useLocalStorage } from "@mantine/hooks";
 
 type UserData = User & {
   team: Team & {
@@ -178,6 +179,20 @@ export function DataProvider({ children }: DataProviderProps) {
       mutateTourney,
     ]
   );
+
+  // if user is not on a team, set to false
+  const [hasAcknowledgedRules, setHasAcknowledgedRules] = useLocalStorage({
+    key: "ack-tournament-rules",
+    defaultValue: false,
+    deserialize: (value) => value === "true",
+    serialize: (value) => (value ? "true" : "false"),
+  });
+
+  useEffect(() => {
+    if (!data?.team && hasAcknowledgedRules) {
+      setHasAcknowledgedRules(false);
+    }
+  }, [data?.team, hasAcknowledgedRules, setHasAcknowledgedRules]);
 
   return (
     <DataContext.Provider value={value}>
