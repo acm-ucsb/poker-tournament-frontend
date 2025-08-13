@@ -5,7 +5,7 @@ import Markdown from "react-markdown";
 import { rules } from "./rules";
 import { useRef, useState, useEffect } from "react";
 
-export function StepThree() {
+export function ReviewRules() {
   const [hasAcknowledgedRules, setHasAcknowledgedRules] = useLocalStorage({
     key: "ack-tournament-rules",
     defaultValue: false,

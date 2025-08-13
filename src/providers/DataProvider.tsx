@@ -188,12 +188,6 @@ export function DataProvider({ children }: DataProviderProps) {
     serialize: (value) => (value ? "true" : "false"),
   });
 
-  useEffect(() => {
-    if (!data?.team && hasAcknowledgedRules) {
-      setHasAcknowledgedRules(false);
-    }
-  }, [data?.team, hasAcknowledgedRules, setHasAcknowledgedRules]);
-
   return (
     <DataContext.Provider value={value}>
       {/* Only show loader if not on home page and no data is available */}
