@@ -46,13 +46,13 @@ export async function createSubmission(
     // check if deadline has passed
     const { data: tournament } = await supabase
       .from("tournaments")
-      .select("submission_deadline")
+      .select("submissions_deadline")
       .eq("id", UCSB_POKER_TOURNEY_ID)
       .single()
       .throwOnError();
 
-    if (tournament && tournament.submission_deadline) {
-      const deadline = new Date(tournament.submission_deadline);
+    if (tournament && tournament.submissions_deadline) {
+      const deadline = new Date(tournament.submissions_deadline);
       const now = new Date();
       if (now > deadline) {
         throw new ServerActionError({

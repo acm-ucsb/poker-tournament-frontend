@@ -45,7 +45,7 @@ const formSchemaTeamName = z.object({
     }),
 });
 
-export function StepOne() {
+export function ManageTeam() {
   const auth = useAuth();
   const { data, teamData, tourneyData, mutate } = useData();
 

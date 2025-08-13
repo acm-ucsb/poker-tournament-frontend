@@ -6,10 +6,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  BACKEND_ENGINE_BASE_URL,
-  SUBMISSION_MAX_FILE_SIZE,
-} from "@/lib/constants";
+import { SUBMISSION_MAX_FILE_SIZE } from "@/lib/constants";
 import {
   Form,
   FormControl,
@@ -19,8 +16,6 @@ import {
 } from "@/components/ui/form";
 import { useState, useRef, useEffect } from "react";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
-import axios from "axios";
-import { useAuth } from "@/providers/AuthProvider";
 import { toast } from "sonner";
 import moment from "moment";
 import {
@@ -44,7 +39,7 @@ const submissionSchema = z.object({
     ),
 });
 
-export function StepTwo() {
+export function SubmitCode() {
   const { data, tourneyData, mutate } = useData();
   const [submittingCode, setSubmittingCode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
