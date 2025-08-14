@@ -21,7 +21,7 @@ export function ViewTables() {
             or choose to view other tables.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Link
+            {/* <Link
               className="grow"
               href={`/dashboard/tables/${data?.team.table.id}`}
             >
@@ -31,7 +31,7 @@ export function ViewTables() {
               <ButtonWrapper className="w-full" variant={"outline"}>
                 View other tables
               </ButtonWrapper>
-            </Link>
+            </Link> */}
           </div>
         </div>
       )}

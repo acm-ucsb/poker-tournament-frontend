@@ -63,8 +63,8 @@ export function Dashboard({}) {
                 "Join your assigned table or spectate other games in the tournament.",
               children: <ViewTables />,
               disabled: !data?.team || !data.team.has_submitted_code,
-              completed:
-                !!data?.team.table && tourneyData?.status !== "not_started",
+              // completed:
+              // !!data?.team.table && tourneyData?.status !== "not_started",
             },
           ]}
         />
