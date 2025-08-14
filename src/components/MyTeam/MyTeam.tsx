@@ -76,7 +76,7 @@ export function MyTeam({}) {
   const onSubmitRename = async (values: z.infer<typeof formRenameTeam>) => {
     setRenameSubmitLoading(true);
 
-    if (!data) {
+    if (!data || !data.team) {
       setRenameSubmitLoading(false);
       toast.error("Failed to rename team. Please try again later.", {
         richColors: true,
@@ -193,7 +193,7 @@ export function MyTeam({}) {
     }
   }, []);
 
-  if (!data?.team || teamInviteId) {
+  if (!data || !data.team || teamInviteId) {
     return null;
   }
 
@@ -210,7 +210,7 @@ export function MyTeam({}) {
       <section className="flex flex-col mt-6">
         <h2 className="text-2xl font-bold mb-2">My Team</h2>
 
-        {data?.team.owner.id === auth.user?.id && (
+        {data?.team?.owner.id === auth.user?.id && (
           <>
             <h3 className="text-lg font-semibold my-3">Team Settings</h3>
             <div className="flex flex-col gap-3">
@@ -231,7 +231,7 @@ export function MyTeam({}) {
                           <FormControl>
                             <Input
                               {...field}
-                              placeholder={data?.team.name}
+                              placeholder={data?.team?.name}
                               className={
                                 fieldState.invalid
                                   ? "border-red-500 focus:border-red-500 focus:ring-red-500"
@@ -294,7 +294,7 @@ export function MyTeam({}) {
 
         {/* Manage Teammates: remove teammates */}
         <h3 className="text-lg font-semibold my-3">
-          {data?.team.owner.id === auth.user?.id &&
+          {data?.team?.owner.id === auth.user?.id &&
           !moment().isAfter(moment(tourneyData?.teams_deadline))
             ? "Manage"
             : "Your"}{" "}
@@ -306,8 +306,8 @@ export function MyTeam({}) {
                 .slice()
                 .sort((a, b) => {
                   // Owner first
-                  if (a.id === data.team.owner.id) return -1;
-                  if (b.id === data.team.owner.id) return 1;
+                  if (a.id === data.team!.owner.id) return -1;
+                  if (b.id === data.team!.owner.id) return 1;
                   // Current user next
                   if (auth.user && a.id === auth.user.id) return -1;
                   if (auth.user && b.id === auth.user.id) return 1;
@@ -317,7 +317,7 @@ export function MyTeam({}) {
                 .map((member) => <UserCard key={member.id} member={member} />)
             : null}
         </div>
-        {data?.team.owner.id !== auth.user?.id &&
+        {data?.team?.owner.id !== auth.user?.id &&
           !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -354,7 +354,7 @@ export function MyTeam({}) {
                 className="min-w-24 grow"
                 variant={"outline"}
                 onClick={() => {
-                  const teamId = data.team.id;
+                  const teamId = data.team!.id;
                   const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
 
                   navigator.clipboard.writeText(teamInviteLink);
@@ -368,7 +368,7 @@ export function MyTeam({}) {
                 className="min-w-24 grow"
                 variant={"outline"}
                 onClick={() => {
-                  const teamId = data.team.id;
+                  const teamId = data.team!.id;
 
                   navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
                   toast.success("Team ID copied to clipboard");
@@ -382,7 +382,7 @@ export function MyTeam({}) {
         {data?.team?.has_submitted_code && (
           <Link href="/dashboard/myteam/submission" className="w-full mt-2">
             <Button variant="outline" className="w-full">
-              View Submission
+              View Current Submission
             </Button>
           </Link>
         )}

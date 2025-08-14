@@ -293,6 +293,13 @@ export function ManageTeam() {
                     className="min-w-24 grow"
                     variant={"outline"}
                     onClick={() => {
+                      if (!data.team) {
+                        toast.error("No team found", {
+                          richColors: true,
+                        });
+                        return;
+                      }
+
                       const teamId = data.team.id;
                       const teamInviteLink = `${location.origin}/dashboard/myteam?invite=${teamId}`;
 
@@ -308,6 +315,13 @@ export function ManageTeam() {
                     className="min-w-24 grow"
                     variant={"outline"}
                     onClick={() => {
+                      if (!data.team) {
+                        toast.error("No team found", {
+                          richColors: true,
+                        });
+                        return;
+                      }
+
                       const teamId = data.team.id;
 
                       navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps

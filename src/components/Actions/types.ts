@@ -4,4 +4,5 @@ export type Step = {
   children: React.ReactNode;
   disabled?: boolean;
   completed?: boolean;
+  incomplete?: boolean;
 };

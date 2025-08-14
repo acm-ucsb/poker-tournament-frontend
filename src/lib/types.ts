@@ -26,6 +26,7 @@ type Table = {
   id: string;
   created_at: string;
   status: TableStatus;
+  name: string;
 };
 
 type Tournament = {

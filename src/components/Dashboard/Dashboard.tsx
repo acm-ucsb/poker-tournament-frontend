@@ -8,12 +8,12 @@ import { ManageTeam } from "@/components/Dashboard/Steps/ManageTeam";
 import { useAuth } from "@/providers/AuthProvider";
 import { SubmitCode } from "@/components/Dashboard/Steps/SubmitCode";
 import { ReviewRules } from "@/components/Dashboard/Steps/ReviewRules";
-import { WatchTournament } from "./Steps/WatchTournament";
+import { ViewTables } from "./Steps/ViewTables";
 import { useLocalStorage } from "@mantine/hooks";
 
 export function Dashboard({}) {
   const auth = useAuth();
-  const { data, isLoading } = useData();
+  const { data, tourneyData, isLoading } = useData();
 
   const [hasAcknowledgedRules] = useLocalStorage({
     key: "ack-tournament-rules",
@@ -61,8 +61,12 @@ export function Dashboard({}) {
               title: "View tournament tables",
               description:
                 "Join your assigned table or spectate other games in the tournament.",
-              children: <WatchTournament />,
+              children: <ViewTables />,
               disabled: !data?.team || !data.team.has_submitted_code,
+              completed:
+                !!data?.team?.table && tourneyData?.status !== "not_started",
+              incomplete:
+                tourneyData?.status !== "not_started" && !data?.team?.table,
             },
           ]}
         />

@@ -30,9 +30,15 @@ export function UserCard({ member }: Props) {
 
   // Remove member method
   const handleRemoveMember = async () => {
-    if (!data?.team) return;
-
     setRemoveLoading(true);
+
+    if (!data || !data.team) {
+      setRemoveLoading(false);
+      toast.error("Failed to remove member. Please try again later.", {
+        richColors: true,
+      });
+      return;
+    }
 
     // Call server action to remove member
     const response = await removeTeamMember({
@@ -62,13 +68,13 @@ export function UserCard({ member }: Props) {
             {member.name}{" "}
             <span className="text-sm text-gray-400">
               {member.id === auth.user?.id &&
-                member.id !== data?.team.owner.id &&
+                member.id !== data?.team?.owner.id &&
                 "(you)"}
               {member.id === auth.user?.id &&
-                member.id === data?.team.owner.id &&
+                member.id === data?.team?.owner.id &&
                 "(you, owner)"}
               {member.id !== auth.user?.id &&
-                member.id === data?.team.owner.id &&
+                member.id === data?.team?.owner.id &&
                 "(owner)"}
             </span>
           </CardTitle>
@@ -76,7 +82,7 @@ export function UserCard({ member }: Props) {
             {member.email}
           </CardDescription>
         </div>
-        {data?.team.owner.id === auth.user?.id &&
+        {data?.team?.owner.id === auth.user?.id &&
           member.id !== auth.user?.id &&
           !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
             <AlertDialog>
