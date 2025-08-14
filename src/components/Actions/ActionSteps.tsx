@@ -23,20 +23,24 @@ export function ActionSteps({ steps, loading }: Props) {
   });
 
   // Find the FIRST incomplete step that is not disabled to determine the current step.
+  // If all steps are completed or disabled, default to the last step.
   const currentStepIndex = steps.findIndex(
     (step) => !step.disabled && !step.completed
   );
   const [openStep, setOpenStep] = useState<number>(
-    currentStepIndex !== -1 ? currentStepIndex : -1
+    currentStepIndex !== -1 ? currentStepIndex : steps.length - 1
   ); // current open step
 
   useEffect(() => {
     // when data is updated, reset the open step to the first incomplete non-disabled step
+    // if no steps are incomplete, open the last step
     const firstIncompleteStepIndex = steps.findIndex(
       (step) => !step.disabled && !step.completed
     );
     setOpenStep(
-      firstIncompleteStepIndex !== -1 ? firstIncompleteStepIndex : -1
+      firstIncompleteStepIndex !== -1
+        ? firstIncompleteStepIndex
+        : steps.length - 1
     );
   }, [data, hasAcknowledgedRules]);
 

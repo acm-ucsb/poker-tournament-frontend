@@ -1,6 +1,6 @@
 import { IconChevronDown } from "@tabler/icons-react";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { CheckCircleIcon } from "lucide-react";
+import { CheckCircleIcon, CircleMinus } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Step } from "./types";
 import { ActionStepDropdown } from "./ActionStepDropdown";
@@ -40,6 +40,20 @@ export function ActionStep({ step, order, isOpen, handleOpenChange }: Props) {
                         <CheckCircleIcon
                           className="p-0 m-0"
                           color="hsl(149, 88%, 66%)"
+                        />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Completed!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : step.incomplete ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="flex items-center justify-center w-6 h-6 p-0">
+                        <CircleMinus
+                          className="p-0 m-0"
+                          color="hsl(32, 88%, 66%)"
                         />
                       </span>
                     </TooltipTrigger>

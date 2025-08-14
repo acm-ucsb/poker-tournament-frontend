@@ -7,9 +7,10 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
@@ -19,10 +20,12 @@ import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
 
 type UserData = User & {
-  team: Team & {
-    table: Table;
-    owner: User;
-  };
+  team:
+    | null
+    | (Omit<Team, "table_id" | "owner_id"> & {
+        table?: Table;
+        owner: User;
+      });
 };
 
 type TeamData = {
@@ -58,6 +61,7 @@ type DataProviderProps = {
 export function DataProvider({ children }: DataProviderProps) {
   const auth = useAuth();
   const supabase = createSupabaseClient();
+  const pathname = usePathname();
 
   // Fetch user data
   const {
@@ -81,7 +85,8 @@ export function DataProvider({ children }: DataProviderProps) {
                 table:tables (
                   id,
                   created_at,
-                  status
+                  status,
+                  name
                 ),
                 owner:users!teams_owner_id_fkey (
                   *
@@ -213,7 +218,7 @@ export function DataProvider({ children }: DataProviderProps) {
   );
 
   // initialize local storage for tournament rules acknowledgment
-  const [hasAcknowledgedRules, setHasAcknowledgedRules] = useLocalStorage({
+  useLocalStorage({
     key: "ack-tournament-rules",
     defaultValue: false,
     deserialize: (value) => value === "true",
@@ -223,7 +228,10 @@ export function DataProvider({ children }: DataProviderProps) {
   return (
     <DataContext.Provider value={value}>
       {/* Only show loader if not on home page and no data is available */}
-      {auth.user && (!data || !tourneyData || !tablesData) ? (
+
+      {((auth.user && (!data || !tourneyData || !tablesData)) ||
+        auth.loadingAuth) &&
+      pathname !== "/" ? (
         <div className="flex items-center justify-center h-screen">
           <Loader2 className="animate-spin text-green-300" size={40} />
         </div>

@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AuthProvider } from "./AuthProvider";
 import { DataProvider } from "./DataProvider";
+import { GlobalNotificationProvider } from "./GlobalNotificationProvider";
 type Props = {
   children: ReactNode;
 };
@@ -18,7 +19,9 @@ export function AppProvider({ children }: Props) {
         defaultTheme="dark"
         disableTransitionOnChange
       >
-        <DataProvider>{children}</DataProvider>
+        <DataProvider>
+          <GlobalNotificationProvider>{children}</GlobalNotificationProvider>
+        </DataProvider>
       </ThemeProvider>
     </AuthProvider>
   );
