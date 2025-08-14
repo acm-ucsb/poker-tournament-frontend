@@ -35,7 +35,6 @@ export function ReviewRules() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">Tournament Rules</h2>
       <div
         className="px-5 py-3 rounded-md max-h-96 overflow-y-auto border"
         ref={rulesContainerRef}

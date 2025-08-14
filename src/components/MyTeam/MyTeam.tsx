@@ -382,7 +382,7 @@ export function MyTeam({}) {
         {data?.team?.has_submitted_code && (
           <Link href="/dashboard/myteam/submission" className="w-full mt-2">
             <Button variant="outline" className="w-full">
-              View Submission
+              View Current Submission
             </Button>
           </Link>
         )}

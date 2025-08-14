@@ -35,6 +35,7 @@ type DataContextType = {
   data: UserData | null;
   teamData: TeamData | null;
   tourneyData: Tournament | null;
+  tablesData: Table[] | null;
   isLoading: boolean;
   error: string | null;
   mutate: () => void;
@@ -44,6 +45,7 @@ const DataContext = createContext<DataContextType>({
   data: null,
   teamData: null,
   tourneyData: null,
+  tablesData: null,
   isLoading: false,
   error: null,
   mutate: () => {},
@@ -57,6 +59,7 @@ export function DataProvider({ children }: DataProviderProps) {
   const auth = useAuth();
   const supabase = createSupabaseClient();
 
+  // Fetch user data
   const {
     data: fetchedData,
     isLoading: isLoadingUserData,
@@ -95,6 +98,7 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   );
 
+  // Fetch user's team data
   const {
     data: fetchedTeamData,
     isLoading: isLoadingTeamData,
@@ -122,6 +126,7 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   );
 
+  // Fetch tournament details
   const {
     data: fetchedTourneyData,
     isLoading: isLoadingTourneyData,
@@ -141,6 +146,20 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   );
 
+  // Fetch all tables
+  const {
+    data: fetchedTablesData,
+    isLoading: isLoadingTablesData,
+    error: fetchTablesError,
+    mutate: mutateTables,
+  } = useQuery<Table[]>(
+    auth.user ? supabase.from("tables").select("*") : null,
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    }
+  );
+
   const data = fetchedData ?? null;
   const error = fetchError?.message ?? null;
 
@@ -150,37 +169,50 @@ export function DataProvider({ children }: DataProviderProps) {
   const tourneyData = fetchedTourneyData ?? null;
   const tourneyError = fetchTourneyError?.message ?? null;
 
+  const tablesData = fetchedTablesData ?? null;
+  const tablesError = fetchTablesError?.message ?? null;
+
   // store session, user, updateUserSession, and signOut function in context
   const value = useMemo(
     () => ({
       data,
       teamData,
       tourneyData,
-      isLoading: isLoadingUserData || isLoadingTeamData || isLoadingTourneyData,
-      error: error || teamError || tourneyError,
+      tablesData,
+      isLoading:
+        isLoadingUserData ||
+        isLoadingTeamData ||
+        isLoadingTourneyData ||
+        isLoadingTablesData,
+      error: error || teamError || tourneyError || tablesError,
       mutate: () => {
         mutateUser();
         mutateTeam();
         mutateTourney();
+        mutateTables();
       },
     }),
     [
       data,
       teamData,
       tourneyData,
+      tablesData,
       isLoadingUserData,
       isLoadingTeamData,
       isLoadingTourneyData,
+      isLoadingTablesData,
       error,
       teamError,
       tourneyError,
+      tablesError,
       mutateUser,
       mutateTeam,
       mutateTourney,
+      mutateTables,
     ]
   );
 
-  // if user is not on a team, set to false
+  // initialize local storage for tournament rules acknowledgment
   const [hasAcknowledgedRules, setHasAcknowledgedRules] = useLocalStorage({
     key: "ack-tournament-rules",
     defaultValue: false,
@@ -191,7 +223,7 @@ export function DataProvider({ children }: DataProviderProps) {
   return (
     <DataContext.Provider value={value}>
       {/* Only show loader if not on home page and no data is available */}
-      {auth.user && (!data || !tourneyData) ? (
+      {auth.user && (!data || !tourneyData || !tablesData) ? (
         <div className="flex items-center justify-center h-screen">
           <Loader2 className="animate-spin text-green-300" size={40} />
         </div>
