@@ -12,7 +12,7 @@ import {
   renameTeam,
 } from "@/lib/server-actions/index";
 import { toast } from "sonner";
-import { Clipboard, LinkIcon, Loader2 } from "lucide-react";
+import { Clipboard, LinkIcon } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";

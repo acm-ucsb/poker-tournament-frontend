@@ -4,21 +4,17 @@ import { useAuth } from "@/providers/AuthProvider";
 import { BreadcrumbBuilder } from "../BreadcrumbBuilder";
 import { useEffect, useState } from "react";
 import { codeToHtml } from "shiki";
-import axios from "axios";
-import { BACKEND_ENGINE_BASE_URL } from "@/lib/constants";
-import { Skeleton } from "../ui/skeleton";
-import { getLanguageFromExtension } from "@/lib/utils";
 import { IconCopy } from "@tabler/icons-react";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { toast } from "sonner";
 import { getSubmission } from "@/lib/server-actions/submission-actions/getSubmission";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { LoaderComponent } from "../LoaderComponent";
 
 export function SubmissionPage() {
   const router = useRouter();
@@ -67,9 +63,7 @@ export function SubmissionPage() {
       <section className="flex flex-col mt-6 grow">
         <h2 className="text-2xl font-bold mb-2">Submission Details</h2>
         {!submissionCodeHtml ? (
-          <div className="flex items-center justify-center grow">
-            <Loader2 className="animate-spin text-green-300" size={40} />
-          </div>
+          <LoaderComponent />
         ) : (
           <div className="relative">
             <div

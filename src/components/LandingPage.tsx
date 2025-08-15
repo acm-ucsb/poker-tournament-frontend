@@ -11,7 +11,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
-import { Bot, Loader2Icon, Trophy, Users } from "lucide-react";
+import { Bot, Trophy, Users } from "lucide-react";
 import { FannedCardsIcon } from "./FannedCardsIcon";
 import { useAuth } from "@/providers/AuthProvider";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";

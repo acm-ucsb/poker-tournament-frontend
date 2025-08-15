@@ -1,8 +1,8 @@
 "use client";
 
+import { LoaderComponent } from "@/components/LoaderComponent";
 import { TableView } from "@/components/TableView/TableView";
 import { useData } from "@/providers/DataProvider";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -30,11 +30,7 @@ export default function Page({
   }, [tourneyData?.status]);
 
   if (tourneyData?.status === "not_started") {
-    return (
-      <div className="flex items-center justify-center grow">
-        <Loader2 className="animate-spin text-green-300" size={40} />
-      </div>
-    );
+    return <LoaderComponent />;
   }
 
   return <TableView tableId={tableId} />;

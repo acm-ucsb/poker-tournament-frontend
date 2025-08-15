@@ -1,23 +1,7 @@
 "use client";
 
-import { Session } from "@supabase/supabase-js";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { createSupabaseClient } from "@/lib/supabase/supabase-client";
+import { createContext, ReactNode, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
-import { useAuth } from "./AuthProvider";
-import { Loader2 } from "lucide-react";
-import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
-import { useLocalStorage } from "@mantine/hooks";
 import { useData } from "./DataProvider";
 
 type GlobalNotificationProviderProps = {
