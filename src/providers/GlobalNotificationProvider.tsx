@@ -3,6 +3,7 @@
 import { createContext, ReactNode, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useData } from "./DataProvider";
+import { usePathname } from "next/navigation";
 
 type GlobalNotificationProviderProps = {
   children: ReactNode;
@@ -14,12 +15,15 @@ export function GlobalNotificationProvider({
   children,
 }: GlobalNotificationProviderProps) {
   const { data, tourneyData } = useData();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   // Global notifications
   const prevTableStatus = useRef(data?.team?.table);
   const prevTourneyStatus = useRef(tourneyData?.status);
 
   useEffect(() => {
+    if (isHomePage) return;
     if (data?.team?.table && data?.team?.table !== prevTableStatus.current) {
       toast.info(
         `You have been assigned a table! You can watch your table play, or watch other tables now.`,
@@ -31,6 +35,7 @@ export function GlobalNotificationProvider({
   }, [data?.team?.table]);
 
   useEffect(() => {
+    if (isHomePage) return;
     if (
       tourneyData?.status === "active" &&
       tourneyData?.status !== prevTourneyStatus.current

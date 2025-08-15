@@ -225,13 +225,14 @@ export function DataProvider({ children }: DataProviderProps) {
     serialize: (value) => (value ? "true" : "false"),
   });
 
+  const isLoading =
+    ((auth.user && (!data || !tourneyData || !tablesData)) ||
+      auth.loadingAuth) &&
+    pathname !== "/";
+
   return (
     <DataContext.Provider value={value}>
-      {/* Only show loader if not on home page and no data is available */}
-
-      {((auth.user && (!data || !tourneyData || !tablesData)) ||
-        auth.loadingAuth) &&
-      pathname !== "/" ? (
+      {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <Loader2 className="animate-spin text-green-300" size={40} />
         </div>
