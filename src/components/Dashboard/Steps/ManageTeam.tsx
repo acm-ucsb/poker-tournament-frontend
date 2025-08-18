@@ -145,85 +145,111 @@ export function ManageTeam() {
     <section className="flex flex-col gap-0.5">
       {!data?.team ? (
         <>
-          <Form {...formTeamId}>
-            <form onSubmit={formTeamId.handleSubmit(onSubmitTeamId)}>
-              <h2 className="text-lg font-semibold">Join a team</h2>
-              <p className="mt-0 text-gray-300 text-sm">
-                Enter the team ID from your team leader's dashboard.
-              </p>
-              <div className="flex items-start justify-center mt-2 gap-2">
-                <FormField
-                  control={formTeamId.control}
-                  name="teamId"
-                  disabled={teamIdSubmitLoading}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Enter team ID"
-                          autoCapitalize="off"
-                          autoComplete="off"
-                          spellCheck="false"
-                          autoCorrect="off"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <ButtonWrapper
-                  type="submit"
-                  loading={teamIdSubmitLoading}
-                  className="w-20"
-                >
-                  Join
-                </ButtonWrapper>
+          {deadlinePassed ? (
+            <p className="mt-0 text-red-300 text-sm">
+              You can no longer join or create a team as the team period has
+              ended.
+            </p>
+          ) : (
+            <>
+              <Form {...formTeamId}>
+                <form onSubmit={formTeamId.handleSubmit(onSubmitTeamId)}>
+                  <h2 className="text-lg font-semibold">Join a team</h2>
+                  <p className="mt-0 text-gray-300 text-sm">
+                    Enter the team ID from your team leader's dashboard.
+                  </p>
+                  <div className="flex items-start justify-center mt-2 gap-2">
+                    <FormField
+                      control={formTeamId.control}
+                      name="teamId"
+                      disabled={teamIdSubmitLoading}
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Enter team ID"
+                              autoCapitalize="off"
+                              autoComplete="off"
+                              spellCheck="false"
+                              autoCorrect="off"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <ButtonWrapper
+                      type="submit"
+                      loading={teamIdSubmitLoading}
+                      className="w-20"
+                    >
+                      Join
+                    </ButtonWrapper>
+                  </div>
+                </form>
+              </Form>
+              <div className="flex items-center mt-2 mb-1">
+                <span className="flex-grow border-t border-gray-400"></span>
+                <span className="px-2 text-sm text-gray-400">OR</span>
+                <span className="flex-grow border-t border-gray-400"></span>
               </div>
-            </form>
-          </Form>
-          <div className="flex items-center mt-2 mb-1">
-            <span className="flex-grow border-t border-gray-400"></span>
-            <span className="px-2 text-sm text-gray-400">OR</span>
-            <span className="flex-grow border-t border-gray-400"></span>
-          </div>
-          <Form {...formTeamName}>
-            <form onSubmit={formTeamName.handleSubmit(onSubmitTeamName)}>
-              <h2 className="text-lg font-semibold">Create a team</h2>
-              <p className="mt-0 text-gray-300 text-sm">
-                Enter a team name and invite your friends to join.
-              </p>
-              <div className="flex items-start justify-center mt-2 gap-2">
-                <FormField
-                  control={formTeamName.control}
-                  name="teamName"
-                  disabled={teamNameSubmitLoading}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Enter team name"
-                          autoCapitalize="off"
-                          autoComplete="off"
-                          spellCheck="false"
-                          autoCorrect="off"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <ButtonWrapper
-                  type="submit"
-                  className="w-20"
-                  loading={teamNameSubmitLoading}
-                >
-                  Create
-                </ButtonWrapper>
-              </div>
-            </form>
-          </Form>
+              <Form {...formTeamName}>
+                <form onSubmit={formTeamName.handleSubmit(onSubmitTeamName)}>
+                  <h2 className="text-lg font-semibold">Create a team</h2>
+                  <p className="mt-0 text-gray-300 text-sm">
+                    Enter a team name and invite your friends to join.
+                  </p>
+                  <div className="flex items-start justify-center mt-2 gap-2">
+                    <FormField
+                      control={formTeamName.control}
+                      name="teamName"
+                      disabled={teamNameSubmitLoading}
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Enter team name"
+                              autoCapitalize="off"
+                              autoComplete="off"
+                              spellCheck="false"
+                              autoCorrect="off"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <ButtonWrapper
+                      type="submit"
+                      className="w-20"
+                      loading={teamNameSubmitLoading}
+                    >
+                      Create
+                    </ButtonWrapper>
+                  </div>
+                </form>
+              </Form>
+              {tourneyData?.teams_deadline && (
+                <Tooltip>
+                  <TooltipTrigger className="w-max">
+                    <p className="mt-2 text-red-300 text-sm">
+                      Team changes end on{" "}
+                      {moment(tourneyData?.teams_deadline).format(
+                        "MMMM Do YYYY, h:mm:ss a"
+                      )}
+                      .
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Team changes end{" "}
+                    {moment(tourneyData?.teams_deadline).fromNow()}
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </>
+          )}
         </>
       ) : (
         <>

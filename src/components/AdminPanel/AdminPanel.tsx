@@ -10,6 +10,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { DateTimePicker } from "../DateTimePicker";
@@ -17,6 +18,20 @@ import { useState } from "react";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { updateDeadlines } from "@/lib/server-actions/admin/updateDeadlines";
 import { toast } from "sonner";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { startTournament } from "@/lib/server-actions/admin/startTournament";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   teamsDeadline: z
@@ -98,7 +113,7 @@ export function AdminPanel() {
 
         */}
         <h3 className="text-lg font-semibold my-3">Manage Tournament</h3>
-        <section>
+        <section className="flex flex-col gap-3">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <h4 className="text-md mb-1 font-medium">Update Deadlines</h4>
@@ -112,6 +127,7 @@ export function AdminPanel() {
                   disabled={deadlineChangesLoading}
                   render={({ field, fieldState }) => (
                     <FormItem className="w-full">
+                      <FormLabel>Teams Deadline</FormLabel>
                       <FormControl>
                         <DateTimePicker
                           value={field.value}
@@ -133,6 +149,7 @@ export function AdminPanel() {
                   disabled={deadlineChangesLoading}
                   render={({ field, fieldState }) => (
                     <FormItem className="w-full">
+                      <FormLabel>Submissions Deadline</FormLabel>
                       <FormControl>
                         <DateTimePicker
                           value={field.value}
@@ -159,9 +176,47 @@ export function AdminPanel() {
               </div>
             </form>
           </Form>
-          {/* 
-            - Form to start the tournament, set teams deadline, set submissions deadline
-          */}
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <ButtonWrapper
+                size={"lg"}
+                variant={"destructive"}
+                className={cn()} // rainbow?
+              >
+                Start The Tournament
+              </ButtonWrapper>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will start the tournament, create the necessary
+                  tables based on the number of players with submitted code, and
+                  begin play. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    toast.info("Starting tournament, please wait...", {
+                      richColors: true,
+                      duration: 10000,
+                    });
+
+                    await startTournament();
+
+                    toast.success("Tournament started.", {
+                      richColors: true,
+                    });
+                  }}
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </section>
         <h3 className="text-lg font-semibold my-3">Manage Teams</h3>
         <section>
