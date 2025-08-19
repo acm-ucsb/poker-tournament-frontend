@@ -1,93 +1,11 @@
 "use client";
 
-import { useData } from "@/providers/DataProvider";
 import { BreadcrumbBuilder } from "../BreadcrumbBuilder";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { DateTimePicker } from "../DateTimePicker";
-import { useState } from "react";
-import { ButtonWrapper } from "../ButtonWrapper";
-import { updateDeadlines } from "@/lib/server-actions/admin/updateDeadlines";
-import { toast } from "sonner";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { startTournament } from "@/lib/server-actions/admin/startTournament";
-import { cn } from "@/lib/utils";
-
-const formSchema = z.object({
-  teamsDeadline: z
-    .date()
-    .nullable()
-    .optional()
-    .refine((date) => (date ? date > new Date() : true), {
-      message: "Teams deadline must be in the future.",
-    }),
-  submissionsDeadline: z
-    .date()
-    .nullable()
-    .optional()
-    .refine((date) => (date ? date > new Date() : true), {
-      message: "Submissions deadline must be in the future.",
-    }),
-});
+import { ManagePlayers } from "./sections/ManagePlayers";
+import { ManageTeams } from "./sections/ManageTeams";
+import { ManageTournament } from "./sections/ManageTournament";
 
 export function AdminPanel() {
-  const { data, tourneyData, mutate } = useData();
-  const [deadlineChangesLoading, setDeadlineChangesLoading] = useState(false);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      teamsDeadline: tourneyData?.teams_deadline
-        ? new Date(tourneyData?.teams_deadline)
-        : null,
-      submissionsDeadline: tourneyData?.submissions_deadline
-        ? new Date(tourneyData?.submissions_deadline)
-        : null,
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setDeadlineChangesLoading(true);
-
-    const res = await updateDeadlines({
-      teamsDeadline: values.teamsDeadline,
-      submissionsDeadline: values.submissionsDeadline,
-    });
-
-    if (res.success) {
-      toast.success("Deadlines updated successfully!", {
-        richColors: true,
-      });
-      mutate();
-    } else {
-      toast.error(`Error updating deadlines: ${res.error?.message}`, {
-        richColors: true,
-      });
-    }
-
-    setDeadlineChangesLoading(false);
-  };
-
   return (
     <main className="flex flex-col w-full max-w-7xl self-center pb-6">
       <BreadcrumbBuilder
@@ -113,123 +31,13 @@ export function AdminPanel() {
 
         */}
         <h3 className="text-lg font-semibold my-3">Manage Tournament</h3>
-        <section className="flex flex-col gap-3">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <h4 className="text-md mb-1 font-medium">Update Deadlines</h4>
-              <p className="mt-0 text-gray-300 text-sm">
-                Enter the deadlines for teams and submissions.
-              </p>
-              <div className="flex flex-col items-start justify-center mt-2 gap-2">
-                <FormField
-                  control={form.control}
-                  name="teamsDeadline"
-                  disabled={deadlineChangesLoading}
-                  render={({ field, fieldState }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Teams Deadline</FormLabel>
-                      <FormControl>
-                        <DateTimePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          className={
-                            fieldState.invalid
-                              ? "!border-red-500 focus:!border-red-500 focus:!ring-red-500 focus:!ring-1"
-                              : undefined
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="submissionsDeadline"
-                  disabled={deadlineChangesLoading}
-                  render={({ field, fieldState }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Submissions Deadline</FormLabel>
-                      <FormControl>
-                        <DateTimePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          className={
-                            fieldState.invalid
-                              ? "!border-red-500 focus:!border-red-500 focus:!ring-red-500 focus:!ring-1"
-                              : undefined
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <ButtonWrapper
-                  type="submit"
-                  loading={deadlineChangesLoading}
-                  className="w-full"
-                  disabled={!form.formState.isDirty}
-                >
-                  Update Deadlines
-                </ButtonWrapper>
-              </div>
-            </form>
-          </Form>
+        <ManageTournament />
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <ButtonWrapper
-                size={"lg"}
-                variant={"destructive"}
-                className={cn()} // rainbow?
-              >
-                Start The Tournament
-              </ButtonWrapper>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action will start the tournament, create the necessary
-                  tables based on the number of players with submitted code, and
-                  begin play. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={async () => {
-                    toast.info("Starting tournament, please wait...", {
-                      richColors: true,
-                      duration: 10000,
-                    });
-
-                    await startTournament();
-
-                    toast.success("Tournament started.", {
-                      richColors: true,
-                    });
-                  }}
-                >
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </section>
         <h3 className="text-lg font-semibold my-3">Manage Teams</h3>
-        <section>
-          {/* 
-            - Form to view and update teams (rename, remove, view code)
-          */}
-        </section>
+        <ManageTeams />
+
         <h3 className="text-lg font-semibold my-3">Manage Players</h3>
-        <section>
-          {/* 
-            - Form to view and update players (remove)
-          */}
-        </section>
+        <ManagePlayers />
       </section>
     </main>
   );

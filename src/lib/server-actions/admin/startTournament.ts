@@ -2,7 +2,25 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import {
+  TABLE_SEATS_MAX_COUNT,
+  TABLE_SEATS_MIN_START,
+  UCSB_POKER_TOURNEY_ID,
+} from "@/lib/constants";
+import {
+  uniqueNamesGenerator,
+  Config,
+  adjectives,
+  colors,
+  animals,
+} from "unique-names-generator";
+
+const config: Config = {
+  dictionaries: [adjectives, colors, animals],
+  length: 3,
+  separator: " ",
+  style: "capital",
+};
 
 export async function startTournament(): Promise<ServerActionResponse<null>> {
   /**
@@ -68,15 +86,62 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
     }
 
     // check if tournament is already active
-    if (tournament.status === "active") {
+    if (tournament.status !== "not_started") {
       throw new ServerActionError({
-        message: "Tournament is already active",
+        message: "Tournament is already active or has ended.",
         code: "BAD_REQUEST",
         status: 400,
       });
     }
 
-    // TODO: implement main logic
+    // Fetch the number of valid teams (teams with submitted code)
+    const { count: totalTeamsCount, error: teamsError } = await supabase
+      .from("teams")
+      .select("*", { count: "exact", head: true })
+      // .eq("tournament_id", UCSB_POKER_TOURNEY_ID) - removed for now since our tournament is hardcoded
+      .eq("has_submitted_code", true);
+
+    if (teamsError) {
+      throw new ServerActionError({
+        message: "Failed to fetch teams",
+        code: "INTERNAL_SERVER_ERROR",
+        status: 500,
+      });
+    }
+
+    if (!totalTeamsCount || totalTeamsCount < TABLE_SEATS_MIN_START) {
+      throw new ServerActionError({
+        message: "Not enough valid teams to start the tournament.",
+        code: "BAD_REQUEST",
+        status: 400,
+      });
+    }
+
+    const numTablesNeeded = Math.ceil(totalTeamsCount / TABLE_SEATS_MAX_COUNT);
+    const tables: string[] = [];
+
+    // generate random table names
+    for (let i = 0; i < numTablesNeeded; i++) {
+      const randomName: string = uniqueNamesGenerator(config);
+      tables.push(randomName);
+    }
+
+    // Insert tables into the database
+    await supabase
+      .from("tables")
+      .insert(
+        tables.map((name) => ({
+          name,
+        }))
+      )
+      .throwOnError();
+
+    // Update tournament status to 'active'
+    await supabase
+      .from("tournaments")
+      .update({ status: "active" })
+      .eq("id", UCSB_POKER_TOURNEY_ID)
+      .throwOnError();
 
     return {
       success: true,

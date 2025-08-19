@@ -24,7 +24,12 @@ export function GlobalNotificationProvider({
 
   useEffect(() => {
     if (isHomePage) return;
-    if (data?.team?.table && data?.team?.table !== prevTableStatus.current) {
+
+    if (
+      data?.team?.table &&
+      data?.team?.table !== prevTableStatus.current &&
+      !data?.is_admin
+    ) {
       toast.info(
         `You have been assigned a table! You can watch your table play, or watch other tables now.`,
         {
@@ -36,9 +41,11 @@ export function GlobalNotificationProvider({
 
   useEffect(() => {
     if (isHomePage) return;
+
     if (
       tourneyData?.status === "active" &&
-      tourneyData?.status !== prevTourneyStatus.current
+      tourneyData?.status !== prevTourneyStatus.current &&
+      !data?.is_admin
     ) {
       toast.info(
         `The tournament has started! Tables have been created and assigned. You can now view your table or watch other tables.`,
