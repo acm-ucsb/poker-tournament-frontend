@@ -42,6 +42,7 @@ import { UserCard } from "./UserCard";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import moment from "moment";
 import Link from "next/link";
+import { Skeleton } from "../ui/skeleton";
 
 const formRenameTeam = z.object({
   teamName: z
@@ -304,21 +305,23 @@ export function MyTeam({}) {
           Teammates
         </h3>
         <div className="flex flex-col gap-2">
-          {teamData
-            ? teamData.members
-                .slice()
-                .sort((a, b) => {
-                  // Owner first
-                  if (a.id === data.team!.owner.id) return -1;
-                  if (b.id === data.team!.owner.id) return 1;
-                  // Current user next
-                  if (auth.user && a.id === auth.user.id) return -1;
-                  if (auth.user && b.id === auth.user.id) return 1;
-                  // Then alphabetical
-                  return a.name.localeCompare(b.name);
-                })
-                .map((member) => <UserCard key={member.id} member={member} />)
-            : null}
+          {teamData ? (
+            teamData.members
+              .slice()
+              .sort((a, b) => {
+                // Owner first
+                if (a.id === data.team!.owner.id) return -1;
+                if (b.id === data.team!.owner.id) return 1;
+                // Current user next
+                if (auth.user && a.id === auth.user.id) return -1;
+                if (auth.user && b.id === auth.user.id) return 1;
+                // Then alphabetical
+                return a.name.localeCompare(b.name);
+              })
+              .map((member) => <UserCard key={member.id} member={member} />)
+          ) : (
+            <Skeleton className="h-18 rounded-2xl w-full" />
+          )}
         </div>
         {data?.team?.owner.id !== auth.user?.id &&
           !isTeamManagementDisabled && (

@@ -21,7 +21,7 @@ export function Dashboard({}) {
 
   const [hasAcknowledgedRules] = useLocalStorage({
     key: "ack-tournament-rules",
-    defaultValue: false,
+    defaultValue: false || !data?.team,
     deserialize: (value) => value === "true",
     serialize: (value) => (value ? "true" : "false"),
   });
@@ -70,7 +70,10 @@ export function Dashboard({}) {
                 description:
                   "You must submit your code in order to participate in the tournament.",
                 children: <SubmitCode />,
-                disabled: !data?.team || data?.type === "human", // Disabled if not in a team (step 1)
+                disabled:
+                  !data?.team ||
+                  data?.type === "human" ||
+                  !hasAcknowledgedRules, // Disabled if not in a team (step 1)
                 completed: !!data?.team?.has_submitted_code,
               },
               {
@@ -78,7 +81,10 @@ export function Dashboard({}) {
                 description:
                   "Join your assigned table or spectate other games in the tournament.",
                 children: <ViewTables />,
-                disabled: !data?.team || !data.team.has_submitted_code,
+                disabled:
+                  !data?.team ||
+                  !data.team.has_submitted_code ||
+                  !hasAcknowledgedRules,
                 completed:
                   !!data?.team?.table && tourneyData?.status !== "not_started",
                 incomplete:
