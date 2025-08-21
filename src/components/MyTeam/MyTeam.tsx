@@ -197,6 +197,10 @@ export function MyTeam({}) {
     return null;
   }
 
+  const isTeamManagementDisabled =
+    moment().isAfter(moment(tourneyData?.teams_deadline)) ||
+    tourneyData?.status !== "not_started";
+
   return (
     <main className="flex flex-col w-full max-w-7xl self-center">
       <BreadcrumbBuilder
@@ -257,7 +261,7 @@ export function MyTeam({}) {
                   </div>
                 </form>
               </Form>
-              {!moment().isAfter(moment(tourneyData?.teams_deadline)) && (
+              {!isTeamManagementDisabled && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <ButtonWrapper
@@ -294,8 +298,7 @@ export function MyTeam({}) {
 
         {/* Manage Teammates: remove teammates */}
         <h3 className="text-lg font-semibold my-3">
-          {data?.team?.owner.id === auth.user?.id &&
-          !moment().isAfter(moment(tourneyData?.teams_deadline))
+          {data?.team?.owner.id === auth.user?.id && !isTeamManagementDisabled
             ? "Manage"
             : "Your"}{" "}
           Teammates
@@ -318,7 +321,7 @@ export function MyTeam({}) {
             : null}
         </div>
         {data?.team?.owner.id !== auth.user?.id &&
-          !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
+          !isTeamManagementDisabled && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <ButtonWrapper
@@ -346,7 +349,7 @@ export function MyTeam({}) {
               </AlertDialogContent>
             </AlertDialog>
           )}
-        {!moment().isAfter(moment(tourneyData?.teams_deadline)) &&
+        {!isTeamManagementDisabled &&
           teamData &&
           teamData?.members.length < TEAM_MAX_MEMBERS && (
             <div className="flex flex-wrap gap-2 w-full mt-3">

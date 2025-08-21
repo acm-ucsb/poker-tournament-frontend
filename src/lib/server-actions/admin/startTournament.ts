@@ -2,11 +2,7 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import {
-  TABLE_SEATS_MAX_COUNT,
-  TABLE_SEATS_MIN_START,
-  UCSB_POKER_TOURNEY_ID,
-} from "@/lib/constants";
+import { TABLE_SEATS_MIN_START, UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 import {
   uniqueNamesGenerator,
   Config,
@@ -14,6 +10,7 @@ import {
   colors,
   animals,
 } from "unique-names-generator";
+import { calculateOptimalTableAssignment } from "@/lib/utils";
 
 const config: Config = {
   dictionaries: [adjectives, colors, animals],
@@ -95,9 +92,13 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
     }
 
     // Fetch the number of valid teams (teams with submitted code)
-    const { count: totalTeamsCount, error: teamsError } = await supabase
+    const {
+      data: teams,
+      count: totalTeamsCount,
+      error: teamsError,
+    } = await supabase
       .from("teams")
-      .select("*", { count: "exact", head: true })
+      .select("id", { count: "exact" })
       // .eq("tournament_id", UCSB_POKER_TOURNEY_ID) - removed for now since our tournament is hardcoded
       .eq("has_submitted_code", true);
 
@@ -117,24 +118,65 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
       });
     }
 
-    const numTablesNeeded = Math.ceil(totalTeamsCount / TABLE_SEATS_MAX_COUNT);
-    const tables: string[] = [];
+    // Calculate optimal table distribution
+    const { numTables, playersPerTable } =
+      calculateOptimalTableAssignment(totalTeamsCount);
 
-    // generate random table names
-    for (let i = 0; i < numTablesNeeded; i++) {
+    // Generate table names
+    const tableNames: string[] = [];
+    for (let i = 0; i < numTables; i++) {
       const randomName: string = uniqueNamesGenerator(config);
-      tables.push(randomName);
+      tableNames.push(randomName);
     }
 
     // Insert tables into the database
-    await supabase
+    const { data: insertedTables } = await supabase
       .from("tables")
       .insert(
-        tables.map((name) => ({
+        tableNames.map((name: string) => ({
           name,
         }))
       )
+      .select("id, name")
       .throwOnError();
+
+    // Create a mapping from table name to table id
+    const tableNameToId = new Map(
+      insertedTables!.map((table) => [table.name, table.id])
+    );
+
+    const randomizedTeams = teams!.sort(() => Math.random() - 0.5); // Shuffle teams
+
+    // Assign teams to tables using the optimized assignment
+    const teamUpdates = [];
+    let teamIndex = 0;
+
+    for (let idx = 0; idx < playersPerTable.length; idx++) {
+      const tableName = tableNames[idx];
+      const tableId = tableNameToId.get(tableName);
+      const teamsForThisTable = playersPerTable[idx];
+
+      for (let i = 0; i < teamsForThisTable; i++) {
+        if (teamIndex < randomizedTeams.length) {
+          teamUpdates.push({
+            id: randomizedTeams[teamIndex].id,
+            table_id: tableId,
+          });
+          teamIndex++;
+        }
+      }
+    }
+
+    // Batch update all team assignments
+    if (teamUpdates.length > 0) {
+      for (const update of teamUpdates) {
+        await supabase
+          .from("teams")
+          .update({ table_id: update.table_id })
+          .eq("id", update.id)
+          .throwOnError();
+      }
+    }
 
     // Update tournament status to 'active'
     await supabase

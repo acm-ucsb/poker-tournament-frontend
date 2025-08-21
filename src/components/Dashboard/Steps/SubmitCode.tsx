@@ -110,11 +110,14 @@ export function SubmitCode() {
     }
   }, [tourneyData?.submissions_deadline, mutate]);
 
+  const isSubmissionDisabled =
+    deadlinePassed || tourneyData?.status !== "not_started";
+
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-col gap-0.5">
         <h2 className="text-lg font-semibold">Your Tournament Submission</h2>
-        {!deadlinePassed ? (
+        {!isSubmissionDisabled ? (
           <>
             <p className="mt-0 text-gray-300 text-sm">
               Please ensure that your code follows our{" "}
@@ -160,55 +163,53 @@ export function SubmitCode() {
           </p>
         )}
       </div>
-      <div className="flex flex-col gap-2">
-        {!deadlinePassed && (
-          <Form {...submissionForm}>
-            <form
-              onSubmit={submissionForm.handleSubmit(onSubmitSubmission)}
-              className="w-full flex gap-2"
+      {!isSubmissionDisabled && (
+        <Form {...submissionForm}>
+          <form
+            onSubmit={submissionForm.handleSubmit(onSubmitSubmission)}
+            className="w-full flex gap-2"
+          >
+            <FormField
+              control={submissionForm.control}
+              name="file"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Input
+                      type="file"
+                      placeholder="Upload your bot code"
+                      accept=".zip,.tar,.gz,.py,.cpp"
+                      disabled={submittingCode}
+                      onChange={(e) => field.onChange(e.target.files?.[0])}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={(e) => {
+                        field.ref(e);
+                        fileInputRef.current = e;
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <ButtonWrapper
+              className="w-20"
+              type="submit"
+              loading={submittingCode}
             >
-              <FormField
-                control={submissionForm.control}
-                name="file"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <Input
-                        type="file"
-                        placeholder="Upload your bot code"
-                        accept=".zip,.tar,.gz,.py,.cpp"
-                        disabled={submittingCode}
-                        onChange={(e) => field.onChange(e.target.files?.[0])}
-                        onBlur={field.onBlur}
-                        name={field.name}
-                        ref={(e) => {
-                          field.ref(e);
-                          fileInputRef.current = e;
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <ButtonWrapper
-                className="w-20"
-                type="submit"
-                loading={submittingCode}
-              >
-                Submit
-              </ButtonWrapper>
-            </form>
-          </Form>
-        )}
-        {data?.team?.has_submitted_code && (
-          <Link href="/dashboard/myteam/submission" className="w-full">
-            <Button variant="outline" className="w-full">
-              View Current Submission
-            </Button>
-          </Link>
-        )}
-      </div>
+              Submit
+            </ButtonWrapper>
+          </form>
+        </Form>
+      )}
+      {data?.team?.has_submitted_code && (
+        <Link href="/dashboard/myteam/submission" className="w-full">
+          <Button variant="outline" className="w-full">
+            View Current Submission
+          </Button>
+        </Link>
+      )}
     </section>
   );
 }

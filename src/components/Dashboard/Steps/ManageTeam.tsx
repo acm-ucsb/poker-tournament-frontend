@@ -141,11 +141,14 @@ export function ManageTeam() {
     }
   }, [tourneyData?.teams_deadline, mutate]);
 
+  const isTeamManagementDisabled =
+    deadlinePassed || tourneyData?.status !== "not_started";
+
   return (
     <section className="flex flex-col gap-0.5">
       {!data?.team ? (
         <>
-          {deadlinePassed ? (
+          {isTeamManagementDisabled ? (
             <p className="mt-0 text-red-300 text-sm">
               You can no longer join or create a team as the team period has
               ended.
@@ -263,7 +266,7 @@ export function ManageTeam() {
             </span>
             of team <strong>{data.team.name}</strong>
           </p>
-          {deadlinePassed ? (
+          {isTeamManagementDisabled ? (
             <p className="mt-0 text-red-300 text-sm">
               You can no longer change your team or join another team as the
               team period has ended. Your team can still be renamed.
@@ -293,14 +296,15 @@ export function ManageTeam() {
               className="md:col-span-3 min-w-40 grow"
               style={{
                 gridColumn:
-                  deadlinePassed ||
+                  isTeamManagementDisabled ||
                   (teamData && teamData?.members?.length >= TEAM_MAX_MEMBERS)
                     ? "span 5 / span 5"
                     : undefined,
               }}
             >
-              {data.team.owner.id === auth.user?.id && !deadlinePassed ? (
-                <Button className="w-full" disabled={deadlinePassed}>
+              {data.team.owner.id === auth.user?.id &&
+              !isTeamManagementDisabled ? (
+                <Button className="w-full" disabled={isTeamManagementDisabled}>
                   <Settings2 />
                   Manage Team
                 </Button>
@@ -311,7 +315,7 @@ export function ManageTeam() {
                 </Button>
               )}
             </Link>
-            {!deadlinePassed &&
+            {!isTeamManagementDisabled &&
               teamData &&
               teamData.members?.length < TEAM_MAX_MEMBERS && (
                 <div className="flex gap-2 w-full md:col-span-2">
@@ -332,7 +336,7 @@ export function ManageTeam() {
                       navigator.clipboard.writeText(teamInviteLink);
                       toast.success("Invite link copied to clipboard");
                     }}
-                    disabled={deadlinePassed}
+                    disabled={isTeamManagementDisabled}
                   >
                     <LinkIcon />
                     Copy Invite Link
@@ -353,7 +357,7 @@ export function ManageTeam() {
                       navigator.clipboard.writeText(teamId!); // teamId cannot be undefined bc skeleton loading in ActionSteps
                       toast.success("Team ID copied to clipboard");
                     }}
-                    disabled={deadlinePassed}
+                    disabled={isTeamManagementDisabled}
                   >
                     <Clipboard />
                     Copy Team ID
