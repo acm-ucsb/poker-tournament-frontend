@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
 import {
   BACKEND_ENGINE_BASE_URL,
+  DISQUALIFICATION_MESSAGE,
   UCSB_POKER_TOURNEY_ID,
 } from "@/lib/constants";
 import axios from "axios";
@@ -63,6 +64,38 @@ export async function createSubmission(
       }
     }
 
+    // check if user is in a team
+    const { data: userTeam } = await supabase
+      .from("users")
+      .select("team_id")
+      .eq("id", user.id)
+      .single()
+      .throwOnError();
+
+    if (!userTeam?.team_id) {
+      throw new ServerActionError({
+        message: "You must be in a team to submit code.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
+    // check if team is disqualified
+    const { data: team } = await supabase
+      .from("teams")
+      .select("is_disqualified")
+      .eq("id", userTeam.team_id)
+      .single()
+      .throwOnError();
+
+    if (team?.is_disqualified) {
+      throw new ServerActionError({
+        message: DISQUALIFICATION_MESSAGE,
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     const newFormData = new FormData();
     newFormData.append("file", file);
 
@@ -99,7 +132,6 @@ export async function createSubmission(
       },
     };
   } catch (error) {
-    console.log(error);
     if (error instanceof ServerActionError) {
       return {
         success: false,

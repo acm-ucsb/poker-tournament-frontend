@@ -19,6 +19,9 @@ export const TABLE_SEATS_MIN_START = 5;
 export const UCSB_POKER_TOURNEY_ID =
   "f6fd507b-42fb-4fba-a0d3-e9ded05aeca5" as const; // hard code for now, implement different tournaments later
 
+export const DISQUALIFICATION_MESSAGE =
+  "Your team has been disqualified and cannot submit code. Please contact an admin for more information.";
+
 export const HEX_OPACITY_POSTFIX = {
   100: "FF",
   99: "FC",
