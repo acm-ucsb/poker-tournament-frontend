@@ -21,7 +21,7 @@ export function Dashboard({}) {
 
   const [hasAcknowledgedRules] = useLocalStorage({
     key: "ack-tournament-rules",
-    defaultValue: false || !data?.team,
+    defaultValue: false,
     deserialize: (value) => value === "true",
     serialize: (value) => (value ? "true" : "false"),
   });
@@ -56,7 +56,7 @@ export function Dashboard({}) {
                   "Please review our tournament rules before participating.",
                 children: <ReviewRules />,
                 disabled: !auth.user?.email?.includes("ucsb.edu"), // User must have a ucsb.edu email
-                completed: hasAcknowledgedRules, // Completed if rules are acknowledged
+                completed: hasAcknowledgedRules || !!data?.team, // Completed if rules are acknowledged or user is in a team
               },
               {
                 title: "Create or join a team",
