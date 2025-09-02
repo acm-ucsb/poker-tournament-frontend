@@ -52,6 +52,30 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Get the user's data to check if they are an admin
+  const { data, error } = await supabase
+    .from("users")
+    .select("is_admin")
+    .eq("id", user?.id)
+    .single();
+
+  // If there's an error fetching user data, redirect to the dashboard
+  if (error && request.nextUrl.pathname.includes("/dashboard/admin")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
+  // If the user is not an admin and trying to access the admin panel, redirect to the dashboard
+  if (
+    !data?.is_admin &&
+    request.nextUrl.pathname.includes("/dashboard/admin")
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

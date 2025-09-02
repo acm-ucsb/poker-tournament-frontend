@@ -39,14 +39,17 @@ export async function createTeam(
     // check if tournaments.teams_deadline has passed
     const { data: tournament } = await supabase
       .from("tournaments")
-      .select("teams_deadline")
+      .select("teams_deadline, status")
       .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
       .single()
       .throwOnError();
 
-    if (moment().isAfter(moment(tournament?.teams_deadline))) {
+    if (
+      moment().isAfter(moment(tournament?.teams_deadline)) ||
+      tournament?.status !== "not_started"
+    ) {
       throw new ServerActionError({
-        message: "Team changes have been disabled for this tournament.",
+        message: "The team registration deadline has passed.",
         code: "FORBIDDEN",
         status: 403,
       });

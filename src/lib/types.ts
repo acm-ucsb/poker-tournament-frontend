@@ -20,6 +20,7 @@ type Team = {
   num_chips: number;
   table_id: string | null;
   owner_id: string;
+  is_disqualified: boolean;
 };
 
 type Table = {

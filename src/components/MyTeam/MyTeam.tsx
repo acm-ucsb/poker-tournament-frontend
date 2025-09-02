@@ -12,7 +12,7 @@ import {
   renameTeam,
 } from "@/lib/server-actions/index";
 import { toast } from "sonner";
-import { Clipboard, LinkIcon, Loader2 } from "lucide-react";
+import { Clipboard, LinkIcon } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -42,6 +42,7 @@ import { UserCard } from "./UserCard";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import moment from "moment";
 import Link from "next/link";
+import { Skeleton } from "../ui/skeleton";
 
 const formRenameTeam = z.object({
   teamName: z
@@ -197,6 +198,10 @@ export function MyTeam({}) {
     return null;
   }
 
+  const isTeamManagementDisabled =
+    moment().isAfter(moment(tourneyData?.teams_deadline)) ||
+    tourneyData?.status !== "not_started";
+
   return (
     <main className="flex flex-col w-full max-w-7xl self-center">
       <BreadcrumbBuilder
@@ -204,7 +209,7 @@ export function MyTeam({}) {
           { title: "Home", link: "/" },
           { title: "Dashboard", link: "/dashboard" },
         ]}
-        currentPage={{ title: "My Team", link: "/dashboard/myteam" }}
+        currentPage={{ title: "My Team" }}
       />
       {/* Team Information */}
       <section className="flex flex-col mt-6">
@@ -257,7 +262,7 @@ export function MyTeam({}) {
                   </div>
                 </form>
               </Form>
-              {!moment().isAfter(moment(tourneyData?.teams_deadline)) && (
+              {!isTeamManagementDisabled && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <ButtonWrapper
@@ -294,31 +299,32 @@ export function MyTeam({}) {
 
         {/* Manage Teammates: remove teammates */}
         <h3 className="text-lg font-semibold my-3">
-          {data?.team?.owner.id === auth.user?.id &&
-          !moment().isAfter(moment(tourneyData?.teams_deadline))
+          {data?.team?.owner.id === auth.user?.id && !isTeamManagementDisabled
             ? "Manage"
             : "Your"}{" "}
           Teammates
         </h3>
         <div className="flex flex-col gap-2">
-          {teamData
-            ? teamData.members
-                .slice()
-                .sort((a, b) => {
-                  // Owner first
-                  if (a.id === data.team!.owner.id) return -1;
-                  if (b.id === data.team!.owner.id) return 1;
-                  // Current user next
-                  if (auth.user && a.id === auth.user.id) return -1;
-                  if (auth.user && b.id === auth.user.id) return 1;
-                  // Then alphabetical
-                  return a.name.localeCompare(b.name);
-                })
-                .map((member) => <UserCard key={member.id} member={member} />)
-            : null}
+          {teamData ? (
+            teamData.members
+              .slice()
+              .sort((a, b) => {
+                // Owner first
+                if (a.id === data.team!.owner.id) return -1;
+                if (b.id === data.team!.owner.id) return 1;
+                // Current user next
+                if (auth.user && a.id === auth.user.id) return -1;
+                if (auth.user && b.id === auth.user.id) return 1;
+                // Then alphabetical
+                return a.name.localeCompare(b.name);
+              })
+              .map((member) => <UserCard key={member.id} member={member} />)
+          ) : (
+            <Skeleton className="h-18 rounded-2xl w-full" />
+          )}
         </div>
         {data?.team?.owner.id !== auth.user?.id &&
-          !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
+          !isTeamManagementDisabled && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <ButtonWrapper
@@ -346,7 +352,7 @@ export function MyTeam({}) {
               </AlertDialogContent>
             </AlertDialog>
           )}
-        {!moment().isAfter(moment(tourneyData?.teams_deadline)) &&
+        {!isTeamManagementDisabled &&
           teamData &&
           teamData?.members.length < TEAM_MAX_MEMBERS && (
             <div className="flex flex-wrap gap-2 w-full mt-3">

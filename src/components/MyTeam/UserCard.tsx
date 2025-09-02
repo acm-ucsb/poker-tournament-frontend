@@ -60,6 +60,10 @@ export function UserCard({ member }: Props) {
     setRemoveLoading(false);
   };
 
+  const isTeamManagementDisabled =
+    moment().isAfter(moment(tourneyData?.teams_deadline)) ||
+    tourneyData?.status !== "not_started";
+
   return (
     <Card key={member.id} className="p-0">
       <CardContent className="flex gap-3 justify-between items-center px-4 py-3">
@@ -84,7 +88,7 @@ export function UserCard({ member }: Props) {
         </div>
         {data?.team?.owner.id === auth.user?.id &&
           member.id !== auth.user?.id &&
-          !moment().isAfter(moment(tourneyData?.teams_deadline)) && (
+          !isTeamManagementDisabled && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <ButtonWrapper
