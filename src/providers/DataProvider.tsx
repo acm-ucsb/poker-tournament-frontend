@@ -32,6 +32,7 @@ type TeamData = {
   id: string;
   name: string;
   members: User[];
+  is_disqualified: boolean;
 };
 
 type DataContextType = {
@@ -117,6 +118,7 @@ export function DataProvider({ children }: DataProviderProps) {
             `
               id,
               name,
+              is_disqualified,
               members:users!users_team_id_fkey(
                 *
               )

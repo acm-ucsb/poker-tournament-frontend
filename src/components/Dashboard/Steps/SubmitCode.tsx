@@ -6,7 +6,10 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { SUBMISSION_MAX_FILE_SIZE } from "@/lib/constants";
+import {
+  DISQUALIFICATION_MESSAGE,
+  SUBMISSION_MAX_FILE_SIZE,
+} from "@/lib/constants";
 import {
   Form,
   FormControl,
@@ -40,7 +43,7 @@ const submissionSchema = z.object({
 });
 
 export function SubmitCode() {
-  const { data, tourneyData, mutate } = useData();
+  const { data, teamData, tourneyData, mutate } = useData();
   const [submittingCode, setSubmittingCode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,6 +56,13 @@ export function SubmitCode() {
   const onSubmitSubmission = async (
     formData: z.infer<typeof submissionSchema>
   ) => {
+    if (teamData?.is_disqualified) {
+      toast.error(DISQUALIFICATION_MESSAGE, {
+        richColors: true,
+      });
+      return;
+    }
+
     setSubmittingCode(true);
 
     const newFormData = new FormData();
@@ -111,7 +121,9 @@ export function SubmitCode() {
   }, [tourneyData?.submissions_deadline, mutate]);
 
   const isSubmissionDisabled =
-    deadlinePassed || tourneyData?.status !== "not_started";
+    deadlinePassed ||
+    tourneyData?.status !== "not_started" ||
+    teamData?.is_disqualified;
 
   return (
     <section className="flex flex-col gap-3">
@@ -159,7 +171,9 @@ export function SubmitCode() {
           </>
         ) : (
           <p className="mt-0 text-red-300 text-sm">
-            Submissions are now closed.
+            {teamData?.is_disqualified
+              ? DISQUALIFICATION_MESSAGE
+              : "Submissions are now closed."}
           </p>
         )}
       </div>

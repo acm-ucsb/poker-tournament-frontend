@@ -100,7 +100,8 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
       .from("teams")
       .select("id", { count: "exact" })
       // .eq("tournament_id", UCSB_POKER_TOURNEY_ID) - removed for now since our tournament is hardcoded
-      .eq("has_submitted_code", true);
+      .eq("has_submitted_code", true)
+      .eq("is_disqualified", false);
 
     if (teamsError) {
       throw new ServerActionError({
