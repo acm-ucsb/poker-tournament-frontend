@@ -43,6 +43,7 @@ import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import moment from "moment";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
+import { LoaderComponent } from "../LoaderComponent";
 
 const formRenameTeam = z.object({
   teamName: z
@@ -175,6 +176,8 @@ export function MyTeam({}) {
         mutate();
         router.push("/dashboard");
       });
+    } else if (teamInviteId && data?.team) {
+      router.replace("/dashboard");
     }
   }, [data?.team]);
 
@@ -195,7 +198,7 @@ export function MyTeam({}) {
   }, []);
 
   if (!data || !data.team || teamInviteId) {
-    return null;
+    return <LoaderComponent />;
   }
 
   const isTeamManagementDisabled =
