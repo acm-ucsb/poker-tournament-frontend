@@ -24,7 +24,6 @@ export function TableView({ tableId }: Props) {
         ]}
         currentPage={{
           title,
-          link: `/dashboard/tables/${tableId}`,
         }}
       />
       {/* Dashboard content */}

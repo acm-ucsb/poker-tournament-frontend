@@ -92,7 +92,7 @@ export function SubmitCode() {
 
       setDeadlinePassed(now.isAfter(deadline));
 
-      if (deadline.isAfter(now)) {
+      if (now.isAfter(deadline)) {
         const timeoutDuration = deadline.diff(now);
         const timer = setTimeout(() => {
           setDeadlinePassed(true);

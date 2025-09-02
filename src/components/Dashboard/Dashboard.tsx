@@ -41,7 +41,7 @@ export function Dashboard({}) {
     <main className="flex flex-col w-full max-w-7xl self-center pb-6">
       <BreadcrumbBuilder
         previousPages={[{ title: "Home", link: "/" }]}
-        currentPage={{ title: "Dashboard", link: "/dashboard" }}
+        currentPage={{ title: "Dashboard" }}
       />
       {/* Dashboard content */}
       <section className="flex flex-col mt-6">

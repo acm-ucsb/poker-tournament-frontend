@@ -17,9 +17,11 @@ import { useAuth } from "@/providers/AuthProvider";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import { IconUsersGroup } from "@tabler/icons-react";
 import { ButtonWrapper } from "./ButtonWrapper";
+import { useData } from "@/providers/DataProvider";
 
 export default function LandingPage() {
   const auth = useAuth();
+  const { data } = useData();
 
   return (
     <div className="flex flex-col">
@@ -63,7 +65,11 @@ export default function LandingPage() {
                       className="w-full"
                       disabled={auth.loadingAuth}
                     >
-                      {auth.user ? <>Dashboard</> : "Sign In & Compete"}
+                      {auth.user
+                        ? data?.is_admin
+                          ? "Admin Dashboard"
+                          : "Dashboard"
+                        : "Sign In & Compete"}
                     </ButtonWrapper>
                   </Link>
                 </motion.div>

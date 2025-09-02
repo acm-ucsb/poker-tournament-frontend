@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderComponent } from "@/components/LoaderComponent";
-import { SubmissionPage } from "@/components/Submission/Submission";
+import { PlayerSubmissionPage } from "@/components/Submission/PlayerSubmissionPage";
 import { useAuth } from "@/providers/AuthProvider";
 import { useData } from "@/providers/DataProvider";
 import { useRouter } from "next/navigation";
@@ -33,5 +33,5 @@ export default function Submission() {
     return <LoaderComponent />;
   }
 
-  return <SubmissionPage />;
+  return <PlayerSubmissionPage />;
 }

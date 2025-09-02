@@ -13,7 +13,7 @@ export function Tables() {
           { title: "Home", link: "/" },
           { title: "Dashboard", link: "/dashboard" },
         ]}
-        currentPage={{ title: "Tournament Tables", link: "/dashboard/tables" }}
+        currentPage={{ title: "Tournament Tables" }}
       />
       {/* Dashboard content */}
       <section className="flex flex-col mt-6">

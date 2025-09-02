@@ -209,7 +209,7 @@ export function MyTeam({}) {
           { title: "Home", link: "/" },
           { title: "Dashboard", link: "/dashboard" },
         ]}
-        currentPage={{ title: "My Team", link: "/dashboard/myteam" }}
+        currentPage={{ title: "My Team" }}
       />
       {/* Team Information */}
       <section className="flex flex-col mt-6">

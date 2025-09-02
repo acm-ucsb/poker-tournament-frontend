@@ -16,7 +16,7 @@ type Page = {
 };
 type Props = {
   previousPages: Page[];
-  currentPage: Page;
+  currentPage: Omit<Page, "link">;
 };
 
 export function BreadcrumbBuilder({ previousPages, currentPage }: Props) {

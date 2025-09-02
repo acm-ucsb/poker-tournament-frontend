@@ -10,7 +10,7 @@ export function AdminPanel() {
     <main className="flex flex-col w-full max-w-7xl self-center pb-6">
       <BreadcrumbBuilder
         previousPages={[{ title: "Home", link: "/" }]}
-        currentPage={{ title: "Admin Panel", link: "/dashboard/admin" }}
+        currentPage={{ title: "Admin Panel" }}
       />
       {/* Dashboard content */}
       <section className="flex flex-col mt-6">
@@ -35,9 +35,6 @@ export function AdminPanel() {
 
         <h3 className="text-lg font-semibold my-3">Manage Teams</h3>
         <ManageTeams />
-
-        <h3 className="text-lg font-semibold my-3">Manage Players</h3>
-        <ManagePlayers />
       </section>
     </main>
   );

@@ -51,6 +51,21 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
       });
     }
 
+    // check if user is admin
+    const { data: userRole } = await supabase
+      .from("users")
+      .select("is_admin")
+      .eq("id", user.id)
+      .single();
+
+    if (!userRole?.is_admin) {
+      throw new ServerActionError({
+        message: "You must be an admin to start a tournament.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
+
     // Security checks
     // check if tournament exists
     const { data: tournament } = await supabase
@@ -64,21 +79,6 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
         message: "Tournament not found",
         code: "BAD_REQUEST",
         status: 400,
-      });
-    }
-
-    // check if user is admin
-    const { data: userRole } = await supabase
-      .from("users")
-      .select("is_admin")
-      .eq("id", user.id)
-      .single();
-
-    if (!userRole?.is_admin) {
-      throw new ServerActionError({
-        message: "You must be an admin to start a tournament.",
-        code: "FORBIDDEN",
-        status: 403,
       });
     }
 
