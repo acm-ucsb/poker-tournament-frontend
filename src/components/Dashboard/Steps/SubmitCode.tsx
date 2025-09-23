@@ -102,11 +102,11 @@ export function SubmitCode() {
 
       setDeadlinePassed(now.isAfter(deadline));
 
-      if (now.isAfter(deadline)) {
+      if (deadline.isAfter(now)) {
         const timeoutDuration = deadline.diff(now);
         const timer = setTimeout(() => {
-          setDeadlinePassed(true);
           mutate();
+          setDeadlinePassed(true);
           toast.info(
             "Submission deadline has passed. You can no longer submit or modify your code.",
             {

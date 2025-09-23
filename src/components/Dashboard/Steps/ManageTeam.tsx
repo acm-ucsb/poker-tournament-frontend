@@ -121,17 +121,20 @@ export function ManageTeam() {
       const deadline = moment(tourneyData.teams_deadline);
       const now = moment();
 
-      if (now.isAfter(deadline)) {
-        setDeadlinePassed(true);
+      setDeadlinePassed(now.isAfter(deadline));
+
+      if (deadline.isAfter(now)) {
+        const timeoutDuration = deadline.diff(now);
         const timer = setTimeout(() => {
           mutate();
+          setDeadlinePassed(true);
           toast.info(
             "Team change deadline has passed. You can no longer change your team or join another team.",
             {
               richColors: true,
             }
           );
-        }, 10000);
+        }, timeoutDuration);
 
         return () => clearTimeout(timer);
       }
