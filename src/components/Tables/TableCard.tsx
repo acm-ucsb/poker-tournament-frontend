@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { useData } from "@/providers/DataProvider";
+import { Badge } from "../ui/badge";
 
 type Props = {
   table: Table;
@@ -14,10 +15,12 @@ export function TableCard({ table }: Props) {
   return (
     <Card key={table.id} className="p-0">
       <CardContent className="flex gap-3 justify-between items-center p-2">
-        <CardTitle className="flex items-center justify-center gap-1 ml-2">
-          {table.name}{" "}
+        <CardTitle className="flex items-center justify-center gap-2 ml-2">
+          {table.name}
           <span className="text-sm text-gray-500">
-            {data?.team?.table?.id === table.id ? "(Your Table)" : ""}
+            {data?.team?.table?.id === table.id && (
+              <Badge variant={"success"}>Your Table</Badge>
+            )}
           </span>
         </CardTitle>
         <Link

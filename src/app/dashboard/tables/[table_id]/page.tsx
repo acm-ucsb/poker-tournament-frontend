@@ -3,6 +3,7 @@
 import { LoaderComponent } from "@/components/LoaderComponent";
 import { TableView } from "@/components/TableView/TableView";
 import { useData } from "@/providers/DataProvider";
+import { GameStateProvider } from "@/providers/GameStateProvider";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -33,5 +34,9 @@ export default function Page({
     return <LoaderComponent />;
   }
 
-  return <TableView tableId={tableId} />;
+  return (
+    <GameStateProvider tableId={tableId}>
+      <TableView tableId={tableId} />
+    </GameStateProvider>
+  );
 }

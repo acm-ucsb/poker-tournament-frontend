@@ -103,7 +103,11 @@ export function SubmitCode() {
       setDeadlinePassed(now.isAfter(deadline));
 
       if (deadline.isAfter(now)) {
-        const timeoutDuration = deadline.diff(now);
+        const timeoutDuration = Math.min(
+          deadline.diff(now),
+          Math.pow(2, 31) - 1 // max setTimeout duration
+        );
+
         const timer = setTimeout(() => {
           mutate();
           setDeadlinePassed(true);
@@ -208,11 +212,11 @@ export function SubmitCode() {
               )}
             />
             <ButtonWrapper
-              className="w-20"
+              className="w-min"
               type="submit"
               loading={submittingCode}
             >
-              Submit
+              {data?.team?.has_submitted_code ? "Resubmit" : "Submit"}
             </ButtonWrapper>
           </form>
         </Form>

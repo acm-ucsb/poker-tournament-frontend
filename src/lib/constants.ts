@@ -14,7 +14,8 @@ export const SUBMISSION_MAX_FILE_SIZE = 10485760 as const; // 10 MB (10 * 1024 *
 export const TABLE_SEATS_MAX_COUNT = 9;
 export const TABLE_SEATS_MIN_COUNT = 2;
 export const TABLE_SEATS_MIN_START = 5;
-// export const TABLE_SEATS_MIN_START = 2;
+// export const TABLE_SEATS_MIN_COUNT = 1; // allow 1 for testing purposes
+// export const TABLE_SEATS_MIN_START = 1; // allow 1 for testing purposes
 
 export const UCSB_POKER_TOURNEY_ID =
   "f6fd507b-42fb-4fba-a0d3-e9ded05aeca5" as const; // hard code for now, implement different tournaments later
