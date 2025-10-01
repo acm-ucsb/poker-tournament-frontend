@@ -89,3 +89,54 @@ export function TournamentDetails() { // Tournament name,start time, end time, b
         </div>
     );
 }
+
+export function LeaderboardTracker() { // Leaderboard of players/bots
+    // Stub list of players (replace with API data in future)
+    const players = [
+        { id: 1, name: "Alice", chips: 3200 },
+        { id: 2, name: "Bob", chips: 2800 },
+        { id: 3, name: "Charlie", chips: 1500 },
+        { id: 4, name: "Dana", chips: 900 },
+        { id: 5, name: "Eve", chips: 500 }
+    ];
+
+    return (
+        <div
+            className="w-full rounded-xl"
+            style={{
+                background: "var(--card)",
+                color: "var(--card-foreground)",
+                backdropFilter: "blur(8px)",
+                padding: "1.5rem"
+            }}
+        >
+            <h2 className="text-2xl font-extrabold mb-4 text-center tracking-wide" style={{textShadow: "0 2px 8px rgba(96,239,134,0.7), 0 0 2px #222"}}>Leaderboard</h2>
+            <ul className="space-y-3">
+                {players.map((player, idx) => {
+                    let circleColor = "bg-gray-700 text-white";
+                    if (idx === 0) circleColor = "bg-yellow-400 text-yellow-900"; // gold
+                    else if (idx === 1) circleColor = "bg-gray-300 text-gray-800"; // silver
+                    else if (idx === 2) circleColor = "bg-orange-400 text-orange-900"; // bronze
+                    return (
+                        <li
+                            key={player.id}
+                            className="flex items-center px-4 py-3 rounded-xl transition-all duration-200 bg-[rgba(0,0,0,0.18)] hover:bg-[rgba(96,239,134,0.12)] hover:scale-105 hover:z-10 shadow-none"
+                            style={{}}
+                        >
+                            <span
+                                className={`flex items-center justify-center mr-4 font-bold text-lg rounded-full w-9 h-9 ${circleColor}`}
+                            >
+                                {idx + 1}
+                            </span>
+                            <span className="font-semibold text-lg" style={{textShadow: "0 2px 8px rgba(96,239,134,0.7), 0 0 2px #222"}}>{player.name}</span>
+                            <span className="ml-auto flex items-center gap-2 font-mono text-lg font-bold">
+                                {player.chips.toLocaleString()}
+                                <img src="/casino-chip.png" alt="Casino Chip" className="w-6 h-6 inline-block" />
+                            </span>
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>
+    );
+}
