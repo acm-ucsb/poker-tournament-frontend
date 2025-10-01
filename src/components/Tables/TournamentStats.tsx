@@ -57,3 +57,35 @@ export function LiveFeed() { // Feed of interesting actions, rounds, events, etc
         </div>
     );
 }
+
+export function TournamentDetails() { // Tournament name,start time, end time, buy in, current blind, etc.
+    // Stub tournament details (replace with API data in future)
+    const tournament = {
+        name: "ACM Poker Tournament 2025",
+        startTime: "Aug 20, 2025, 6:00 PM",
+        endTime: "Aug 20, 2025, 11:00 PM",
+        buyIn: 1000,
+        currentBlind: "100 / 200",
+        totalPlayers: 120,
+        tables: 10,
+        status: "In Progress"
+    };
+
+    // NOTE: This is a stub, dk if we want this here or what to display if so
+    return (
+        <div className="w-full mb-4">
+            <h2 className="text-2xl font-extrabold mb-4 text-left tracking-wide" style={{textShadow: "0 2px 8px rgba(96,239,134,0.7), 0 0 2px #222"}}>
+                {tournament.name}
+            </h2>
+            <div className="flex flex-col gap-2 text-lg">
+                <div className="flex"><span className="font-semibold text-gray-400 w-40">Start Time:</span><span className="font-bold text-white">{tournament.startTime}</span></div>
+                <div className="flex"><span className="font-semibold text-gray-400 w-40">End Time:</span><span className="font-bold text-white">{tournament.endTime}</span></div>
+                <div className="flex items-center"><span className="font-semibold text-gray-400 w-40">Buy-In:</span><span className="font-bold text-[#60ef86]">{tournament.buyIn.toLocaleString()} <img src="/casino-chip.png" alt="Casino Chip" className="w-5 h-5 inline-block ml-1" /></span></div>
+                <div className="flex"><span className="font-semibold text-gray-400 w-40">Current Blind:</span><span className="font-bold text-[#f5c542]">{tournament.currentBlind}</span></div>
+                <div className="flex"><span className="font-semibold text-gray-400 w-40">Total Players:</span><span className="font-bold text-white">{tournament.totalPlayers}</span></div>
+                <div className="flex"><span className="font-semibold text-gray-400 w-40">Tables:</span><span className="font-bold text-white">{tournament.tables}</span></div>
+                <div className="flex"><span className="font-semibold text-gray-400 w-40">Status:</span><span className="font-bold text-[#60ef86]">{tournament.status}</span></div>
+            </div>
+        </div>
+    );
+}
