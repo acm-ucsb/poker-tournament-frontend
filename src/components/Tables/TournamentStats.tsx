@@ -2,10 +2,11 @@
 
 export function TournamentStats() {
   return (
-    <div>
-      <TournamentDetails />
-      <LeaderboardTracker />
-      <LiveFeed />
+    <div className="flex-[1] min-w-0 pt-8 pb-8 md:pl-6 md:pr-10 mt-6">
+      <div className="flex flex-col gap-4">
+          <LeaderboardTracker/>
+          <LiveFeed/>
+      </div>
     </div>
   );
 }
