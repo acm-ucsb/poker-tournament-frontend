@@ -11,10 +11,10 @@ export function TournamentStats() {
 
                 {/* Small stat boxes in a responsive grid to match table cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <StatBox label="Players" value="120" sub="total players" />
-                    <StatBox label="Blind" value="100 / 200" sub="current" />
-                    <StatBox label="Buy-In" value="1,000" sub="entry amount" />
-                    <StatBox label="Tables" value="10" sub="active tables" />
+                    <StatBox label="Players" value="120" />
+                    <StatBox label="Blind" value="100 / 200" />
+                    <StatBox label="Buy-In" value="1,000" />
+                    <StatBox label="Tables" value="10" />
                 </div>
 
                 {/* Leaderboard and Live Feed as full-width boxes below the small stats */}
@@ -76,8 +76,8 @@ export function TournamentDetails() {
     // Stub tournament details (replace with API data in future)
     const tournament = {
         name: "ACM Poker Tournament 2025",
-        startTime: "Aug 20, 2025, 6:00 PM",
-        endTime: "Aug 20, 2025, 11:00 PM",
+        startTime: "Aug 20, 6:00 PM",
+        endTime: "Aug 20, 11:00 PM",
         buyIn: 1000,
         currentBlind: "100 / 200",
         totalPlayers: 120,
@@ -149,15 +149,14 @@ export function LeaderboardTracker() {
     );
 }
 
-function StatBox({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
+function StatBox({ label, value }: { label: string; value: string | number }) {
     return (
-        <div className={`${cardBase} flex flex-col justify-center items-start gap-1 p-4`}>
-            <div className="flex items-center justify-between w-full">
-                <div>
+        <div className={`${cardBase} p-4`}>
+            <div className="flex items-center justify-between w-full gap-3">
+                <div className="min-w-0">
                     <div className="text-xs text-gray-400 uppercase tracking-wider">{label}</div>
-                    <div className="text-lg font-semibold mt-1">{value}</div>
+                    <div className="text-lg font-semibold mt-1 truncate">{value}</div>
                 </div>
-                <div className="text-sm text-gray-400">{sub}</div>
             </div>
         </div>
     );
