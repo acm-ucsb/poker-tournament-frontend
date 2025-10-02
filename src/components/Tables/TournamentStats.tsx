@@ -145,8 +145,7 @@ export function LeaderboardTracker() {
                                 {i + 1}
                             </div>
                             <div className="min-w-0">
-                                <div className="text-sm font-medium truncate">{p.name}</div>
-                                <div className="text-xs text-gray-400">Player</div>
+                                <div className="text-base font-medium truncate">{p.name}</div>
                             </div>
                             <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
                                 {p.chips.toLocaleString()}
