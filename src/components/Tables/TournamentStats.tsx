@@ -121,7 +121,15 @@ export function LeaderboardTracker() {
         { id: 3, name: "Charlie", chips: 1500 },
         { id: 4, name: "Dana", chips: 900 },
         { id: 5, name: "Eve", chips: 500 },
+        { id: 6, name: "Frank", chips: 300 },
+        { id: 7, name: "Grace", chips: 200 },
+        { id: 8, name: "Heidi", chips: 100 },
+        { id: 9, name: "Ivan", chips: 50 },
+        { id: 10, name: "Judy", chips: 25 },
     ];
+
+    const visibleLimit = 5;
+    const shouldScroll = players.length > visibleLimit;
 
     return (
         <div className={cardBase}>
@@ -129,24 +137,25 @@ export function LeaderboardTracker() {
                 <h3 className="text-lg font-semibold">Leaderboard</h3>
                 <span className="text-sm text-gray-400">top stacks</span>
             </div>
-
-            <ol className="mt-3 space-y-2">
-                {players.map((p, i) => (
-                    <li key={p.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-[rgba(96,239,134,0.04)]">
-                        <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
-                            {i + 1}
-                        </div>
-                        <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">{p.name}</div>
-                            <div className="text-xs text-gray-400">Player</div>
-                        </div>
-                        <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
-                            {p.chips.toLocaleString()}
-                            <img src="/casino-chip.png" alt="chip" className="w-4 h-4 inline-block" />
-                        </div>
-                    </li>
-                ))}
-            </ol>
+            <div className="mt-3">
+                <ol className={`space-y-2 pr-2 ${shouldScroll ? 'h-[17rem] overflow-y-auto' : ''}`}>
+                    {players.map((p, i) => (
+                        <li key={p.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-[rgba(96,239,134,0.04)] h-12">
+                            <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
+                                {i + 1}
+                            </div>
+                            <div className="min-w-0">
+                                <div className="text-sm font-medium truncate">{p.name}</div>
+                                <div className="text-xs text-gray-400">Player</div>
+                            </div>
+                            <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
+                                {p.chips.toLocaleString()}
+                                <img src="/casino-chip.png" alt="chip" className="w-4 h-4 inline-block" />
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            </div>
         </div>
     );
 }
