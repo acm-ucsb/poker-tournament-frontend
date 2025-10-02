@@ -36,9 +36,6 @@ export function Tables() {
           <div className="md:col-span-1">
             {/* Table for displaying tournament statistics */}
             <div className="w-full h-full grow">
-              <h3 className="text-lg font-semibold mb-1">
-                Tournament Statistics
-              </h3>
               <TournamentStats />
             </div>
           </div>

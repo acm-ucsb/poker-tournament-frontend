@@ -85,27 +85,25 @@ export function TournamentDetails() {
         status: "In Progress",
     };
 
+    const statusClass = tournament.status === 'In Progress' ? 'text-[#60ef86] font-semibold' : (tournament.status === 'Ended' || tournament.status === 'Will Begin') ? 'text-[#ef6060] font-semibold' : 'text-gray-400';
+
     return (
         <div className={cardBase}>
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <h2 className="text-xl font-semibold">{tournament.name}</h2>
-                    <p className="text-sm text-gray-400 mt-1">{tournament.status} • {tournament.tables} tables</p>
-                </div>
-                <div className="text-right">
-                    <div className="text-sm text-gray-400">Buy-In</div>
-                    <div className="font-semibold text-[#60ef86]">{tournament.buyIn.toLocaleString()} <img src="/casino-chip.png" alt="chip" className="inline-block w-4 h-4 ml-1"/></div>
+            <div className="flex items-start gap-4">
+                <div className="min-w-0">
+                    <h2 className="text-xl font-semibold truncate">{tournament.name}</h2>
+                    <p className="text-sm mt-1 truncate"><span className={statusClass}>{tournament.status}</span> <span className="text-gray-400">• {tournament.tables} tables</span></p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mt-4 text-sm text-gray-300">
-                <div>
+            <div className="grid grid-cols-2 gap-3 mt-4 text-sm text-gray-300 min-w-0">
+                <div className="min-w-0">
                     <div className="text-xs text-gray-400">Start</div>
-                    <div className="font-medium text-white">{tournament.startTime}</div>
+                    <div className="font-medium text-white truncate">{tournament.startTime}</div>
                 </div>
-                <div>
+                <div className="min-w-0">
                     <div className="text-xs text-gray-400">End</div>
-                    <div className="font-medium text-white">{tournament.endTime}</div>
+                    <div className="font-medium text-white truncate">{tournament.endTime}</div>
                 </div>
 
             </div>
