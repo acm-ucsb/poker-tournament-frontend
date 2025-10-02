@@ -1,4 +1,6 @@
 "use client";
+import type { ReactNode } from 'react';
+import { User as UserIcon } from 'lucide-react';
 
 export function TournamentStats() {
     return (
@@ -11,10 +13,10 @@ export function TournamentStats() {
 
                 {/* Small stat boxes in a responsive grid to match table cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <StatBox label="Players" value="120" />
-                    <StatBox label="Blind" value="100 / 200" />
-                    <StatBox label="Buy-In" value="1,000" />
-                    <StatBox label="Tables" value="10" />
+                    <StatBox label="Players" value="120" icon={<UserIcon className="w-6 h-6 text-gray-300" />} />
+                    <StatBox label="Blind" value="100 / 200" icon={<img src={encodeURI('/Poker Chip Single.png')} alt="chip" className="w-6 h-6" />} />
+                    <StatBox label="Buy-In" value="1,000" icon={<img src="/casino-chip.png" alt="chip" className="w-6 h-6" />} />
+                    <StatBox label="Tables" value="10" icon={<img src={encodeURI('/poker-table (1).png')} alt="table" className="w-8 h-8" />} />
                 </div>
 
                 {/* Leaderboard and Live Feed as full-width boxes below the small stats */}
@@ -149,14 +151,23 @@ export function LeaderboardTracker() {
     );
 }
 
-function StatBox({ label, value }: { label: string; value: string | number }) {
+function StatBox({ label, value, icon }: { label: string; value: string | number; icon?: ReactNode }) {
     return (
         <div className={`${cardBase} p-4`}>
-            <div className="flex items-center justify-between w-full gap-3">
-                <div className="min-w-0">
+            <div className="grid grid-rows-2 grid-cols-[1fr_auto] gap-0.5 items-start">
+                <div className="row-start-1 min-w-0">
                     <div className="text-xs text-gray-400 uppercase tracking-wider">{label}</div>
-                    <div className="text-lg font-semibold mt-1 truncate">{value}</div>
                 </div>
+
+                <div className="row-start-2 min-w-0">
+                    <div className="text-lg font-semibold truncate">{value}</div>
+                </div>
+
+                {icon && (
+                    <div className="row-start-2 self-center flex-shrink-0 flex items-center justify-center">
+                        {icon}
+                    </div>
+                )}
             </div>
         </div>
     );
