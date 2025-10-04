@@ -2,21 +2,19 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { BACKEND_ENGINE_BASE_URL } from "@/lib/constants";
-import axios from "axios";
-import { getLanguageFromExtension } from "@/lib/utils";
+import { Team } from "@/lib/types";
 
-type SubmissionData = {
-  code: string;
-  language: string;
+type Params = {
+  teamIds: string[];
 };
 
-export async function getSubmission(): Promise<
-  ServerActionResponse<SubmissionData>
-> {
+export async function getTeams(
+  params: Params
+): Promise<ServerActionResponse<Team[]>> {
+  const { teamIds } = params;
+
   try {
     const supabase = await createSupabaseServerClient();
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -26,7 +24,7 @@ export async function getSubmission(): Promise<
 
     if (!user || !session) {
       throw new ServerActionError({
-        message: "You must be logged in to fetch submissions.",
+        message: "You must be logged in to get a team.",
         code: "UNAUTHORIZED",
         status: 401,
       });
@@ -34,45 +32,30 @@ export async function getSubmission(): Promise<
 
     if (!user.email?.includes("@ucsb.edu")) {
       throw new ServerActionError({
-        message: "You must use a UCSB email to fetch submissions.",
+        message: "You must use a UCSB email to get a team.",
         code: "FORBIDDEN",
         status: 403,
       });
     }
 
-    const res = await axios.get(`${BACKEND_ENGINE_BASE_URL}/submission`, {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      validateStatus: function (status) {
-        return true; // Don't throw errors for any status code, just handle them manually
-      },
-    });
+    // check if team with team id exists
+    const { data: teams } = await supabase
+      .from("teams")
+      .select("*")
+      .in("id", teamIds)
+      .throwOnError();
 
-    if (
-      res.status !== 200 ||
-      !res.data ||
-      !res.data.content ||
-      !res.data.filename
-    ) {
+    if (!teams || teams.length === 0) {
       throw new ServerActionError({
-        message: "Failed to fetch submission.",
-        code: "INTERNAL_SERVER_ERROR",
-        status: res.status,
+        message: "Teams not found",
+        code: "BAD_REQUEST",
+        status: 400,
       });
     }
 
-    const code = res.data.content;
-    const language = getLanguageFromExtension({
-      extension: res.data.filename.split(".").pop() || "",
-    });
-
     return {
       success: true,
-      data: {
-        code,
-        language,
-      },
+      data: teams,
       status: 200,
       error: null,
     };

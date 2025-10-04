@@ -24,53 +24,60 @@ const suitColors: Record<CardSuit, string> = {
 };
 
 export function PlayingCard({ card, faceDown = false, className }: Props) {
-  if (faceDown || !card) {
-    return (
-      <div
-        className={cn(
-          "w-12 h-16 rounded-lg bg-gray-700 flex items-center justify-center",
-          "shadow-lg border border-gray-600",
-          "relative overflow-hidden",
-          className
-        )}
-      >
-        {/* Card back pattern */}
-        <div className="w-full h-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
-          <div className="w-10 h-16 border border-gray-500 rounded bg-gray-700/50 flex items-center justify-center">
-            <div className="w-6 h-12 bg-gray-600 rounded"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const suitSymbol = suitSymbols[card.suit];
-  const suitColor = suitColors[card.suit];
-
   return (
     <div
-      className={cn(
-        "w-12 h-16 rounded-lg bg-white flex flex-col relative",
-        "shadow-lg border border-gray-200",
-        className
-      )}
+      style={{
+        backgroundColor: faceDown || !card ? undefined : "white",
+        borderColor: faceDown || !card ? undefined : "black",
+        borderStyle: faceDown || !card ? undefined : "solid",
+        borderRadius: "0.25rem",
+      }}
+      className={cn("w-12 h-16 flex flex-col relative shadow-lg", className)}
     >
-      {/* Top-left corner */}
-      <div className="absolute top-1 left-1 flex flex-col items-center text-xs font-bold leading-none">
-        <span className={cn("text-[14px]", suitColor)}>{card.rank}</span>
-        <span className={cn("text-[12px]", suitColor)}>{suitSymbol}</span>
-      </div>
+      {faceDown || !card ? (
+        <>
+          {/* Card back pattern */}
+          <div
+            style={{
+              borderRadius: "inherit",
+            }}
+            className="w-full h-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center"
+          >
+            <div className="w-10 h-16 border border-gray-500 rounded bg-gray-700/50 flex items-center justify-center">
+              <div className="w-6 h-12 bg-gray-600 rounded"></div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Top-left corner */}
+          <div className="absolute top-1 left-1 flex flex-col items-center text-xs font-bold leading-none">
+            <span className={cn("text-[14px]", suitColors[card.suit])}>
+              {card.rank === "T" ? "10" : card.rank}
+            </span>
+            <span className={cn("text-[12px]", suitColors[card.suit])}>
+              {suitSymbols[card.suit]}
+            </span>
+          </div>
 
-      {/* Center symbol */}
-      <div className="flex-1 flex items-center justify-center">
-        <span className={cn("text-xl", suitColor)}>{suitSymbol}</span>
-      </div>
+          {/* Center symbol */}
+          <div className="flex-1 flex items-center justify-center">
+            <span className={cn("text-xl", suitColors[card.suit])}>
+              {suitSymbols[card.suit]}
+            </span>
+          </div>
 
-      {/* Bottom-right corner (rotated) */}
-      <div className="absolute bottom-1 right-1 flex flex-col items-center text-xs font-bold leading-none transform rotate-180">
-        <span className={cn("text-[14px]", suitColor)}>{card.rank}</span>
-        <span className={cn("text-[12px]", suitColor)}>{suitSymbol}</span>
-      </div>
+          {/* Bottom-right corner (rotated) */}
+          <div className="absolute bottom-1 right-1 flex flex-col items-center text-xs font-bold leading-none transform rotate-180">
+            <span className={cn("text-[14px]", suitColors[card.suit])}>
+              {card.rank === "T" ? "10" : card.rank}
+            </span>
+            <span className={cn("text-[12px]", suitColors[card.suit])}>
+              {suitSymbols[card.suit]}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

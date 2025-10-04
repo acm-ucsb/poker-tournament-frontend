@@ -29,7 +29,7 @@ export type Table = {
   created_at: string;
   status: TableStatus;
   name: string;
-  game_state: PokerGameState; // Will be PokerGameState but stored as JSON in DB
+  game_state: PokerGameStateDB; // Will be PokerGameState but stored as JSON in DB
   last_change: any; // type??
 };
 
@@ -53,7 +53,7 @@ export type CardRank =
   | "7"
   | "8"
   | "9"
-  | "10"
+  | "T"
   | "J"
   | "Q"
   | "K"
@@ -75,32 +75,30 @@ export type PlayerAction =
 export type PlayerStatus = "active" | "folded" | "all-in" | "waiting";
 export type GamePhase = "preflop" | "flop" | "turn" | "river" | "showdown";
 
-// TODO: fix the types below
-export type PokerPlayer = {
-  id: string;
-  teamId: string;
-  teamName: string;
-  position: number; // 0-8 for up to 9 players
-  chips: number;
-  currentBet: number;
-  cards: PlayingCard[] | null; // null for face-down cards
-  status: PlayerStatus;
-  lastAction?: PlayerAction;
-  lastActionAmount?: number;
-  isDealer: boolean;
-  isSmallBlind: boolean;
-  isBigBlind: boolean;
-  isCurrentPlayer: boolean;
+export type Pot = {
+  value: number;
+  players: string[]; // team IDs eligible for this pot
 };
 
-export type PokerGameState = {
-  tableId: string;
-  phase: GamePhase;
-  pot: number;
-  communityCards: PlayingCard[];
-  players: PokerPlayer[];
-  currentBet: number;
-  smallBlind: number;
-  bigBlind: number;
-  handNumber: number;
+export type PokerGameStateDB = {
+  index_to_action: number; // index of player whose turn it is
+  index_of_small_blind: number; // index of small blind player
+  players: string[]; // list of teams - DB returns list of IDs, but we need full team objects here, must be joined
+  players_cards: [string, string][]; // list of player hands in seating order
+  held_money: number[]; // list of current stack sizes in seating order
+  bet_money: number[]; // list of current bets in seating order
+  community_cards: string[]; // 0 to 5 cards
+  pots: Pot[]; // list of pots
+  small_blind: number;
+  big_blind: number;
+};
+
+export type PokerGameState = Omit<
+  PokerGameStateDB,
+  "players_cards" | "community_cards" | "players" | "phase"
+> & {
+  players_cards: [PlayingCard, PlayingCard][]; // list of player hands in seating order
+  community_cards: PlayingCard[]; // 0 to 5 cards
+  players: Team[]; // list of teams - DB returns list of IDs, but we need full team objects here, must be joined
+  phase: GamePhase; // current phase of the hand - this is not in the DB, must be derived
 };

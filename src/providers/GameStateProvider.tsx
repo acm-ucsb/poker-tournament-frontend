@@ -17,11 +17,19 @@ import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
 import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
-import { Table, Team, Tournament, User } from "@/lib/types";
+import {
+  PokerGameState,
+  PokerGameStateDB,
+  Table,
+  Team,
+  Tournament,
+  User,
+} from "@/lib/types";
 import { useData } from "./DataProvider";
+import { parseGameState } from "@/lib/util/parseGameState";
 
 type GameStateContextType = {
-  gameState: any | null;
+  gameState: PokerGameState | null;
   isLoading: boolean;
   error: string | null;
 };
@@ -42,9 +50,28 @@ export function GameStateProvider({
   tableId,
 }: GameStateProviderProps) {
   const supabase = createSupabaseClient();
-  const [gameState, setGameState] = useState<any | null>(null);
+
+  const [gameState, setGameState] = useState<PokerGameState | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // First fetch the game state
+  const { data: initialTableData, error: initialError } = useQuery<{
+    game_state: PokerGameStateDB;
+  }>(supabase.from("tables").select("game_state").eq("id", tableId).single(), {
+    revalidateOnFocus: false,
+    refreshInterval: 0,
+  });
+
+  useEffect(() => {
+    if (initialTableData) {
+      parseGameState(initialTableData.game_state).then((populatedState) => {
+        setGameState(populatedState);
+      });
+
+      setIsLoading(false);
+    }
+  }, [initialTableData, initialError]);
 
   useEffect(() => {
     const supabasePokerTable = supabase.channel(`poker_table:${tableId}`);
@@ -59,13 +86,11 @@ export function GameStateProvider({
           table: "tables",
           filter: `id=eq.${tableId}`,
         },
-        ({ new: newGame }: { new: Table }) => {
-          console.log("New game state:", newGame);
-          setGameState(newGame.game_state);
+        async ({ new: newGame }: { new: Table }) => {
+          setGameState(await parseGameState(newGame.game_state));
         }
       )
       .subscribe((status, err) => {
-        console.log("Received event:", status, err);
         if (err) {
           toast.error("Unable to fetch game state: " + err.message);
           setError(err.message);

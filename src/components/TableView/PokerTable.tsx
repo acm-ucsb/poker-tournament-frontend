@@ -27,23 +27,6 @@ export function PokerTable({ gameState, className }: Props) {
     };
   };
 
-  const getPhaseDisplayName = (phase: PokerGameState["phase"]) => {
-    switch (phase) {
-      case "preflop":
-        return "Pre-Flop";
-      case "flop":
-        return "Flop";
-      case "turn":
-        return "Turn";
-      case "river":
-        return "River";
-      case "showdown":
-        return "Showdown";
-      default:
-        return phase;
-    }
-  };
-
   return (
     <div className={cn("relative w-full mx-auto", className)}>
       {/* Main table area */}
@@ -57,15 +40,15 @@ export function PokerTable({ gameState, className }: Props) {
                 Pot
               </div>
               <div className="text-xl font-bold text-white">
-                ${gameState.pot.toLocaleString()}
+                ${gameState.pots[0].value.toLocaleString()}
               </div>
             </div>
           </div>
 
           {/* Community cards */}
           <div className="flex space-x-2">
-            {gameState.communityCards.length > 0 ? (
-              gameState.communityCards.map((card, index) => (
+            {gameState.community_cards.length > 0 ? (
+              gameState.community_cards.map((card, index) => (
                 <PlayingCard
                   key={index}
                   card={card}
@@ -93,7 +76,7 @@ export function PokerTable({ gameState, className }: Props) {
             className="absolute"
             style={getPlayerPosition(index, gameState.players.length)}
           >
-            <PlayerPosition player={player} />
+            <PlayerPosition team={player} />
           </div>
         ))}
       </div>
