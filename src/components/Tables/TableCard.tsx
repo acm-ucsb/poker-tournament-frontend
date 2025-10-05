@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import { useData } from "@/providers/DataProvider";
 import { Badge } from "../ui/badge";
+import { Table } from "@/lib/types";
 
 type Props = {
   table: Table;
