@@ -6,6 +6,8 @@ import { PlayingCard } from "./PlayingCard";
 import { Team } from "@/lib/types";
 import { useGameState } from "@/providers/GameStateProvider";
 import { LoaderComponent } from "../LoaderComponent";
+import { formatChips } from "@/lib/util/util";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type Props = {
   team: Team;
@@ -23,23 +25,7 @@ export function PlayerPosition({ team, className }: Props) {
     (p) => p.id === team.id
   );
 
-  const getActionText = () => {
-    if (gameState.index_to_action <= currentPlayerIndex) return "";
-
-    switch (gameState.bet_money[currentPlayerIndex]) {
-      case -1:
-        return "FOLD";
-      case 0:
-        return "CHECK";
-      case gameState.held_money[currentPlayerIndex]:
-        return "ALL-IN";
-      case gameState.bet_money[currentPlayerIndex - 1]:
-        return "CALL";
-      default:
-        return "RAISE";
-    }
-  };
-
+  // Determine special positions
   const isSmallBlind = gameState.index_of_small_blind === currentPlayerIndex;
   const isBigBlind =
     (gameState.index_of_small_blind + 1) % gameState.players.length ===
@@ -48,87 +34,187 @@ export function PlayerPosition({ team, className }: Props) {
     (gameState.index_of_small_blind - 1 + gameState.players.length) %
       gameState.players.length ===
     currentPlayerIndex;
-  const isCurrentPlayer = gameState.index_to_action === currentPlayerIndex;
+
+  const getActionBadge = () => {
+    const currentBet = gameState.bet_money[currentPlayerIndex];
+    const currentHeldMoney = gameState.held_money[currentPlayerIndex];
+
+    // Check if no action has occurred yet
+    if (gameState.index_to_action <= currentPlayerIndex && currentBet === 0)
+      return {
+        action: null,
+        amount: 0,
+        component: null,
+      };
+
+    // Calculate the highest bet made BEFORE this player's turn
+    const maxBetBeforePlayer = Math.max(
+      ...gameState.bet_money.slice(0, currentPlayerIndex),
+      0 // Include 0 in case this is the first player
+    );
+
+    // Check for fold
+    if (currentBet === -1) {
+      return {
+        action: "fold",
+        amount: 0,
+        component: (
+          <Badge variant={"default"} className="rounded-full bg-blue-100">
+            fold
+          </Badge>
+        ),
+      };
+    }
+
+    // Check for check (bet is 0 and there's no bet to match)
+    if (currentBet === 0) {
+      return {
+        action: "check",
+        amount: 0,
+        component: (
+          <Badge variant={"default"} className="rounded-full bg-blue-100">
+            check
+          </Badge>
+        ),
+      };
+    }
+
+    // Check for all-in (player has 0 chips left after betting)
+    if (currentHeldMoney === 0 || currentBet >= currentHeldMoney) {
+      return {
+        action: "all-in",
+        amount: currentBet,
+        component: (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant={"default"} className="rounded-full bg-blue-100">
+                all-in {formatChips(currentBet)}
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>{formatChips(currentBet, false)} chips</span>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      };
+    }
+
+    // Check for call (matches the highest bet before their turn)
+    if (currentBet === maxBetBeforePlayer) {
+      return {
+        action: "call",
+        amount: currentBet,
+        component: (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant={"default"} className="rounded-full bg-blue-100">
+                call {formatChips(currentBet)}
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>{formatChips(currentBet, false)} chips</span>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      };
+    }
+
+    // Otherwise it's a raise
+    return {
+      action: "raise",
+      amount: currentBet,
+      component: (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Badge variant={"default"} className="rounded-full bg-blue-100">
+              raise {formatChips(currentBet)}
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>
+            <span>{formatChips(currentBet, false)} chips</span>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    };
+  };
 
   return (
     <div className={cn("flex flex-col items-center space-y-2", className)}>
       {/* Player info header */}
-      <div className="flex flex-col items-center space-y-1">
+      <div className="flex flex-col items-center gap-y-1.5">
+        {/* Action indicator */}
+        {currentPlayerIndex === gameState.index_to_action && (
+          <Badge variant={"default"} className="rounded-full bg-red-100">
+            action
+          </Badge>
+        )}
+        {getActionBadge().action && getActionBadge().component}
+
         {/* Team name */}
         <div
           className={
-            "text-sm font-medium inline-flex items-center justify-center gap-1.5"
+            "text-sm font-medium flex flex-col items-center justify-center gap-1.5"
           }
         >
-          {team.name}
-          {/* Special position indicators */}
-          {isDealer && (
-            <Badge
-              variant={"default"}
-              className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
-            >
-              D
-            </Badge>
-          )}
-          {isSmallBlind && (
-            <Badge
-              variant={"default"}
-              className="w-6 h-6 bg-amber-300 rounded-full flex items-center justify-center text-[11px] font-bold"
-            >
-              SB
-            </Badge>
-          )}
-          {isBigBlind && (
-            <Badge
-              variant={"default"}
-              className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-[11px] font-bold"
-            >
-              BB
-            </Badge>
-          )}
+          <span className="font-extrabold">{team.name}</span>
+          <div className="flex gap-1.5">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant={"default"} className="rounded-full bg-white/90">
+                  {formatChips(gameState.held_money[currentPlayerIndex])} chips
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>
+                  {formatChips(gameState.held_money[currentPlayerIndex], false)}{" "}
+                  chips
+                </span>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Special position indicators */}
+            {isDealer && (
+              <Badge
+                variant={"default"}
+                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
+              >
+                D
+              </Badge>
+            )}
+            {isSmallBlind && (
+              <Badge
+                variant={"default"}
+                className="w-6 h-6 bg-amber-300 rounded-full flex items-center justify-center text-[11px] font-bold"
+              >
+                SB
+              </Badge>
+            )}
+            {isBigBlind && (
+              <Badge
+                variant={"default"}
+                className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center text-[11px] font-bold"
+              >
+                BB
+              </Badge>
+            )}
+          </div>
         </div>
-        Chips
-        <Badge variant={"default"} className="rounded-full bg-white/70">
-          {gameState.held_money[currentPlayerIndex]} chips
-        </Badge>
       </div>
 
       {/* Player cards */}
-      <div className="flex space-x-1">
+      <div className="flex gap-[clamp(0.15rem,0.3vw,0.375rem)]">
         {gameState.players_cards[currentPlayerIndex] ? (
+          // && gameState.players[currentPlayerIndex].id === data?.team_id
           gameState.players_cards[currentPlayerIndex].map((card, index) => (
-            <PlayingCard key={index} card={card} className="w-14 h-20" />
+            <PlayingCard key={index} card={card} />
           ))
         ) : (
           <>
-            <PlayingCard faceDown className="w-14 h-20" />
-            <PlayingCard faceDown className="w-14 h-20" />
+            <PlayingCard faceDown />
+            <PlayingCard faceDown />
           </>
         )}
       </div>
-
-      {/* Current bet display */}
-      {/* {team.currentBet > 0 && (
-        <div className="bg-gray-800/80 backdrop-blur-sm rounded px-2 py-1 border border-gray-600">
-          <div className="text-xs text-gray-300">bet {team.currentBet}</div>
-        </div>
-      )} */}
-
-      {/* Action indicator */}
-      {/* {team.lastAction && (
-        <div
-          className={cn(
-            "text-xs font-bold px-2 py-1 rounded",
-            team.lastAction === "fold"
-              ? "text-red-400 bg-red-900/30"
-              : team.isCurrentPlayer
-                ? "text-green-400 bg-green-900/30"
-                : "text-gray-400 bg-gray-800/50"
-          )}
-        >
-          {getActionText()}
-        </div>
-      )} */}
     </div>
   );
 }

@@ -21,7 +21,7 @@ export function TableView({ tableId }: Props) {
     data?.team?.table?.id === tableId ? `Your Table` : `Table ${tableName}`;
 
   return (
-    <main className="flex flex-col w-full max-w-7xl self-center pb-6">
+    <main className="flex flex-col w-full max-w-7xl self-center pb-6 grow">
       <BreadcrumbBuilder
         previousPages={[
           { title: "Home", link: "/" },
@@ -32,7 +32,7 @@ export function TableView({ tableId }: Props) {
       />
 
       {/* Main content */}
-      <section className="flex flex-col mt-6">
+      <section className="flex flex-col mt-6 grow">
         {/* Poker table */}
         {!gameState ? (
           <LoaderComponent />
