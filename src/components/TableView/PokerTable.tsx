@@ -2,9 +2,8 @@
 
 import { PokerGameState } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { PlayingCard } from "./PlayingCard";
 import { PlayerPosition } from "./PlayerPosition";
+import { RevealingCard, CARD_DIMENSIONS_CLASS } from "./RevealingCard";
 import {
   Tooltip,
   TooltipContent,
@@ -77,21 +76,30 @@ export function PokerTable({ gameState, className }: Props) {
 
           {/* Community cards */}
           <div className="flex gap-[clamp(0.25rem,0.5vw,0.5rem)]">
-            {gameState.community_cards.length > 0 ? (
-              gameState.community_cards.map((card, index) => (
-                <PlayingCard key={index} card={card} className="shadow-lg" />
-              ))
-            ) : (
-              // Placeholder for community cards
-              <div className="flex gap-[clamp(0.25rem,0.5vw,0.5rem)]">
-                {[...Array(5)].map((_, i) => (
+            {Array.from({ length: 5 }).map((_, index) => {
+              const card = gameState.community_cards[index];
+
+              if (!card) {
+                return (
                   <div
-                    key={i}
-                    className="rounded-lg border-2 border-dashed border-slate-600/50"
+                    key={`placeholder-${index}`}
+                    className={cn(
+                      CARD_DIMENSIONS_CLASS,
+                      "rounded-lg border-2 border-dashed border-slate-600/50 bg-black/10 backdrop-blur-sm"
+                    )}
                   />
-                ))}
-              </div>
-            )}
+                );
+              }
+
+              return (
+                <RevealingCard
+                  key={`${card.rank}${card.suit}`}
+                  card={card}
+                  delay={index * 140}
+                  className="shadow-lg"
+                />
+              );
+            })}
           </div>
         </div>
 
