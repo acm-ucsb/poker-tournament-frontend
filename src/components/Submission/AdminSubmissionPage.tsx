@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { LoaderComponent } from "../LoaderComponent";
 import { getTeamSubmission } from "@/lib/server-actions/admin/getTeamSubmission";
+import { Team } from "@/lib/types";
 
 export function AdminSubmissionPage({
   params,

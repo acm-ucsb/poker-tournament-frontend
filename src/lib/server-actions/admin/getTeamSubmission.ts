@@ -5,6 +5,7 @@ import { ServerActionError, ServerActionResponse } from "../types";
 import { BACKEND_ENGINE_BASE_URL } from "@/lib/constants";
 import axios from "axios";
 import { getLanguageFromExtension } from "@/lib/utils";
+import { Team } from "@/lib/types";
 
 type Params = {
   teamId: string;
@@ -117,7 +118,6 @@ export async function getTeamSubmission(
       error: null,
     };
   } catch (error) {
-    console.log(error);
     if (error instanceof ServerActionError) {
       return {
         success: false,

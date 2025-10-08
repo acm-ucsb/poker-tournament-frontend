@@ -18,6 +18,7 @@ import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
 import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
+import { Table, Team, Tournament, User } from "@/lib/types";
 
 type UserData = User & {
   team:
@@ -179,7 +180,6 @@ export function DataProvider({ children }: DataProviderProps) {
   const tablesData = fetchedTablesData ?? null;
   const tablesError = fetchTablesError?.message ?? null;
 
-  // store session, user, updateUserSession, and signOut function in context
   const value = useMemo(
     () => ({
       data,

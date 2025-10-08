@@ -18,6 +18,7 @@ import {
 } from "../ui/alert-dialog";
 import { ButtonWrapper } from "../ButtonWrapper";
 import moment from "moment";
+import { User } from "@/lib/types";
 
 type Props = {
   member: User;
