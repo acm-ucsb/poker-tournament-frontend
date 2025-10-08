@@ -203,7 +203,8 @@ export function PlayerPosition({ team, className }: Props) {
 
       {/* Player cards */}
       <div className="flex gap-[clamp(0.15rem,0.3vw,0.375rem)]">
-        {gameState.players_cards[currentPlayerIndex] ? (
+        {gameState.players_cards[currentPlayerIndex] &&
+        gameState.players_cards[currentPlayerIndex].length === 2 ? (
           // && gameState.players[currentPlayerIndex].id === data?.team_id
           gameState.players_cards[currentPlayerIndex].map((card, index) => (
             <PlayingCard key={index} card={card} />

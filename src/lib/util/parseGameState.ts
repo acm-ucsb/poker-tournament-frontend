@@ -30,10 +30,6 @@ export async function parseGameState(
 
   const playerCards = [] as [PlayingCard, PlayingCard][];
   for (const cardPair of game_state.players_cards) {
-    if (cardPair.length !== 2) {
-      throw new Error("Invalid card pair");
-    }
-
     // the first letter of each card is the suit, the rest is the rank. convert to PlayingCard object
     const parsedPair: [PlayingCard, PlayingCard] = cardPair.map((cardStr) => {
       return parseCard(cardStr);

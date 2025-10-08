@@ -85,7 +85,7 @@ export function PokerTable({ gameState, className }: Props) {
                     key={`placeholder-${index}`}
                     className={cn(
                       CARD_DIMENSIONS_CLASS,
-                      "rounded-lg border-2 border-dashed border-slate-600/50 bg-black/10 backdrop-blur-sm"
+                      "rounded-lg border-2 border-dashed border-slate-600/60 bg-black/20 backdrop-blur-sm"
                     )}
                   />
                 );
