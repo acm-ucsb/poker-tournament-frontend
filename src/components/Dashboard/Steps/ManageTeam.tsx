@@ -124,7 +124,11 @@ export function ManageTeam() {
       setDeadlinePassed(now.isAfter(deadline));
 
       if (deadline.isAfter(now)) {
-        const timeoutDuration = deadline.diff(now);
+        const timeoutDuration = Math.min(
+          deadline.diff(now),
+          Math.pow(2, 31) - 1 // max setTimeout duration
+        );
+
         const timer = setTimeout(() => {
           mutate();
           setDeadlinePassed(true);

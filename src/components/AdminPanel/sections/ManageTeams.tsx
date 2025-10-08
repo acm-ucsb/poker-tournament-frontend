@@ -3,6 +3,7 @@
 import { TeamCard } from "@/components/Teams/TeamCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
+import { Team } from "@/lib/types";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 
 export type TeamData = Team & {
