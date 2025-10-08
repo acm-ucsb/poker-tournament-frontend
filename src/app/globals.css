@@ -126,6 +126,38 @@
   }
 }
 
+/* scrollbars */
+/* *::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 9999px;
+  background-color: hsl(0, 0%, 80%);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 9999px;
+  background-color: hsl(0, 0%, 70%);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 9999px;
+  background-color: hsl(0, 0%, 60%);
+} */
+
 .shiki-container pre {
   padding: 1rem;
   border-radius: calc(var(--radius) - 2px);
