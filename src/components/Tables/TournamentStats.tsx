@@ -1,6 +1,8 @@
 "use client";
 import type { ReactNode } from 'react';
 import { User as UserIcon } from 'lucide-react';
+import Link from 'next/link';
+import { useData } from '@/providers/DataProvider';
 
 export function TournamentStats() {
     return (
@@ -115,21 +117,12 @@ export function TournamentDetails() {
 
 export function LeaderboardTracker() {
     // Stub list of players (replace with API data in future)
-    const players = [
-        { id: 1, name: "Alice", chips: 3200 },
-        { id: 2, name: "Bob", chips: 2800 },
-        { id: 3, name: "Charlie", chips: 1500 },
-        { id: 4, name: "Dana", chips: 900 },
-        { id: 5, name: "Eve", chips: 500 },
-        { id: 6, name: "Frank", chips: 300 },
-        { id: 7, name: "Grace", chips: 200 },
-        { id: 8, name: "Heidi", chips: 100 },
-        { id: 9, name: "Ivan", chips: 50 },
-        { id: 10, name: "Judy", chips: 25 },
-    ];
+    const { leaderboardData } = useData();
+
+    const teams = leaderboardData || [];
 
     const visibleLimit = 5;
-    const shouldScroll = players.length > visibleLimit;
+    const shouldScroll = teams.length > visibleLimit;
 
     return (
         <div className={cardBase}>
@@ -138,20 +131,25 @@ export function LeaderboardTracker() {
                 <span className="text-sm text-gray-400">top stacks</span>
             </div>
             <div className="mt-3">
-                <ol className={`space-y-2 pr-2 ${shouldScroll ? 'h-[17rem] overflow-y-auto' : ''}`}>
-                    {players.map((p, i) => (
-                        <li key={p.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-[rgba(96,239,134,0.04)] h-12">
-                            <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
-                                {i + 1}
-                            </div>
-                            <div className="min-w-0">
-                                <div className="text-base font-medium truncate">{p.name}</div>
-                            </div>
-                            <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
-                                {p.chips.toLocaleString()}
-                                <img src="/casino-chip.png" alt="chip" className="w-4 h-4 inline-block" />
-                            </div>
-                        </li>
+                <ol className={`space-y-3 pr-2 ${shouldScroll ? 'h-[17rem] overflow-y-auto' : ''}`}>
+                    {teams.map((team, i) => (
+                        <Link
+                            href={team.table_id ? `/dashboard/tables/${team.table_id}` : '#'}
+                            title={team.table_id ? `Go to table ${team.table_id}` : "No table assigned"}
+                        >
+                            <li key={team.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-[rgba(96,239,134,0.04)] h-12">
+                                <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
+                                    {i + 1}
+                                </div>
+                                <div className="min-w-0">
+                                    <div className="text-base font-medium truncate">{team.name}</div>
+                                </div>
+                                <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
+                                    {team.num_chips.toLocaleString()}
+                                    <img src="/casino-chip.png" alt="chip" className="w-4 h-4 inline-block" />
+                                </div>
+                            </li>
+                        </Link>
                     ))}
                 </ol>
             </div>
