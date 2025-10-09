@@ -76,7 +76,7 @@ export function TournamentStats() {
         {/* Leaderboard and Live Feed as full-width boxes below the small stats */}
         <div className="grid grid-cols-1 gap-3">
           <LeaderboardTracker />
-          <LiveFeed />
+          {/* <LiveFeed /> */}
         </div>
       </div>
     </div>
