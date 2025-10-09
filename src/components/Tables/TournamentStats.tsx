@@ -226,7 +226,6 @@ export function TournamentDetails() {
 }
 
 export function LeaderboardTracker() {
-    // Stub list of players (replace with API data in future)
     const { leaderboardData } = useData();
 
     const teams = leaderboardData || [];

@@ -32,7 +32,7 @@ export function Tables() {
               ))}
           </div>
 
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 lg:ml-6">
             {/* Table for displaying tournament statistics */}
             <div className="w-full h-full grow">
               <TournamentStats />
