@@ -150,7 +150,7 @@ export function LiveFeed() {
         {actions.map((a) => (
           <li
             key={a.id}
-            className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:border-[rgba(96,239,134,0.06)] transition-colors"
+            className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:bg-[rgba(96,239,134,0.06)] hover:border-[rgba(96,239,134,0.06)] transition-colors"
           >
             <div className={`flex-shrink-0 mt-0.5 ${typeColor(a.type)}`}>
               {a.type === "win" ? "🏆" : a.type === "loss" ? "💔" : "🔥"}
@@ -242,15 +242,15 @@ export function LeaderboardTracker() {
 
     const teams = leaderboardData || [];
 
-    const visibleLimit = 5;
-    const shouldScroll = teams.length > visibleLimit;
-
     return (
         <div className={cardBase}>
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Leaderboard</h3>
-                <span className="text-sm text-gray-400">top stacks</span>
-            </div>
+              <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Leaderboard</h3>
+                  <span className="text-sm text-gray-400">top stacks</span>
+              </div>
+        <div className="mt-1 mb-2">
+          <span className="text-sm text-gray-400 block text-left">Scroll to see more teams!</span>
+        </div>
             <div className="mt-3">
                 {/* Height for 5 items: 5 * 3.5rem (item height + padding) + 4 * 0.5rem (space-y-2) = 19.5rem */}
                 <ol className={`space-y-2 pr-2 h-[19.5rem] overflow-y-auto`}>
@@ -260,7 +260,7 @@ export function LeaderboardTracker() {
               href={team.table_id ? `/dashboard/tables/${team.table_id}` : '#'}
               title={team.table_id ? `Go to table ${team.table_id}` : "No table assigned"}
             >
-          <li className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-[rgba(96,239,134,0.06)] transition-colors">
+          <li className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-[rgba(96,239,134,0.06)] hover:border-[rgba(96,239,134,0.06)] transition-colors cursor-pointer">
                 <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
                   {i + 1}
                 </div>
