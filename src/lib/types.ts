@@ -40,6 +40,7 @@ export type Tournament = {
   status: TournamentStatus;
   teams_deadline: string;
   submissions_deadline: string;
+  starting_chips: number;
 };
 
 // Poker-specific types
