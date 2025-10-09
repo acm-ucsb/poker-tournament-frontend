@@ -13,14 +13,13 @@ export function Tables() {
           { title: "Home", link: "/" },
           { title: "Dashboard", link: "/dashboard" },
         ]}
-        currentPage={{ title: "Tournament Tables" }}
+        currentPage={{ title: "Tournament Menu" }}
       />
       {/* Dashboard content */}
       <section className="flex flex-col mt-6">
-        <h2 className="text-2xl font-bold mb-4">Tournament Tables</h2>
-        <div className="md:grid md:grid-cols-3 flex flex-col-reverse gap-3">
-          <div className="flex flex-col gap-2 md:col-span-2 w-full">
-            <h3 className="text-lg font-semibold mb-1">Tables</h3>
+        <h2 className="text-2xl font-bold mb-4">Tournament Menu</h2>
+        <div className="lg:grid lg:grid-cols-3 flex flex-col gap-3">
+          <div className="flex flex-col gap-2 lg:col-span-2 w-full">
             {/* Table for displaying tournament tables */}
             {tablesData
               ?.sort((a, b) => {
@@ -33,12 +32,9 @@ export function Tables() {
               ))}
           </div>
 
-          <div className="md:col-span-1">
+          <div className="lg:col-span-1 lg:ml-6">
             {/* Table for displaying tournament statistics */}
             <div className="w-full h-full grow">
-              <h3 className="text-lg font-semibold mb-1">
-                Tournament Statistics
-              </h3>
               <TournamentStats />
             </div>
           </div>
