@@ -41,12 +41,22 @@ export default function LandingPage() {
                       "4px 4px 3px rgba(244, 244, 244, 0.30), 8px 8px 10px rgba(255,255,255,0.3)",
                   }}
                 >
-                  UCSB ACM Development Branch Poker Tournament
+                  Mann vs. Machine: Poker Bot Tournament
                 </h1>
-                <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
-                  Upload your poker bot, watch it compete in real-time, and
-                  compete for prizes
-                </p>
+                  <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
+                    Play poker against others or compete with your own bot—let’s see who’s better: humans or bots. <br />
+                    <span style={{
+                      display: "block",
+                      fontSize: "0.85rem",
+                      color: "#b0b0b0",
+                      fontWeight: 400,
+                      marginTop: "0.5rem",
+                      letterSpacing: "0.04em",
+                      fontStyle: "italic",
+                    }}>
+                      Presented by ACM Dev & UCSB Poker Club
+                    </span>
+                  </p>
               </motion.div>
               <div className="flex flex-col justify-center gap-3 mt-6 w-full">
                 <motion.div
@@ -122,88 +132,130 @@ export default function LandingPage() {
           <p className="max-w-[900px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto text-center mt-4">
             A simple process to get your bot in the game.
           </p>
-          <div className="grid items-stretch justify-center gap-3 sm:max-w-4xl sm:grid-cols-2 md:gap-4 lg:max-w-5xl mt-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex"
-            >
-              <Card className="h-full w-full flex flex-col gap-3">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="w-6 h-6" /> Sign In
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p>Create an account using your UCSB google account.</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="flex"
-            >
-              <Card className="h-full w-full flex flex-col gap-3">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <IconUsersGroup className="w-6 h-6" /> Create or Join a Team
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p>
-                    Make sure all your teammates join the same team. Max{" "}
-                    {TEAM_MAX_MEMBERS} members per team.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="flex"
-            >
-              <Card className="h-full w-full flex flex-col gap-3">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bot className="w-6 h-6" /> Upload Your Bot
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p>
-                    Upload your poker bot's code in the dashboard. You can only
-                    join the tournament once your bot is uploaded.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
-              className="flex"
-            >
-              <Card className="h-full w-full flex flex-col gap-3">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Trophy className="w-6 h-6" /> Compete
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <p>
-                    Watch your bot compete in real-time against other bots.
-                    Prizes will be awarded to the top-performing bots.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-12">
+            {/* Human Bracket Column */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-semibold text-center mb-2">Human Bracket</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {[{
+                  title: "Sign In",
+                  content: "Create an account using your UCSB Google account."
+                }, {
+                  title: "Join a Team",
+                  content: `Form or join a team with up to ${TEAM_MAX_MEMBERS} members.`
+                }, {
+                  title: "Play Poker",
+                  content: "Compete in classic Texas Hold'em against other teams."
+                }, {
+                  title: "Advance to Finals",
+                  content: "Top players move on to face the best bots in the final round."
+                }].map((card, idx) => (
+                  <motion.div
+                    key={card.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.5, delay: 0.2 * idx }}
+                    className="flex justify-center"
+                  >
+                    <Card className="max-w-xs w-full">
+                      <CardHeader>
+                        <CardTitle>{card.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p>{card.content}</p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            {/* Bot Bracket Column */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-xl font-semibold text-center mb-2">Bot Bracket</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {[{
+                  title: "Sign In",
+                  content: "Create an account using your UCSB Google account."
+                }, {
+                  title: "Build Your Bot",
+                  content: "Develop your poker bot and upload it to the dashboard."
+                }, {
+                  title: "Compete",
+                  content: "Watch your bot play against other bots in real-time."
+                }, {
+                  title: "Advance to Finals",
+                  content: "Top bots move on to face the best humans in the final round."
+                }].map((card, idx) => (
+                  <motion.div
+                    key={card.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.5, delay: 0.2 * idx }}
+                    className="flex justify-center"
+                  >
+                    <Card className="max-w-xs w-full">
+                      <CardHeader>
+                        <CardTitle>{card.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p>{card.content}</p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline Section - moved below How It Works */}
+      <section className="flex justify-center w-full py-12 md:py-20 lg:py-24 px-6 bg-background">
+        <div className="container md:px-6 flex flex-col items-center">
+          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl mb-8">
+            Tournament Timeline
+          </h2>
+          <div className="w-full overflow-x-auto flex flex-col items-center">
+            {/* Horizontal timeline line */}
+            <div className="relative w-full flex justify-center mb-12" style={{ minWidth: '600px' }}>
+              <div className="absolute left-0 right-0 top-1/2 h-1 bg-gray-300" style={{ zIndex: 0 }} />
+              <div className="flex w-full justify-between" style={{ position: 'relative', zIndex: 1 }}>
+                {[
+                  { day: "Monday", event: "Kickoff & Team Registration (stub)" },
+                  { day: "Tuesday", event: "Bot Submission Opens (stub)" },
+                  { day: "Wednesday", event: "Practice Games (stub)" },
+                  { day: "Thursday", event: "Main Tournament Begins (stub)" },
+                  { day: "Friday", event: "Finals: Top Humans vs Top Bots (stub)" },
+                  { day: "Saturday", event: "Awards & Closing Ceremony (stub)" },
+                ].map((item, idx) => (
+                  <div key={item.day} className="flex flex-col items-center" style={{ minWidth: '100px' }}>
+                    {/* Vertical line down to event */}
+                    <div className="w-1 h-8 bg-gray-300" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Event titles below timeline, with numbers at the end of the vertical lines */}
+            <div className="flex w-full justify-between" style={{ minWidth: '600px' }}>
+              {[
+                { day: "Monday", event: "Kickoff & Team Registration (stub)" },
+                { day: "Tuesday", event: "Bot Submission Opens (stub)" },
+                { day: "Wednesday", event: "Practice Games (stub)" },
+                { day: "Thursday", event: "Main Tournament Begins (stub)" },
+                { day: "Friday", event: "Finals: Top Humans vs Top Bots (stub)" },
+                { day: "Saturday", event: "Awards & Closing Ceremony (stub)" },
+              ].map((item, idx) => (
+                <div key={item.day} className="flex flex-col items-center" style={{ minWidth: '100px' }}>
+                  <div className="bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-white font-bold mb-2">
+                    {idx + 1}
+                  </div>
+                  <div className="font-semibold text-lg text-center mb-1">{item.day}</div>
+                  <div className="text-gray-400 text-center text-sm max-w-[160px]">{item.event}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
