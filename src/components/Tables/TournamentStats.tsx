@@ -174,13 +174,25 @@ export function LiveFeed() {
   );
 }
 
+const formatDate = (timestamp: string | null | undefined) => {
+  if (!timestamp) return null;
+  const date = new Date(timestamp);
+  return date.toLocaleString("en-US", {
+    month: "short", 
+    day: "numeric", 
+    hour: "numeric", 
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 export function TournamentDetails() {
   const { tourneyData, tablesData } = useData();
   // Stub tournament details (replace with API data in future)
   const tournament = {
     name: tourneyData?.name,
-    // startTime: "Aug 20, 6:00 PM",
-    // endTime: "Aug 20, 11:00 PM",
+    startTime: formatDate(tourneyData?.start_time),
+    endTime: formatDate(tourneyData?.end_time),
     status:
       tourneyData?.status == "active"
         ? "In Progress"
@@ -207,7 +219,7 @@ export function TournamentDetails() {
         </div>
       </div>
 
-      {/* <div className="grid grid-cols-2 gap-3 mt-4 text-sm text-gray-300 min-w-0">
+      <div className="grid grid-cols-2 gap-3 mt-4 text-sm text-gray-300 min-w-0">
         <div className="min-w-0">
           <div className="text-xs text-gray-400">Start</div>
           <div className="font-medium text-white truncate">
@@ -220,7 +232,7 @@ export function TournamentDetails() {
             {tournament.endTime}
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
@@ -240,26 +252,28 @@ export function LeaderboardTracker() {
                 <span className="text-sm text-gray-400">top stacks</span>
             </div>
             <div className="mt-3">
-                <ol className={`space-y-3 pr-2 ${shouldScroll ? 'h-[17rem] overflow-y-auto' : ''}`}>
-                    {teams.map((team, i) => (
-                        <Link
-                            href={team.table_id ? `/dashboard/tables/${team.table_id}` : '#'}
-                            title={team.table_id ? `Go to table ${team.table_id}` : "No table assigned"}
-                        >
-                            <li key={team.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-[rgba(96,239,134,0.04)] h-12">
-                                <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
-                                    {i + 1}
-                                </div>
-                                <div className="min-w-0">
-                                    <div className="text-base font-medium truncate">{team.name}</div>
-                                </div>
-                                <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
-                                    {team.num_chips.toLocaleString()}
-                                    <img src="/casino-chip.png" alt="chip" className="w-4 h-4 inline-block" />
-                                </div>
-                            </li>
-                        </Link>
-                    ))}
+                {/* Height for 5 items: 5 * 3.5rem (item height + padding) + 4 * 0.5rem (space-y-2) = 19.5rem */}
+                <ol className={`space-y-2 pr-2 h-[19.5rem] overflow-y-auto`}>
+        {teams.map((team, i) => (
+            <Link
+              key={team.id}
+              href={team.table_id ? `/dashboard/tables/${team.table_id}` : '#'}
+              title={team.table_id ? `Go to table ${team.table_id}` : "No table assigned"}
+            >
+          <li className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-[rgba(96,239,134,0.06)] transition-colors">
+                <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
+                  {i + 1}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-base font-medium truncate">{team.name}</div>
+                </div>
+                <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
+                  {team.num_chips.toLocaleString()}
+                  <img src="/casino-chip.png" alt="chip" className="w-4 h-4 inline-block" />
+                </div>
+              </li>
+            </Link>
+          ))}
                 </ol>
             </div>
         </div>

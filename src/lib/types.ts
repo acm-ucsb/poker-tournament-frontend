@@ -41,6 +41,8 @@ export type Tournament = {
   teams_deadline: string;
   submissions_deadline: string;
   starting_chips: number;
+  start_time: string | null;
+  end_time: string | null;
 };
 
 // Poker-specific types
