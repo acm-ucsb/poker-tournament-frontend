@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
 import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 import moment from "moment";
+import { Team } from "@/lib/types";
 
 type Params = {
   teamName: string;

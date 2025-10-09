@@ -29,7 +29,7 @@ export async function deleteTeam(
 
     if (!user || !session) {
       throw new ServerActionError({
-        message: "You must be logged in to join a team.",
+        message: "You must be logged in to delete a team.",
         code: "UNAUTHORIZED",
         status: 401,
       });

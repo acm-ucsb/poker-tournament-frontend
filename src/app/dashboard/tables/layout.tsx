@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tournament Tables",
+  title: "Tournament Menu",
   description: "View all tournament tables, leaderboard, and more.",
 };
 
