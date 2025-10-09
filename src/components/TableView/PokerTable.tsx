@@ -32,9 +32,18 @@ export function PokerTable({ gameState, className }: Props) {
   };
 
   return (
-    <div className={cn("relative w-full mx-auto", className)}>
-      {/* Main table area */}
-      <div className="h-[700px] rounded-full bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-950">
+  <div className={cn("relative w-full mx-auto py-6 md:py-10", className)}>
+      {/* Main table area with brown rim and felt */}
+      <div
+        className="h-[700px] rounded-full relative flex items-center justify-center"
+        style={{
+          boxShadow:
+            "0 0 0 32px #8B5C2A, 0 0 60px 0 #3e2723 inset, 0 8px 32px 0 #0008", // brown rim, inner shadow
+          border: "12px solid #a97c50", // brown border
+          background:
+            "radial-gradient(ellipse at center, #357a38 70%, #1b5e20 100%)", // felt green
+        }}
+      >
         {/* Central area with community cards and pot */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center space-y-4">
           {/* Pot display with main pot and side pots */}
@@ -48,12 +57,12 @@ export function PokerTable({ gameState, className }: Props) {
               return (
                 <Tooltip key={index}>
                   <TooltipTrigger asChild>
-                    <div className="bg-gray-900/90 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-700 hover:border-gray-500 transition-colors cursor-help">
+                    <div className="bg-gray-900/90 backdrop-blur-sm rounded-lg px-4 py-2 border border-yellow-900 hover:border-yellow-700 transition-colors cursor-help shadow-md">
                       <div className="text-center">
-                        <div className="text-xs text-gray-300 uppercase tracking-wide">
+                        <div className="text-xs text-yellow-200 uppercase tracking-wide">
                           {isMainPot ? "Main Pot" : `Side Pot ${index}`}
                         </div>
-                        <div className="text-lg font-bold text-white">
+                        <div className="text-lg font-bold text-yellow-100">
                           ${pot.value.toLocaleString()}
                         </div>
                       </div>
@@ -85,7 +94,7 @@ export function PokerTable({ gameState, className }: Props) {
                     key={`placeholder-${index}`}
                     className={cn(
                       CARD_DIMENSIONS_CLASS,
-                      "rounded-lg border-2 border-dashed border-slate-600/60 bg-black/20 backdrop-blur-sm"
+                      "rounded-lg border-2 border-dashed border-yellow-900 bg-yellow-900/10 backdrop-blur-sm"
                     )}
                   />
                 );
