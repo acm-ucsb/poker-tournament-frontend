@@ -44,7 +44,8 @@ export default function LandingPage() {
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
                   <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
-                    Play poker against others or compete with your own bot—let’s see who’s better: humans or bots. <br />
+                    Challenge friends at the table or put your poker bot to the test. <br />
+                    Compete, win prizes, and have fun! <br />
                     <span style={{
                       display: "block",
                       fontSize: "0.85rem",
