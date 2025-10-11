@@ -19,6 +19,8 @@ import { Loader2 } from "lucide-react";
 import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
 import { Table, Team, Tournament, User } from "@/lib/types";
+import { parseGameState } from "@/lib/util/parseGameState";
+import { table } from "console";
 
 type UserData = User & {
   team:
@@ -41,6 +43,7 @@ type DataContextType = {
   teamData: TeamData | null;
   tourneyData: Tournament | null;
   tablesData: Table[] | null;
+  leaderboardData: Team[] | null;
   isLoading: boolean;
   error: string | null;
   mutate: () => void;
@@ -51,6 +54,7 @@ const DataContext = createContext<DataContextType>({
   teamData: null,
   tourneyData: null,
   tablesData: null,
+  leaderboardData: null,
   isLoading: false,
   error: null,
   mutate: () => {},
@@ -168,6 +172,23 @@ export function DataProvider({ children }: DataProviderProps) {
     }
   );
 
+  // fetch leaderboard (basically just teams in order of chips)
+  const {
+    data: fetchedLeaderboard,
+    isLoading: isLoadingLeaderboard,
+    error: fetchLeaderboardError,
+    mutate: mutateLeaderboard,
+  } = useQuery<Team[]>(
+        supabase
+          .from("teams")
+          .select("*")
+          .order("num_chips", { ascending: false }),
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+    }
+  );
+
   const data = fetchedData ?? null;
   const error = fetchError?.message ?? null;
 
@@ -180,17 +201,23 @@ export function DataProvider({ children }: DataProviderProps) {
   const tablesData = fetchedTablesData ?? null;
   const tablesError = fetchTablesError?.message ?? null;
 
+  const leaderboardData = fetchedLeaderboard ?? null;
+  const leaderboardError = fetchLeaderboardError?.message ?? null;
+
+  // store session, user, updateUserSession, and signOut function in context
   const value = useMemo(
     () => ({
       data,
       teamData,
       tourneyData,
       tablesData,
+      leaderboardData,
       isLoading:
         isLoadingUserData ||
         isLoadingTeamData ||
         isLoadingTourneyData ||
-        isLoadingTablesData,
+        isLoadingTablesData ||
+        isLoadingLeaderboard,
       error: error || teamError || tourneyError || tablesError,
       mutate: () => {
         mutateUser();
@@ -204,18 +231,22 @@ export function DataProvider({ children }: DataProviderProps) {
       teamData,
       tourneyData,
       tablesData,
+      leaderboardData,
       isLoadingUserData,
       isLoadingTeamData,
       isLoadingTourneyData,
       isLoadingTablesData,
+      isLoadingLeaderboard,
       error,
       teamError,
       tourneyError,
       tablesError,
+      leaderboardError,
       mutateUser,
       mutateTeam,
       mutateTourney,
       mutateTables,
+      mutateLeaderboard,
     ]
   );
 
