@@ -92,7 +92,7 @@ export default function LandingPage() {
                   >
                     <Link href="#how-it-works">
                       <Button variant={"outline"} size="lg" className="w-full">
-                        How It Works
+                        Tournament Format
                       </Button>
                     </Link>
                   </motion.div>
@@ -128,25 +128,25 @@ export default function LandingPage() {
       >
         <div className="container md:px-6 flex flex-col items-center">
           <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
-            How It Works
+            Tournament Format
           </h2>
           <p className="max-w-[900px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto text-center mt-4">
-            A simple process to get your bot in the game.
+            A simple process to join and play.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-12">
+          <div className="flex flex-row w-full mt-12 items-stretch justify-center">
             {/* Human Bracket Column */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center mr-12">
               <h3 className="text-xl font-semibold text-center mb-2">Human Bracket</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 mt-4">
                 {[{
-                  title: "Sign In",
-                  content: "Create an account using your UCSB Google account."
+                  title: "Pull Up",
+                  content: "Check in at the registration desk @ Loma Pelona on Nov 8."
                 }, {
-                  title: "Join a Team",
-                  content: `Form or join a team with up to ${TEAM_MAX_MEMBERS} members.`
+                  title: "Get Seated",
+                  content: "Wait to be seated at a table with other players."
                 }, {
                   title: "Play Poker",
-                  content: "Compete in classic Texas Hold'em against other teams."
+                  content: "Compete in classic Texas Hold'em against other players."
                 }, {
                   title: "Advance to Finals",
                   content: "Top players move on to face the best bots in the final round."
@@ -171,10 +171,14 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
+            {/* Vertical Divider for md+ screens */}
+            <div className="hidden md:block md:col-span-1 md:self-stretch md:justify-center md:items-center">
+              <div className="w-px h-[380px] bg-gray-500" />
+            </div>
             {/* Bot Bracket Column */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center ml-12">
               <h3 className="text-xl font-semibold text-center mb-2">Bot Bracket</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 mt-4">
                 {[{
                   title: "Sign In",
                   content: "Create an account using your UCSB Google account."
