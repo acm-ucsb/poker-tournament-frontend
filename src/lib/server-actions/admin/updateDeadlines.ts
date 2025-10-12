@@ -2,7 +2,7 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import { UCSB_ACTIVE_POKER_TOURNEY_ID } from "@/lib/constants";
 
 type Params = {
   teamsDeadline?: Date | null;
@@ -56,7 +56,7 @@ export async function updateDeadlines(
     const { data: tournament } = await supabase
       .from("tournaments")
       .select("*")
-      .eq("id", UCSB_POKER_TOURNEY_ID) // Assuming there's only one tournament for simplicity
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID) // Assuming there's only one tournament for simplicity
       .single()
       .throwOnError();
 
@@ -75,7 +75,7 @@ export async function updateDeadlines(
         teams_deadline: teamsDeadline,
         submissions_deadline: submissionsDeadline,
       })
-      .eq("id", UCSB_POKER_TOURNEY_ID)
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID)
       .throwOnError();
 
     return {

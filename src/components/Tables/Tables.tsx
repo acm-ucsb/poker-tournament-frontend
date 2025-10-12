@@ -23,8 +23,20 @@ export function Tables() {
             {/* Table for displaying tournament tables */}
             {tablesData
               ?.sort((a, b) => {
+                // Sort the tables so that the user's table appears first
                 if (a.id === data?.team?.table?.id) return -1;
                 if (b.id === data?.team?.table?.id) return 1;
+
+                // Sort the tables so that they appear in the order of their status as such: Active, Paused, Not Started, Inactive
+                const statusOrder = {
+                  active: 0,
+                  paused: 1,
+                  not_started: 2,
+                  inactive: 3,
+                };
+                if (statusOrder[a.status] < statusOrder[b.status]) return -1;
+                if (statusOrder[a.status] > statusOrder[b.status]) return 1;
+
                 return a.name.localeCompare(b.name);
               })
               .map((table) => (

@@ -38,6 +38,15 @@ export async function getTeams(
       });
     }
 
+    if (teamIds.length === 0) {
+      return {
+        success: true,
+        data: [],
+        status: 200,
+        error: null,
+      };
+    }
+
     // check if team with team id exists
     const { data: teams } = await supabase
       .from("teams")

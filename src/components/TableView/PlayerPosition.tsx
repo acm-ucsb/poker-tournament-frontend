@@ -176,7 +176,7 @@ export function PlayerPosition({ team, className }: Props) {
             {isDealer && (
               <Badge
                 variant={"default"}
-                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
+                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold bg-white"
               >
                 D
               </Badge>

@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
-import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import { UCSB_ACTIVE_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
 import {
   PokerGameState,

@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
 import {
   BACKEND_ENGINE_BASE_URL,
-  UCSB_POKER_TOURNEY_ID,
+  UCSB_ACTIVE_POKER_TOURNEY_ID,
 } from "@/lib/constants";
 import moment from "moment";
 import axios from "axios";
@@ -47,7 +47,7 @@ export async function deleteTeam(
     const { data: tournament } = await supabase
       .from("tournaments")
       .select("teams_deadline, status")
-      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID) // hardcoded for now
       .single()
       .throwOnError();
 

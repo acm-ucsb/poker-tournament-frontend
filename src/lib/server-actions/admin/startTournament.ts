@@ -2,7 +2,10 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { TABLE_SEATS_MIN_START, UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import {
+  TABLE_SEATS_MIN_START,
+  UCSB_ACTIVE_POKER_TOURNEY_ID,
+} from "@/lib/constants";
 import {
   uniqueNamesGenerator,
   Config,
@@ -71,7 +74,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
     const { data: tournament } = await supabase
       .from("tournaments")
       .select("*")
-      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID) // hardcoded for now
       .single();
 
     if (!tournament) {
@@ -136,6 +139,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
       .insert(
         tableNames.map((name: string) => ({
           name,
+          tournament_id: UCSB_ACTIVE_POKER_TOURNEY_ID,
         }))
       )
       .select("id, name")
@@ -183,7 +187,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
     await supabase
       .from("tournaments")
       .update({ status: "active" })
-      .eq("id", UCSB_POKER_TOURNEY_ID)
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID)
       .throwOnError();
 
     return {
