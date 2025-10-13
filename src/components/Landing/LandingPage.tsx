@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import { Bot, Trophy, Users } from "lucide-react";
-import { FannedCardsIcon } from "./FannedCardsIcon";
+import { FannedCardsIcon } from "../FannedCardsIcon";
 import { useAuth } from "@/providers/AuthProvider";
 import { TEAM_MAX_MEMBERS } from "@/lib/constants";
 import { IconUsersGroup } from "@tabler/icons-react";
-import { ButtonWrapper } from "./ButtonWrapper";
+import { ButtonWrapper } from "../ButtonWrapper";
 import { useData } from "@/providers/DataProvider";
+import TournamentTimeline from "./TournamentTimeline";
 
 export default function LandingPage() {
   const auth = useAuth();
@@ -55,7 +56,7 @@ export default function LandingPage() {
                       letterSpacing: "0.04em",
                       fontStyle: "italic",
                     }}>
-                      Presented by ACM Dev & UCSB Poker Club
+                      Presented by ACM@UCSB Dev & UCSB Poker Club
                     </span>
                   </p>
               </motion.div>
@@ -84,15 +85,26 @@ export default function LandingPage() {
                     </ButtonWrapper>
                   </Link>
                 </motion.div>
-                <div className="grid grid-cols-2 gap-3 w-full">
+                <div className="grid grid-cols-3 gap-3 w-full">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
-                    <Link href="#how-it-works">
+                    <Link href="#tournament-format">
                       <Button variant={"outline"} size="lg" className="w-full">
                         Tournament Format
+                      </Button>
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <Link href="#tournament-timeline">
+                      <Button variant={"outline"} size="lg" className="w-full">
+                        Deadlines & Events
                       </Button>
                     </Link>
                   </motion.div>
@@ -123,7 +135,7 @@ export default function LandingPage() {
       </section>
 
       <section
-        id="how-it-works"
+        id="tournament-format"
         className="flex justify-center w-full py-12 md:py-24 lg:py-32 px-6"
       >
         <div className="container md:px-6 flex flex-col items-center">
@@ -133,9 +145,9 @@ export default function LandingPage() {
           <p className="max-w-[900px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto text-center mt-4">
             A simple process to join and play.
           </p>
-          <div className="flex flex-row w-full mt-12 items-stretch justify-center">
+          <div className="flex flex-col md:flex-row w-full mt-12 items-stretch justify-center">
             {/* Human Bracket Column */}
-            <div className="flex flex-col items-center mr-12">
+            <div className="flex flex-col items-center md:mr-12 mb-12 md:mb-0">
               <h3 className="text-xl font-semibold text-center mb-2">Human Bracket</h3>
               <div className="grid grid-cols-2 gap-4 mt-4">
                 {[{
@@ -176,7 +188,7 @@ export default function LandingPage() {
               <div className="w-px h-[380px] bg-gray-500" />
             </div>
             {/* Bot Bracket Column */}
-            <div className="flex flex-col items-center ml-12">
+            <div className="flex flex-col items-center md:ml-12">
               <h3 className="text-xl font-semibold text-center mb-2">Bot Bracket</h3>
               <div className="grid grid-cols-2 gap-4 mt-4">
                 {[{
@@ -216,53 +228,50 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Timeline Section - moved below How It Works */}
-      <section className="flex justify-center w-full py-12 md:py-20 lg:py-24 px-6 bg-background">
-        <div className="container md:px-6 flex flex-col items-center">
-          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl mb-8">
+      {/* Tournament Timeline */}
+  <section className="flex flex-col items-center w-full py-24 lg:py-32" id = "tournament-timeline">
+        <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
             Tournament Timeline
-          </h2>
-          <div className="w-full overflow-x-auto flex flex-col items-center">
-            {/* Horizontal timeline line */}
-            <div className="relative w-full flex justify-center mb-12" style={{ minWidth: '600px' }}>
-              <div className="absolute left-0 right-0 top-1/2 h-1 bg-gray-300" style={{ zIndex: 0 }} />
-              <div className="flex w-full justify-between" style={{ position: 'relative', zIndex: 1 }}>
-                {[
-                  { day: "Monday", event: "Kickoff & Team Registration (stub)" },
-                  { day: "Tuesday", event: "Bot Submission Opens (stub)" },
-                  { day: "Wednesday", event: "Practice Games (stub)" },
-                  { day: "Thursday", event: "Main Tournament Begins (stub)" },
-                  { day: "Friday", event: "Finals: Top Humans vs Top Bots (stub)" },
-                  { day: "Saturday", event: "Awards & Closing Ceremony (stub)" },
-                ].map((item, idx) => (
-                  <div key={item.day} className="flex flex-col items-center" style={{ minWidth: '100px' }}>
-                    {/* Vertical line down to event */}
-                    <div className="w-1 h-8 bg-gray-300" />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Event titles below timeline, with numbers at the end of the vertical lines */}
-            <div className="flex w-full justify-between" style={{ minWidth: '600px' }}>
-              {[
-                { day: "Monday", event: "Kickoff & Team Registration (stub)" },
-                { day: "Tuesday", event: "Bot Submission Opens (stub)" },
-                { day: "Wednesday", event: "Practice Games (stub)" },
-                { day: "Thursday", event: "Main Tournament Begins (stub)" },
-                { day: "Friday", event: "Finals: Top Humans vs Top Bots (stub)" },
-                { day: "Saturday", event: "Awards & Closing Ceremony (stub)" },
-              ].map((item, idx) => (
-                <div key={item.day} className="flex flex-col items-center" style={{ minWidth: '100px' }}>
-                  <div className="bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-white font-bold mb-2">
-                    {idx + 1}
-                  </div>
-                  <div className="font-semibold text-lg text-center mb-1">{item.day}</div>
-                  <div className="text-gray-400 text-center text-sm max-w-[160px]">{item.event}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        </h2>
+        <p className="max-w-[900px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto text-center mt-4">
+            Deadlines & events throughout the week.
+        </p>
+        <div className="mb-12" />
+        <TournamentTimeline
+          events={[
+            {
+              time: "Nov 3, 11:59 PM",
+              title: "Bot Registration & Team Formation Closes",
+              description: "Sign in with your UCSB email and form teams (up to 4 members).",
+            },
+            {
+              time: "Nov 8, 7:00 PM",
+              title: "Poker Night & Bot Office Hours",
+              description: "Get help with building your bot, or just come play poker!",
+            },
+            {
+              time: "Nov 7, 11:59 PM",
+              title: "Code Submission Deadline",
+              description: "Upload your bot code to the dashboard by this time.",
+            },
+            {
+              time: "Nov 8, 2:00 PM",
+              title: "Human Bracket Registration",
+              description: "Check in at the registration desk @ Loma Pelona",
+            },
+            {
+              time: "Nov 8, 2:30 PM",
+              title: "Tournament Begins",
+              description: "First hands are dealt. Human and bot brackets start.",
+            },
+            {
+              time: "Nov 8, 6:30 PM",
+              title: "Finals",
+              description: "Top humans and bots face off for the championship.",
+            },
+          ]}
+        />
+          <div className="mb-16" />
       </section>
 
       <section
