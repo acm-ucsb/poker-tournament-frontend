@@ -69,7 +69,7 @@ const TournamentTimeline: React.FC<TournamentTimelineProps> = ({ events }) => {
       <div className="absolute left-5 top-0 w-2.5 rounded bg-gray-200 -translate-y-5 z-0" style={{ height: `calc(100% + 40px)` }} />
       {/* Progress bar filled */}
       <div
-        className="absolute left-5 top-0 w-2.5 rounded z-10 transition-all duration-300 -translate-y-5 bg-gradient-to-b from-green-300 via-green-400 to-green-600"
+          className="absolute left-5 top-0 w-2.5 rounded z-10 transition-all duration-300 -translate-y-5 bg-gradient-to-b from-green-400 via-green-500 to-green-600"
         style={{ height: `${barHeight}px` }}
       />
       {events.map((event, idx) => (
@@ -77,10 +77,10 @@ const TournamentTimeline: React.FC<TournamentTimelineProps> = ({ events }) => {
           {/* Step number */}
           <div className="relative z-20 flex items-center justify-center h-12">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-base transition-all duration-300
-                ${idx < currentIdx ? "bg-gradient-to-b from-green-300 via-green-400 to-green-600 text-white" : "bg-gray-200 text-gray-400"}
-                ${idx === currentIdx ? "border-4 border-green-400 shadow-[0_0_0_4px_#bbf7d0]" : "border-2 border-gray-300"}
-              `}
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-base transition-all duration-300
+                  ${idx < currentIdx ? "bg-gradient-to-b from-green-400 via-green-500 to-green-600 text-white" : "bg-gray-200 text-gray-400"}
+                  ${idx === currentIdx ? "border-4 border-green-700 shadow-[0_0_0_4px_#22c55e]" : "border-2 border-gray-500"}
+                `}
             >
               {idx + 1}
             </div>
@@ -94,9 +94,9 @@ const TournamentTimeline: React.FC<TournamentTimelineProps> = ({ events }) => {
             className="flex flex-col items-start min-h-12"
           >
             <div
-              className={`font-bold text-lg
-                ${idx < currentIdx ? "text-gray-400" : idx === currentIdx ? "text-green-400" : "text-white"}
-              `}
+                className={`font-bold text-lg
+                  ${idx < currentIdx ? "text-gray-400" : idx === currentIdx ? "text-green-500" : "text-white"}
+                `}
             >
               {event.title}
             </div>
