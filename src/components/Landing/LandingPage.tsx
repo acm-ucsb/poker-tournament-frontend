@@ -61,7 +61,7 @@ export default function LandingPage() {
                       letterSpacing: "0.04em",
                       fontStyle: "italic",
                     }}>
-                      Presented by ACM@UCSB Dev & UCSB Poker Club
+                      Presented by ACM Dev @ UCSB & Poker Club @ UCSB
                     </span>
                   </p>
               </motion.div>
