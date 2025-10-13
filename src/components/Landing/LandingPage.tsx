@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from 'framer-motion';
 import { Bot, Trophy, Users } from "lucide-react";
 import { FannedCardsIcon } from "../FannedCardsIcon";
 import { useAuth } from "@/providers/AuthProvider";
@@ -19,6 +19,11 @@ import { IconUsersGroup } from "@tabler/icons-react";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { useData } from "@/providers/DataProvider";
 import TournamentTimeline from "./TournamentTimeline";
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { DEFAULT_SIGNIN_REDIRECT_URL } from '../../lib/constants';
+import { useWindowScroll } from '@mantine/hooks';
+import { MyTeam } from '../MyTeam/MyTeam';
+import { AdminPanel } from '../AdminPanel/AdminPanel';
 
 export default function LandingPage() {
   const auth = useAuth();
@@ -240,9 +245,14 @@ export default function LandingPage() {
         <TournamentTimeline
           events={[
             {
+              time: "Oct 26, 12:00 AM",
+              title: "Bot Registration & Team Formation Opens",
+              description: "Sign in with your UCSB email and form teams (up to 4 members).",
+            },
+            {
               time: "Nov 3, 11:59 PM",
               title: "Bot Registration & Team Formation Closes",
-              description: "Sign in with your UCSB email and form teams (up to 4 members).",
+              description: "All teams must be finalized by this time.",
             },
             {
               time: "Nov 6, 7:00 PM",
@@ -294,40 +304,52 @@ export default function LandingPage() {
                   <AccordionItem value="item-1">
                     <AccordionTrigger>Game Structure</AccordionTrigger>
                     <AccordionContent>
-                      The tournament will be played as a series of No-Limit
-                      Texas Hold'em games. Tables will automatically try to
+                      Both brackets of the tournament will be played as a series of No-Limit
+                      Texas Hold'em games. Tables will try to
                       maintain 8 players. As players are eliminated, tables will
-                      be balanced until the final table is reached.
+                      be reduced & balanced until the final table is reached.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2">
-                    <AccordionTrigger>Bot API</AccordionTrigger>
+                    <AccordionTrigger>Bracket Structure</AccordionTrigger>
                     <AccordionContent>
-                      We provide a simple API for your bot to receive game state
-                      information and submit actions (fold, call, raise).
-                      Detailed documentation will be available upon signing up.
+                      You may compete in both brackets, however prizes will only be awarded
+                      once per individual/team. The top 3 players from the human bracket
+                      and the top 3 bots will receieve prizes. The final round will feature
+                      the top 3 humans and top 3 bots competing against each other.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
-                    <AccordionTrigger>Starting the Game</AccordionTrigger>
+                    <AccordionTrigger>Bot Interface</AccordionTrigger>
                     <AccordionContent>
-                      A game at a table will automatically start once a
-                      sufficient number of players have joined.
+                      We provide a simple bot template to get you started. Your bot
+                      will receive game state information and return strictly actions
+                      (fold, call, raise). You may modify the template as you see fit,
+                      but you may not use external APIs or internet access during the
+                      tournament. External libraries will be strictly defined in the 
+                      submissions guidelines documentation.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-4">
+                    <AccordionTrigger>Use of AI</AccordionTrigger>
+                    <AccordionContent>
+                      You may use AI tools (like ChatGPT) to help you build your bot.
+                      You are also allowed to create your own ML models to assist your
+                      bot in making decisions. Use of fully trained poker AI models
+                      is plagarism and strictly prohibited.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
               </TabsContent>
               <TabsContent value="faq" className="pt-6">
                 <Accordion type="single" collapsible>
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger>
-                      What programming languages can I use?
-                    </AccordionTrigger>
+                  <AccordionItem value="item-0">
+                    <AccordionTrigger>How do I run my bot?</AccordionTrigger>
                     <AccordionContent>
-                      We currently support bots written in Python, and C++. Bots
-                      should be created so that they can process a JSON object
-                      representing the game state and return a JSON object with
-                      the action to take.
+                      Your bot will run on our servers. You just need to upload your
+                      code to the dashboard before the submission deadline, and
+                      we'll take care of the rest. You will be able to watch your bot
+                      compete in real-time through the dashboard.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2">
@@ -335,6 +357,16 @@ export default function LandingPage() {
                     <AccordionContent>
                       After signing up, you will have access to a dashboard
                       where you can upload your bot's code.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                      What programming languages can I use?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      We currently support bots written in Python, and C++. We will
+                      provide a simple bot template which will contain a core
+                      defined function you must implement. 
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
@@ -353,9 +385,23 @@ export default function LandingPage() {
                   <AccordionItem value="item-1">
                     <AccordionTrigger>What are the prizes?</AccordionTrigger>
                     <AccordionContent>
-                      Prizes will be awarded to the top three bots based on
+                      Prizes will be awarded to the top three players & bots based on
                       their performance in the tournament. Details will be
                       announced closer to the tournament date.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-2">
+                    <AccordionTrigger>Can I win both human and bot bracket prizes?</AccordionTrigger>
+                    <AccordionContent>
+                      No, prizes will only be awarded once per individual/team. You are
+                      still welcome to compete in both brackets, but can only win prizes 
+                      in one bracket.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-3">
+                    <AccordionTrigger>What does the winner of the final combined table get?</AccordionTrigger>
+                    <AccordionContent>
+                      You get glory and bragging rights!
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
