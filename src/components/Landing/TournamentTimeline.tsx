@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 export type TournamentEvent = {
   time: string;
@@ -84,8 +85,14 @@ const TournamentTimeline: React.FC<TournamentTimelineProps> = ({ events }) => {
               {idx + 1}
             </div>
           </div>
-          {/* Event details */}
-          <div className="flex flex-col items-start min-h-12">
+          {/* Animate the entire event block together */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.2 * idx }}
+            className="flex flex-col items-start min-h-12"
+          >
             <div
               className={`font-bold text-lg
                 ${idx < currentIdx ? "text-gray-400" : idx === currentIdx ? "text-green-400" : "text-white"}
@@ -93,13 +100,11 @@ const TournamentTimeline: React.FC<TournamentTimelineProps> = ({ events }) => {
             >
               {event.title}
             </div>
-            {/* Show time/date for all events */}
             <div className="text-gray-500 text-base">{event.time}</div>
-            {/* Show description for all events */}
             {event.description && (
               <div className="text-sm text-gray-400">{event.description}</div>
             )}
-          </div>
+          </motion.div>
         </React.Fragment>
       ))}
     </div>
