@@ -245,7 +245,7 @@ export default function LandingPage() {
               description: "Sign in with your UCSB email and form teams (up to 4 members).",
             },
             {
-              time: "Nov 8, 7:00 PM",
+              time: "Nov 6, 7:00 PM",
               title: "Poker Night & Bot Office Hours",
               description: "Get help with building your bot, or just come play poker!",
             },
