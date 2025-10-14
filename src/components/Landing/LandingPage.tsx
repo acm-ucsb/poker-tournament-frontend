@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation } from "framer-motion";
 import { Bot, Trophy, Users } from "lucide-react";
 import { FannedCardsIcon } from "../FannedCardsIcon";
 import { useAuth } from "@/providers/AuthProvider";
@@ -19,15 +19,17 @@ import { IconUsersGroup } from "@tabler/icons-react";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { useData } from "@/providers/DataProvider";
 import TournamentTimeline from "./TournamentTimeline";
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { DEFAULT_SIGNIN_REDIRECT_URL } from '../../lib/constants';
-import { useWindowScroll } from '@mantine/hooks';
-import { MyTeam } from '../MyTeam/MyTeam';
-import { AdminPanel } from '../AdminPanel/AdminPanel';
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { DEFAULT_SIGNIN_REDIRECT_URL } from "../../lib/constants";
+import { useWindowScroll } from "@mantine/hooks";
+import { MyTeam } from "../MyTeam/MyTeam";
+import { AdminPanel } from "../AdminPanel/AdminPanel";
+import { useState } from "react";
 
 export default function LandingPage() {
   const auth = useAuth();
   const { data } = useData();
+  const [showSignupPopup, setShowSignupPopup] = useState(false);
 
   return (
     <div className="flex flex-col">
@@ -49,10 +51,12 @@ export default function LandingPage() {
                 >
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
-                  <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
-                    Challenge friends at the table or put your poker bot to the test. <br />
-                    Compete, win prizes, and have fun! <br />
-                    <span style={{
+                <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
+                  Challenge friends at the table or put your poker bot to the
+                  test. <br />
+                  Compete, win prizes, and have fun! <br />
+                  <span
+                    style={{
                       display: "block",
                       fontSize: "0.85rem",
                       color: "#b0b0b0",
@@ -60,10 +64,11 @@ export default function LandingPage() {
                       marginTop: "0.5rem",
                       letterSpacing: "0.04em",
                       fontStyle: "italic",
-                    }}>
-                      Presented by ACM Dev @ UCSB & Poker Club @ UCSB
-                    </span>
-                  </p>
+                    }}
+                  >
+                    Presented by ACM Dev @ UCSB & Poker Club @ UCSB
+                  </span>
+                </p>
               </motion.div>
               <div className="flex flex-col justify-center gap-3 mt-6 w-full">
                 <motion.div
@@ -71,24 +76,79 @@ export default function LandingPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  <Link
-                    href={auth.user ? "/dashboard" : "/auth/signin"}
-                    style={{
-                      pointerEvents: auth.loadingAuth ? "none" : "auto",
-                    }}
-                  >
-                    <ButtonWrapper
-                      size="xl"
-                      className="w-full"
-                      disabled={auth.loadingAuth}
+                  {auth.user ? (
+                    <Link
+                      href="/dashboard"
+                      style={{
+                        pointerEvents: auth.loadingAuth ? "none" : "auto",
+                      }}
                     >
-                      {auth.user
-                        ? data?.is_admin
-                          ? "Admin Dashboard"
-                          : "Dashboard"
-                        : "Sign In & Compete"}
-                    </ButtonWrapper>
-                  </Link>
+                      <ButtonWrapper
+                        size="xl"
+                        className="w-full"
+                        disabled={auth.loadingAuth}
+                      >
+                        {data?.is_admin ? "Admin Dashboard" : "Dashboard"}
+                      </ButtonWrapper>
+                    </Link>
+                  ) : (
+                    <>
+                      <ButtonWrapper
+                        size="xl"
+                        className="w-full"
+                        disabled={auth.loadingAuth}
+                        onClick={() => {
+                          setShowSignupPopup(true);
+                        }}
+                      >
+                        Sign In & Compete
+                      </ButtonWrapper>
+                      {showSignupPopup && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                          >
+                            <div className="bg-black rounded-2xl p-6 shadow-lg w-80 text-center">
+                              <h2 className="text-xl font-semibold mb-4">
+                                Hey 👋, which bracket will you participate in?
+                              </h2>
+                              <p className="text-gray-300 mb-6">
+                                You only need to sign up online if you're participating in the bot bracket.
+                                If you're only interested in playing normal poker just show up to the event and register there.
+                              </p>
+                              <div className="flex justify-center gap-3">
+                                <Button
+                                  variant={"outline"}
+                                  size="lg"
+                                  onClick={() => setShowSignupPopup(false)}
+                                >
+                                  No coding for me
+                                </Button>
+                                <Link
+                                  href="/auth/signin"
+                                  style={{
+                                    pointerEvents: auth.loadingAuth
+                                      ? "none"
+                                      : "auto",
+                                  }}
+                                >
+                                  <Button
+                                    variant={"default"}
+                                    size="lg"
+                                    className="bg-[#22c55e]"
+                                  >
+                                    Continue
+                                  </Button>
+                                </Link>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </motion.div>
                 <div className="grid grid-cols-3 gap-3 w-full">
                   <motion.div
@@ -153,21 +213,31 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row w-full mt-12 items-stretch justify-center">
             {/* Human Bracket Column */}
             <div className="flex flex-col items-center md:mr-12 mb-12 md:mb-0">
-              <h3 className="text-xl font-semibold text-center mb-2">Human Bracket</h3>
+              <h3 className="text-xl font-semibold text-center mb-2">
+                Human Bracket
+              </h3>
               <div className="grid grid-cols-2 gap-4 mt-4">
-                {[{
-                  title: "Pull Up",
-                  content: "Check in at the registration desk @ Loma Pelona on Nov 8."
-                }, {
-                  title: "Get Seated",
-                  content: "Wait to be seated at a table with other players."
-                }, {
-                  title: "Play Poker",
-                  content: "Compete in classic Texas Hold'em against other players."
-                }, {
-                  title: "Advance to Finals",
-                  content: "Top players move on to face the best bots in the final round."
-                }].map((card, idx) => (
+                {[
+                  {
+                    title: "Pull Up",
+                    content:
+                      "Check in at the registration desk @ Loma Pelona on Nov 8.",
+                  },
+                  {
+                    title: "Get Seated",
+                    content: "Wait to be seated at a table with other players.",
+                  },
+                  {
+                    title: "Play Poker",
+                    content:
+                      "Compete in classic Texas Hold'em against other players.",
+                  },
+                  {
+                    title: "Advance to Finals",
+                    content:
+                      "Top players move on to face the best bots in the final round.",
+                  },
+                ].map((card, idx) => (
                   <motion.div
                     key={card.title}
                     initial={{ opacity: 0, y: 20 }}
@@ -194,21 +264,32 @@ export default function LandingPage() {
             </div>
             {/* Bot Bracket Column */}
             <div className="flex flex-col items-center md:ml-12">
-              <h3 className="text-xl font-semibold text-center mb-2">Bot Bracket</h3>
+              <h3 className="text-xl font-semibold text-center mb-2">
+                Bot Bracket
+              </h3>
               <div className="grid grid-cols-2 gap-4 mt-4">
-                {[{
-                  title: "Sign In",
-                  content: "Create an account using your UCSB Google account."
-                }, {
-                  title: "Build Your Bot",
-                  content: "Develop your poker bot and upload it to the dashboard."
-                }, {
-                  title: "Compete",
-                  content: "Watch your bot play against other bots in real-time."
-                }, {
-                  title: "Advance to Finals",
-                  content: "Top bots move on to face the best humans in the final round."
-                }].map((card, idx) => (
+                {[
+                  {
+                    title: "Sign In",
+                    content:
+                      "Create an account using your UCSB Google account.",
+                  },
+                  {
+                    title: "Build Your Bot",
+                    content:
+                      "Develop your poker bot and upload it to the dashboard.",
+                  },
+                  {
+                    title: "Compete",
+                    content:
+                      "Watch your bot play against other bots in real-time.",
+                  },
+                  {
+                    title: "Advance to Finals",
+                    content:
+                      "Top bots move on to face the best humans in the final round.",
+                  },
+                ].map((card, idx) => (
                   <motion.div
                     key={card.title}
                     initial={{ opacity: 0, y: 20 }}
@@ -234,12 +315,15 @@ export default function LandingPage() {
       </section>
 
       {/* Tournament Timeline */}
-  <section className="flex flex-col items-center w-full py-24 lg:py-32" id = "tournament-timeline">
+      <section
+        className="flex flex-col items-center w-full py-24 lg:py-32"
+        id="tournament-timeline"
+      >
         <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
-            Tournament Timeline
+          Tournament Timeline
         </h2>
         <p className="max-w-[900px] text-gray-300 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed mx-auto text-center mt-4">
-            Deadlines & events throughout the week.
+          Deadlines & events throughout the week.
         </p>
         <div className="mb-12" />
         <TournamentTimeline
@@ -247,7 +331,8 @@ export default function LandingPage() {
             {
               time: "Oct 26, 12:00 AM",
               title: "Bot Registration & Team Formation Opens",
-              description: "Sign in with your UCSB email and form teams (up to 4 members).",
+              description:
+                "Sign in with your UCSB email and form teams (up to 4 members).",
             },
             {
               time: "Nov 3, 11:59 PM",
@@ -257,12 +342,14 @@ export default function LandingPage() {
             {
               time: "Nov 6, 7:00 PM",
               title: "Poker Night & Bot Office Hours",
-              description: "Get help with building your bot, or just come play poker!",
+              description:
+                "Get help with building your bot, or just come play poker!",
             },
             {
               time: "Nov 7, 11:59 PM",
               title: "Code Submission Deadline",
-              description: "Upload your bot code to the dashboard by this time.",
+              description:
+                "Upload your bot code to the dashboard by this time.",
             },
             {
               time: "Nov 8, 2:00 PM",
@@ -272,7 +359,8 @@ export default function LandingPage() {
             {
               time: "Nov 8, 2:30 PM",
               title: "Tournament Begins",
-              description: "First hands are dealt. Human and bot brackets start.",
+              description:
+                "First hands are dealt. Human and bot brackets start.",
             },
             {
               time: "Nov 8, 6:30 PM",
@@ -281,7 +369,7 @@ export default function LandingPage() {
             },
           ]}
         />
-          <div className="mb-16" />
+        <div className="mb-16" />
       </section>
 
       <section
@@ -304,8 +392,8 @@ export default function LandingPage() {
                   <AccordionItem value="item-1">
                     <AccordionTrigger>Game Structure</AccordionTrigger>
                     <AccordionContent>
-                      Both brackets of the tournament will be played as a series of No-Limit
-                      Texas Hold'em games. Tables will try to
+                      Both brackets of the tournament will be played as a series
+                      of No-Limit Texas Hold'em games. Tables will try to
                       maintain 8 players. As players are eliminated, tables will
                       be reduced & balanced until the final table is reached.
                     </AccordionContent>
@@ -313,30 +401,32 @@ export default function LandingPage() {
                   <AccordionItem value="item-2">
                     <AccordionTrigger>Bracket Structure</AccordionTrigger>
                     <AccordionContent>
-                      You may compete in both brackets, however prizes will only be awarded
-                      once per individual/team. The top 3 players from the human bracket
-                      and the top 3 bots will receieve prizes. The final round will feature
-                      the top 3 humans and top 3 bots competing against each other.
+                      You may compete in both brackets, however prizes will only
+                      be awarded once per individual/team. The top 3 players
+                      from the human bracket and the top 3 bots will receieve
+                      prizes. The final round will feature the top 3 humans and
+                      top 3 bots competing against each other.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
                     <AccordionTrigger>Bot Interface</AccordionTrigger>
                     <AccordionContent>
-                      We provide a simple bot template to get you started. Your bot
-                      will receive game state information and return strictly actions
-                      (fold, call, raise). You may modify the template as you see fit,
-                      but you may not use external APIs or internet access during the
-                      tournament. External libraries will be strictly defined in the 
-                      submissions guidelines documentation.
+                      We provide a simple bot template to get you started. Your
+                      bot will receive game state information and return
+                      strictly actions (fold, call, raise). You may modify the
+                      template as you see fit, but you may not use external APIs
+                      or internet access during the tournament. External
+                      libraries will be strictly defined in the submissions
+                      guidelines documentation.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-4">
                     <AccordionTrigger>Use of AI</AccordionTrigger>
                     <AccordionContent>
-                      You may use AI tools (like ChatGPT) to help you build your bot.
-                      You are also allowed to create your own ML models to assist your
-                      bot in making decisions. Use of fully trained poker AI models
-                      is plagarism and strictly prohibited.
+                      You may use AI tools (like ChatGPT) to help you build your
+                      bot. You are also allowed to create your own ML models to
+                      assist your bot in making decisions. Use of fully trained
+                      poker AI models is plagarism and strictly prohibited.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -346,10 +436,10 @@ export default function LandingPage() {
                   <AccordionItem value="item-0">
                     <AccordionTrigger>How do I run my bot?</AccordionTrigger>
                     <AccordionContent>
-                      Your bot will run on our servers. You just need to upload your
-                      code to the dashboard before the submission deadline, and
-                      we'll take care of the rest. You will be able to watch your bot
-                      compete in real-time through the dashboard.
+                      Your bot will run on our servers. You just need to upload
+                      your code to the dashboard before the submission deadline,
+                      and we'll take care of the rest. You will be able to watch
+                      your bot compete in real-time through the dashboard.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2">
@@ -364,9 +454,9 @@ export default function LandingPage() {
                       What programming languages can I use?
                     </AccordionTrigger>
                     <AccordionContent>
-                      We currently support bots written in Python, and C++. We will
-                      provide a simple bot template which will contain a core
-                      defined function you must implement. 
+                      We currently support bots written in Python, and C++. We
+                      will provide a simple bot template which will contain a
+                      core defined function you must implement.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
@@ -385,21 +475,25 @@ export default function LandingPage() {
                   <AccordionItem value="item-1">
                     <AccordionTrigger>What are the prizes?</AccordionTrigger>
                     <AccordionContent>
-                      Prizes will be awarded to the top three players & bots based on
-                      their performance in the tournament. Details will be
-                      announced closer to the tournament date.
+                      Prizes will be awarded to the top three players & bots
+                      based on their performance in the tournament. Details will
+                      be announced closer to the tournament date.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2">
-                    <AccordionTrigger>Can I win both human and bot bracket prizes?</AccordionTrigger>
+                    <AccordionTrigger>
+                      Can I win both human and bot bracket prizes?
+                    </AccordionTrigger>
                     <AccordionContent>
-                      No, prizes will only be awarded once per individual/team. You are
-                      still welcome to compete in both brackets, but can only win prizes 
-                      in one bracket.
+                      No, prizes will only be awarded once per individual/team.
+                      You are still welcome to compete in both brackets, but can
+                      only win prizes in one bracket.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
-                    <AccordionTrigger>What does the winner of the final combined table get?</AccordionTrigger>
+                    <AccordionTrigger>
+                      What does the winner of the final combined table get?
+                    </AccordionTrigger>
                     <AccordionContent>
                       You get glory and bragging rights!
                     </AccordionContent>
