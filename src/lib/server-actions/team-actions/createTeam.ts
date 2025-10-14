@@ -40,10 +40,19 @@ export async function createTeam(
     // check if tournaments.teams_deadline has passed
     const { data: tournament } = await supabase
       .from("tournaments")
-      .select("teams_deadline, status")
+      .select("teams_deadline, status, start_time")
       .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
       .single()
       .throwOnError();
+
+    // Check if the current time is before the registration start_time
+    if (moment().isBefore(moment(tournament?.start_time))) {
+      throw new ServerActionError({
+        message: "Registration has not opened yet.",
+        code: "FORBIDDEN",
+        status: 403,
+      });
+    }
 
     if (
       moment().isAfter(moment(tournament?.teams_deadline)) ||

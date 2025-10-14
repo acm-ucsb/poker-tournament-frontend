@@ -32,8 +32,8 @@ export function CountdownTimer({ targetDate }: { targetDate: Date }) {
   const pad = (num: number) => String(num).padStart(2, "0");
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-4 select-none pb-8">
-      <div className="flex items-center justify-center text-6xl md:text-8xl font-bold tracking-wider">
+    <div className="flex flex-col items-center justify-center space-y-4 select-none pb-4">
+      <div className="flex items-center justify-center text-4xl sm:text-6xl font-bold tracking-wider">
         <div className="relative flex flex-col items-center">
           <span className="w-[2ch]">{pad(timeLeft.days)}</span>
           <span className="absolute -bottom-6 text-sm md:text-base font-medium text-gray-300">

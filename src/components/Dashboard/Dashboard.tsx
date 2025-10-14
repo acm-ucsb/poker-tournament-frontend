@@ -53,7 +53,7 @@ export function Dashboard({}) {
             {tourneyData?.start_time &&
             !moment().isAfter(moment(tourneyData.start_time)) ? (
               <div className="mb-12">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl text-center mb-8">
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter text-center mb-4">
                   Registration opens in
                 </h1>
                 <CountdownTimer targetDate={new Date(tourneyData.start_time)} />
@@ -74,7 +74,10 @@ export function Dashboard({}) {
                   title: "Create or join a team",
                   description: `Make sure all your teammates join the same team. Max ${TEAM_MAX_MEMBERS} members per team.`,
                   children: <ManageTeam />,
-                  disabled: !hasAcknowledgedRules, // Disabled until rules are acknowledged
+                  disabled:
+                    !hasAcknowledgedRules ||
+                    !tourneyData?.start_time ||
+                    moment().isBefore(moment(tourneyData.start_time)), // Disabled until rules are acknowledged and if registration is not opened
                   completed: !!data?.team,
                 },
                 {
