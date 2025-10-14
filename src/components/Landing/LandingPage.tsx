@@ -44,10 +44,6 @@ export default function LandingPage() {
               >
                 <h1
                   className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl text-white"
-                  style={{
-                    textShadow:
-                      "4px 4px 3px rgba(244, 244, 244, 0.30), 8px 8px 10px rgba(255,255,255,0.3)",
-                  }}
                 >
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
@@ -115,8 +111,10 @@ export default function LandingPage() {
                                 Hey 👋, which bracket will you participate in?
                               </h2>
                               <p className="text-gray-300 mb-6">
-                                You only need to sign up online if you're participating in the bot bracket.
-                                If you're only interested in playing normal poker just show up to the event and register there.
+                                You only need to sign up online if you're
+                                participating in the bot bracket. If you're only
+                                interested in playing normal poker just show up
+                                to the event and register there.
                               </p>
                               <div className="flex justify-center gap-3">
                                 <Button
