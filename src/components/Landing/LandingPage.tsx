@@ -25,25 +25,21 @@ import { useWindowScroll } from "@mantine/hooks";
 import { MyTeam } from "../MyTeam/MyTeam";
 import { AdminPanel } from "../AdminPanel/AdminPanel";
 import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 
 export default function LandingPage() {
   const auth = useAuth();
   const { data } = useData();
-  const [showSignupPopup, setShowSignupPopup] = useState(false);
-
-  // Prevent scrolling when popup is open
-  useEffect(() => {
-    if (showSignupPopup) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    // Cleanup just in case the component unmounts
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [showSignupPopup]);
 
   return (
     <div className="flex flex-col">
@@ -56,9 +52,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1
-                  className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl text-white"
-                >
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl text-white">
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
                 <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
@@ -103,65 +97,60 @@ export default function LandingPage() {
                     </Link>
                   ) : (
                     <>
-                      <ButtonWrapper
-                        size="xl"
-                        className="w-full"
-                        disabled={auth.loadingAuth}
-                        onClick={() => {
-                          setShowSignupPopup(true);
-                        }}
-                      >
-                        Sign In & Compete
-                      </ButtonWrapper>
-                      {showSignupPopup && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <ButtonWrapper
+                            size="xl"
+                            className="w-full"
+                            disabled={auth.loadingAuth}
+                          >
+                            Sign In & Compete
+                          </ButtonWrapper>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Hey 👋, which bracket will you participate in?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              You only need to sign up online if you're
+                              participating in the bot bracket. If you're only
+                              interested in playing normal poker just show up to
+                              the event and register there.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>
+                              No coding for me
+                            </AlertDialogCancel>
+                            <Link
+                              href="/auth/signin"
+                              style={{
+                                pointerEvents: auth.loadingAuth
+                                  ? "none"
+                                  : "auto",
+                              }}
+                            >
+                              <AlertDialogAction>Continue</AlertDialogAction>
+                            </Link>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      {/* {showSignupPopup && (
                         <div className="fixed top-0 inset-0 flex items-center justify-center bg-black/50 z-50">
                           <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
                           >
-                            <div className="bg-black rounded-2xl p-6 shadow-lg w-80 text-center">
-                              <h2 className="text-xl font-semibold mb-4">
-                                Hey 👋, which bracket will you participate in?
-                              </h2>
-                              <p className="text-gray-300 mb-6">
-                                You only need to sign up online if you're
-                                participating in the bot bracket. If you're only
-                                interested in playing normal poker just show up
-                                to the event and register there.
-                              </p>
-                              <div className="flex justify-center gap-3">
-                                <Button
-                                  variant={"outline"}
-                                  size="lg"
-                                  onClick={() => setShowSignupPopup(false)}
-                                >
-                                  No coding for me
-                                </Button>
-                                <Link
-                                  href="/auth/signin"
-                                  style={{
-                                    pointerEvents: auth.loadingAuth
-                                      ? "none"
-                                      : "auto",
-                                  }}
-                                >
-                                  <Button
-                                    variant={"default"}
-                                    size="lg"
-                                    className="bg-[#22c55e]"
-                                  >
-                                    Continue
-                                  </Button>
-                                </Link>
-                              </div>
-                            </div>
+                            
                           </motion.div>
                         </div>
-                      )}
+                      )} */}
                     </>
                   )}
                 </motion.div>
+
                 <div className="grid grid-cols-3 gap-3 w-full">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
