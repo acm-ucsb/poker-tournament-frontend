@@ -24,12 +24,26 @@ import { DEFAULT_SIGNIN_REDIRECT_URL } from "../../lib/constants";
 import { useWindowScroll } from "@mantine/hooks";
 import { MyTeam } from "../MyTeam/MyTeam";
 import { AdminPanel } from "../AdminPanel/AdminPanel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function LandingPage() {
   const auth = useAuth();
   const { data } = useData();
   const [showSignupPopup, setShowSignupPopup] = useState(false);
+
+  // Prevent scrolling when popup is open
+  useEffect(() => {
+    if (showSignupPopup) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    // Cleanup just in case the component unmounts
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showSignupPopup]);
 
   return (
     <div className="flex flex-col">
@@ -100,7 +114,7 @@ export default function LandingPage() {
                         Sign In & Compete
                       </ButtonWrapper>
                       {showSignupPopup && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
+                        <div className="fixed top-0 inset-0 flex items-center justify-center bg-black/50 z-50">
                           <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}

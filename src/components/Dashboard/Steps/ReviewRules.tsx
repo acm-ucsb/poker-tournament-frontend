@@ -69,7 +69,7 @@ export function ReviewRules() {
       )}
 
       {showRulePopup && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
