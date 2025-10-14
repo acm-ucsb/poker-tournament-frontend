@@ -47,7 +47,7 @@ export function Dashboard({}) {
       />
       {/* Dashboard content */}
       <section className="flex flex-col mt-6">
-        <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+        {/* <h2 className="text-2xl font-bold mb-4">Dashboard</h2> */}
         {!data?.is_admin && (
           <>
             {tourneyData?.start_time &&
@@ -58,9 +58,7 @@ export function Dashboard({}) {
                 </h1>
                 <CountdownTimer targetDate={new Date(tourneyData.start_time)} />
               </div>
-            ) : (
-              <></>
-            )}
+            ) : null}
             <ActionSteps
               loading={isLoading || auth.loadingAuth}
               steps={[
