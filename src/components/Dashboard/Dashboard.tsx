@@ -8,11 +8,13 @@ import { ManageTeam } from "@/components/Dashboard/Steps/ManageTeam";
 import { useAuth } from "@/providers/AuthProvider";
 import { SubmitCode } from "@/components/Dashboard/Steps/SubmitCode";
 import { ReviewRules } from "@/components/Dashboard/Steps/ReviewRules";
+import { CountdownTimer } from "@/components/Dashboard/CountdownTimer";
 import { ViewTables } from "./Steps/ViewTables";
 import { useLocalStorage } from "@mantine/hooks";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderComponent } from "../LoaderComponent";
+import moment from "moment";
 
 export function Dashboard({}) {
   const auth = useAuth();
@@ -47,53 +49,67 @@ export function Dashboard({}) {
       <section className="flex flex-col mt-6">
         <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
         {!data?.is_admin && (
-          <ActionSteps
-            loading={isLoading || auth.loadingAuth}
-            steps={[
-              {
-                title: "Review tournament rules",
-                description:
-                  "Please review our tournament rules before participating.",
-                children: <ReviewRules />,
-                disabled: !auth.user?.email?.includes("ucsb.edu"), // User must have a ucsb.edu email
-                completed: hasAcknowledgedRules, // Completed if rules are acknowledged or user is in a team
-              },
-              {
-                title: "Create or join a team",
-                description: `Make sure all your teammates join the same team. Max ${TEAM_MAX_MEMBERS} members per team.`,
-                children: <ManageTeam />,
-                disabled: !hasAcknowledgedRules, // Disabled until rules are acknowledged
-                completed: !!data?.team,
-              },
-              {
-                title: "Submit your bot code",
-                description:
-                  "You must submit your code in order to participate in the tournament.",
-                children: <SubmitCode />,
-                disabled:
-                  !data?.team ||
-                  data?.type === "human" ||
-                  !hasAcknowledgedRules, // Disabled if not in a team (step 1)
-                completed: !!data?.team?.has_submitted_code,
-              },
-              {
-                title: "View tournament tables",
-                description:
-                  "Join your assigned table or spectate other games in the tournament.",
-                children: <ViewTables />,
-                disabled:
-                  !data?.team ||
-                  !data.team.has_submitted_code ||
-                  !hasAcknowledgedRules,
-                completed:
-                  !!data?.team?.table && tourneyData?.status !== "not_started",
-                incomplete:
-                  tourneyData?.status !== "not_started" &&
-                  !data?.team?.table &&
-                  data?.team?.has_submitted_code,
-              },
-            ]}
-          />
+          <>
+            {tourneyData?.start_time &&
+            !moment().isAfter(moment(tourneyData.start_time)) ? (
+              <div className="mb-12">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl text-center mb-8">
+                  Registration opens in
+                </h1>
+                <CountdownTimer targetDate={new Date(tourneyData.start_time)} />
+              </div>
+            ) : (
+              <></>
+            )}
+            <ActionSteps
+              loading={isLoading || auth.loadingAuth}
+              steps={[
+                {
+                  title: "Review tournament rules",
+                  description:
+                    "Please review our tournament rules before participating.",
+                  children: <ReviewRules />,
+                  disabled: !auth.user?.email?.includes("ucsb.edu"), // User must have a ucsb.edu email
+                  completed: hasAcknowledgedRules, // Completed if rules are acknowledged or user is in a team
+                },
+                {
+                  title: "Create or join a team",
+                  description: `Make sure all your teammates join the same team. Max ${TEAM_MAX_MEMBERS} members per team.`,
+                  children: <ManageTeam />,
+                  disabled: !hasAcknowledgedRules, // Disabled until rules are acknowledged
+                  completed: !!data?.team,
+                },
+                {
+                  title: "Submit your bot code",
+                  description:
+                    "You must submit your code in order to participate in the tournament.",
+                  children: <SubmitCode />,
+                  disabled:
+                    !data?.team ||
+                    data?.type === "human" ||
+                    !hasAcknowledgedRules, // Disabled if not in a team (step 1)
+                  completed: !!data?.team?.has_submitted_code,
+                },
+                {
+                  title: "View tournament tables",
+                  description:
+                    "Join your assigned table or spectate other games in the tournament.",
+                  children: <ViewTables />,
+                  disabled:
+                    !data?.team ||
+                    !data.team.has_submitted_code ||
+                    !hasAcknowledgedRules,
+                  completed:
+                    !!data?.team?.table &&
+                    tourneyData?.status !== "not_started",
+                  incomplete:
+                    tourneyData?.status !== "not_started" &&
+                    !data?.team?.table &&
+                    data?.team?.has_submitted_code,
+                },
+              ]}
+            />
+          </>
         )}
       </section>
     </main>
