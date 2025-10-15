@@ -141,7 +141,7 @@ export default function LandingPage() {
                   )}
                 </motion.div>
 
-                <div className="grid grid-cols-3 flex-wrap flex gap-3 w-full">
+                <div className="flex flex-wrap gap-3 w-full justify-center items-center">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
