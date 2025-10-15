@@ -56,20 +56,10 @@ export default function LandingPage() {
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
                 <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
-                  Challenge friends at the table or put your poker bot to the
-                  test. <br />
-                  Compete, win prizes, and have fun! <br />
-                  <span
-                    style={{
-                      display: "block",
-                      fontSize: "0.85rem",
-                      color: "#b0b0b0",
-                      fontWeight: 400,
-                      marginTop: "0.5rem",
-                      letterSpacing: "0.04em",
-                      fontStyle: "italic",
-                    }}
-                  >
+                  Challenge friends at the table or put your poker bot to the test. 
+                  Compete, win prizes, and have fun!
+                  
+                  <span className="block text-[0.85rem] text-[#b0b0b0] font-normal mt-2 tracking-wider italic">
                     Presented by ACM Dev @ UCSB & Poker Club @ UCSB
                   </span>
                 </p>
@@ -151,7 +141,7 @@ export default function LandingPage() {
                   )}
                 </motion.div>
 
-                <div className="grid grid-cols-3 gap-3 w-full">
+                <div className="grid grid-cols-3 flex-wrap flex gap-3 w-full">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
