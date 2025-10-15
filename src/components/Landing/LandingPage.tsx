@@ -141,7 +141,7 @@ export default function LandingPage() {
                   )}
                 </motion.div>
 
-                <div className="flex flex-wrap gap-3 w-full justify-center items-center">
+                <div className="grid grid-cols-3 gap-3 w-full">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -149,7 +149,8 @@ export default function LandingPage() {
                   >
                     <Link href="#tournament-format">
                       <Button variant={"outline"} size="lg" className="w-full">
-                        Tournament Format
+                        <span className="block md:hidden">Format</span>
+                        <span className="hidden md:block">Tournament Format</span>
                       </Button>
                     </Link>
                   </motion.div>
@@ -160,7 +161,8 @@ export default function LandingPage() {
                   >
                     <Link href="#tournament-timeline">
                       <Button variant={"outline"} size="lg" className="w-full">
-                        Deadlines & Events
+                        <span className="block md:hidden">Deadlines</span>
+                        <span className="hidden md:block">Deadlines & Events</span>
                       </Button>
                     </Link>
                   </motion.div>
