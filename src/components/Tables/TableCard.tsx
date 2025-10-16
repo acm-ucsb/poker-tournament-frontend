@@ -19,24 +19,30 @@ export function TableCard({ table }: Props) {
       <CardContent className="flex gap-3 justify-between items-center p-2">
         <CardTitle className="flex items-center justify-center gap-2 ml-2">
           {table.name}
-          {data?.team?.table?.id === table.id && (
-            <Badge variant={"success"}>Your Table</Badge>
-          )}
-          {table.tournament_id === UCSB_HUMAN_POKER_TOURNEY_ID && (
-            <Badge variant={"info"}>Human Bracket</Badge>
-          )}
-          {table.status === "active" && (
-            <Badge variant={"success"}>Active</Badge>
-          )}
-          {table.status === "inactive" && (
-            <Badge variant={"error"}>Inactive</Badge>
-          )}
-          {table.status === "paused" && (
-            <Badge variant={"warning"}>Paused</Badge>
-          )}
-          {table.status === "not_started" && (
-            <Badge variant={"warning"}>Not Started</Badge>
-          )}
+          <div className="hidden sm:flex gap-2">
+            {data?.team?.table?.id === table.id && (
+              <Badge variant={"success"}>Your Table</Badge>
+            )}
+            {table.status === "active" && (
+              <Badge variant={"success"}>Active</Badge>
+            )}
+            {table.status === "inactive" && (
+              <Badge variant={"error"}>Inactive</Badge>
+            )}
+            {table.status === "paused" && (
+              <Badge variant={"warning"}>Paused</Badge>
+            )}
+            {table.status === "not_started" && (
+              <Badge variant={"warning"}>Not Started</Badge>
+            )}
+            {table.tournament_id === UCSB_HUMAN_POKER_TOURNEY_ID && (
+              <Badge variant={"info"}>Human Bracket</Badge>
+            )}
+            <Badge variant={"info"}>
+              {table.game_state.players.length} Player
+              {table.game_state.players.length !== 1 ? "s" : ""}
+            </Badge>
+          </div>
         </CardTitle>
         <Link
           href={`/dashboard/tables/${table.id}`}

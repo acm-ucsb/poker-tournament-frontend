@@ -12,8 +12,11 @@ export function TournamentStats() {
   const { tourneyData, tablesData } = useData();
   const supabase = createSupabaseClient();
 
-  const { data: remainingPlayers, isLoading } = useQuery(
-    supabase.rpc("count_remaining_teams"),
+  const { count: remainingPlayers, isLoading } = useQuery(
+    supabase
+      .from("teams")
+      .select("*", { count: "exact", head: true })
+      .neq("num_chips", 0),
     {
       refreshInterval: 1000,
     }
@@ -206,7 +209,7 @@ export function TournamentDetails() {
     <div className={cardBase}>
       <div className="flex items-start gap-4">
         <div className="min-w-0">
-          <h2 className="text-xl font-semibold truncate">{tournament.name}</h2>
+          <h2 className="text-xl font-semibold">{tournament.name}</h2>
           <p className="text-sm mt-1 truncate">
             <span className={statusClass}>{tournament.status}</span>
           </p>

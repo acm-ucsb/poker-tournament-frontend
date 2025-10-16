@@ -6,8 +6,8 @@ export function Footer() {
       className="flex items-center justify-center w-full border-t"
       style={{ height: HEADER_HEIGHT_PX }}
     >
-      <p className="text-muted-foreground">
-        Made by the ACM Development Branch @ UCSB.
+      <p className="text-muted-foreground text-center px-2">
+        Made by the ACM Development Branch @ UCSB
       </p>
     </footer>
   );
