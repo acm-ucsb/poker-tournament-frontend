@@ -38,6 +38,9 @@ export function PlayerPosition({ team, className }: Props) {
   const currentBet = gameState.bet_money[currentPlayerIndex] ?? 0;
   const currentHeldMoney = gameState.held_money[currentPlayerIndex] ?? 0;
 
+  const isCurrentPlayerHuman =
+    gameState.players[currentPlayerIndex].type === "human";
+
   const getActionBadge = () => {
     // Check if no action has occurred yet
     if (gameState.index_to_action <= currentPlayerIndex && currentBet === 0)
@@ -157,7 +160,14 @@ export function PlayerPosition({ team, className }: Props) {
             "text-sm font-medium flex flex-col items-center justify-center gap-1.5"
           }
         >
-          <span className="font-extrabold">{team.name}</span>
+          <div className="flex gap-1.5">
+            <span className="font-extrabold">{team.name}</span>
+            {isCurrentPlayerHuman && (
+              <Badge variant={"default"} className="rounded-full bg-sky-200">
+                human
+              </Badge>
+            )}
+          </div>
           <div className="flex gap-1.5">
             <Tooltip>
               <TooltipTrigger asChild>

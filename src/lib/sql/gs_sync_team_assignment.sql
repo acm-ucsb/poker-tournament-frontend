@@ -2,7 +2,10 @@
 -- This trigger ensures that when a team's table_id is updated, the team is added to the table's game_state.players array
 
 CREATE OR REPLACE FUNCTION update_table_game_state_on_team_assignment()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
 BEGIN
   -- Log for debugging (optional - comment out if not needed)
   RAISE NOTICE 'Trigger fired for team %: OLD.table_id = "%" (is null: %), NEW.table_id = "%" (is null: %)', 
@@ -58,7 +61,7 @@ BEGIN
   
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- Drop the trigger if it exists
 DROP TRIGGER IF EXISTS team_table_assignment_trigger ON teams;

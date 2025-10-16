@@ -8,6 +8,7 @@ import { GameStateProvider } from "@/providers/GameStateProvider";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function Page() {
   const router = useRouter();
@@ -26,13 +27,24 @@ export default function Page() {
   }
 
   // fetch the table id for the human bracket
-  const { data: humanTable, error } = useQuery(
+  const {
+    data: humanTable,
+    isLoading,
+    error,
+  } = useQuery(
     supabase
       .from("tables")
       .select("*")
       .eq("tournament_id", UCSB_HUMAN_POKER_TOURNEY_ID)
       .maybeSingle()
   );
+
+  useEffect(() => {
+    if (!isLoading && (!humanTable || error)) {
+      toast.error("Unable to fetch human table", { richColors: true });
+      router.replace("/dashboard");
+    }
+  }, [isLoading, humanTable, error]);
 
   return (
     <GameStateProvider tableId={humanTable?.id ?? ""}>

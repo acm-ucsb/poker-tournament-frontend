@@ -165,7 +165,7 @@ export function ManageTournament() {
           >
             Tournament Is Active
           </ButtonWrapper>
-          {tourneyData.id !== UCSB_HUMAN_POKER_TOURNEY_ID ? (
+          {tourneyData.id === UCSB_HUMAN_POKER_TOURNEY_ID ? (
             <ButtonWrapper
               className="group"
               href="/dashboard/admin/human-actions"
