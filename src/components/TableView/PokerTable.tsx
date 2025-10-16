@@ -9,13 +9,20 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useGameState } from "@/providers/GameStateProvider";
+import { LoaderComponent } from "../LoaderComponent";
 
 type Props = {
-  gameState: PokerGameState;
   className?: string;
 };
 
-export function PokerTable({ gameState, className }: Props) {
+export function PokerTable({ className }: Props) {
+  const { gameState } = useGameState();
+
+  if (!gameState) {
+    return <LoaderComponent />;
+  }
+
   // Calculate player positions around the table (elliptical layout)
   const getPlayerPosition = (index: number, totalPlayers: number) => {
     const angle = (index * 360) / totalPlayers - 90; // Start from top

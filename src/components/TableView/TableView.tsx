@@ -34,11 +34,7 @@ export function TableView({ tableId }: Props) {
       {/* Main content */}
       <section className="flex flex-col mt-6 grow">
         {/* Poker table */}
-        {!gameState ? (
-          <LoaderComponent />
-        ) : (
-          <PokerTable gameState={gameState} />
-        )}
+        {!gameState ? <LoaderComponent /> : <PokerTable />}
       </section>
     </main>
   );

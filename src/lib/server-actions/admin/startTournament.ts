@@ -102,7 +102,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
     } = await supabase
       .from("teams")
       .select("id", { count: "exact" })
-      // .eq("tournament_id", UCSB_POKER_TOURNEY_ID) - removed for now since our tournament is hardcoded
+      // .eq("tournament_id", UCSB_ACTIVE_POKER_TOURNEY_ID) # TODO: add a filter so that in the next bracket, we only get the people who advanced
       .eq("has_submitted_code", true)
       .eq("is_disqualified", false);
 
