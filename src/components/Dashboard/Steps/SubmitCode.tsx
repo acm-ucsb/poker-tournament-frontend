@@ -139,7 +139,7 @@ export function SubmitCode() {
               Please ensure that your code follows our{" "}
               {/* TODO: implement a submission guidelines page */}
               <Link
-                href="/submission-guidelines"
+                href="/dashboard/submission-guidelines"
                 className="inline-flex items-center gap-1 p-0 m-0 hover:underline text-white font-semibold"
                 style={{
                   cursor: "pointer",
