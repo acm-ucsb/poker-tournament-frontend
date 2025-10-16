@@ -2,7 +2,10 @@
 
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
-import { TEAM_MAX_MEMBERS, UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import {
+  TEAM_MAX_MEMBERS,
+  UCSB_ACTIVE_POKER_TOURNEY_ID,
+} from "@/lib/constants";
 import moment from "moment";
 
 type Params = {
@@ -41,7 +44,7 @@ export async function joinTeam(
     const { data: tournament } = await supabase
       .from("tournaments")
       .select("teams_deadline, status, start_time")
-      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID) // hardcoded for now
       .single()
       .throwOnError();
 

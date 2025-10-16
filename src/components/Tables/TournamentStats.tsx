@@ -2,31 +2,25 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { User as UserIcon } from "lucide-react";
-import { useGameState } from "@/providers/GameStateProvider";
-import { parseGameState } from "@/lib/util/parseGameState";
-import { PokerGameState, Table } from "@/lib/types";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
-import Link from 'next/link';
-import { useData } from '@/providers/DataProvider';
+import Link from "next/link";
+import { useData } from "@/providers/DataProvider";
+import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { Skeleton } from "../ui/skeleton";
 
 export function TournamentStats() {
   const { tourneyData, tablesData } = useData();
   const supabase = createSupabaseClient();
 
-  const [remainingPlayers, setRemainingPlayers] = useState<number>();
-
-  useEffect(() => {
-    async function fetchRemainingPlayers() {
-      const { data, error } = await supabase.rpc("count_remaining_teams");
-      if (error) {
-        console.error("Error fetching remaining players:", error);
-      } else {
-        setRemainingPlayers(data);
-      }
+  const { count: remainingPlayers, isLoading } = useQuery(
+    supabase
+      .from("teams")
+      .select("*", { count: "exact", head: true })
+      .neq("num_chips", 0),
+    {
+      refreshInterval: 1000,
     }
-
-    fetchRemainingPlayers();
-  }, []);
+  );
 
   return (
     <div className="flex-[1] min-w-0">
@@ -36,11 +30,15 @@ export function TournamentStats() {
 
         {/* Small stat boxes in a responsive grid to match table cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <StatBox
-            label="Remaining Teams"
-            value={remainingPlayers || "N/A"}
-            icon={<UserIcon className="w-6 h-6 text-gray-300" />}
-          />
+          {isLoading ? (
+            <Skeleton className="w-full h-full" />
+          ) : (
+            <StatBox
+              label="Remaining Teams"
+              value={remainingPlayers || "N/A"}
+              icon={<UserIcon className="w-6 h-6 text-gray-300" />}
+            />
+          )}
           <StatBox
             label="Blind"
             value={`${tablesData?.[0].game_state.small_blind} / ${tablesData?.[0].game_state.big_blind}`}
@@ -76,7 +74,6 @@ export function TournamentStats() {
         {/* Leaderboard and Live Feed as full-width boxes below the small stats */}
         <div className="grid grid-cols-1 gap-3">
           <LeaderboardTracker />
-          {/* <LiveFeed /> */}
         </div>
       </div>
     </div>
@@ -178,16 +175,16 @@ const formatDate = (timestamp: string | null | undefined) => {
   if (!timestamp) return null;
   const date = new Date(timestamp);
   return date.toLocaleString("en-US", {
-    month: "short", 
-    day: "numeric", 
-    hour: "numeric", 
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
     minute: "2-digit",
     hour12: true,
   });
 };
 
 export function TournamentDetails() {
-  const { tourneyData, tablesData } = useData();
+  const { tourneyData } = useData();
   // Stub tournament details (replace with API data in future)
   const tournament = {
     name: tourneyData?.name,
@@ -212,7 +209,7 @@ export function TournamentDetails() {
     <div className={cardBase}>
       <div className="flex items-start gap-4">
         <div className="min-w-0">
-          <h2 className="text-xl font-semibold truncate">{tournament.name}</h2>
+          <h2 className="text-xl font-semibold">{tournament.name}</h2>
           <p className="text-sm mt-1 truncate">
             <span className={statusClass}>{tournament.status}</span>
           </p>
@@ -238,46 +235,54 @@ export function TournamentDetails() {
 }
 
 export function LeaderboardTracker() {
-    const { leaderboardData } = useData();
+  const { leaderboardData } = useData();
 
-    const teams = leaderboardData || [];
+  const teams = leaderboardData || [];
 
-    return (
-        <div className={cardBase}>
-              <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Leaderboard</h3>
-                  <span className="text-sm text-gray-400">top stacks</span>
-              </div>
-        <div className="mt-1 mb-2">
-          <span className="text-sm text-gray-400 block text-left">Scroll to see more teams!</span>
-        </div>
-            <div className="mt-3">
-                {/* Height for 5 items: 5 * 3.5rem (item height + padding) + 4 * 0.5rem (space-y-2) = 19.5rem */}
-                <ol className={`space-y-2 pr-2 h-[19.5rem] overflow-y-auto`}>
-        {teams.map((team, i) => (
+  return (
+    <div className={cardBase}>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Leaderboard</h3>
+      </div>
+      <div className="mt-3">
+        {/* Height for 5 items: 5 * 3.5rem (item height + padding) + 4 * 0.5rem (space-y-2) = 19.5rem */}
+        <ol className={`space-y-2 pr-2 h-[19.5rem] overflow-y-auto`}>
+          {teams.map((team, i) => (
             <Link
               key={team.id}
-              href={team.table_id ? `/dashboard/tables/${team.table_id}` : '#'}
-              title={team.table_id ? `Go to table ${team.table_id}` : "No table assigned"}
+              href={team.table_id ? `/dashboard/tables/${team.table_id}` : "#"}
+              title={
+                team.table_id
+                  ? `Go to table ${team.table_id}`
+                  : "No table assigned"
+              }
             >
-          <li className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-[rgba(96,239,134,0.06)] hover:border-[rgba(96,239,134,0.06)] transition-colors cursor-pointer">
-                <div className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? 'bg-yellow-400 text-yellow-900' : i === 1 ? 'bg-gray-300 text-gray-800' : i === 2 ? 'bg-orange-400 text-orange-900' : 'bg-gray-700 text-white'}`}>
+              <li className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-[var(--secondary)] transition-colors cursor-pointer">
+                <div
+                  className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? "bg-yellow-400 text-yellow-900" : i === 1 ? "bg-gray-300 text-gray-800" : i === 2 ? "bg-orange-400 text-orange-900" : "bg-gray-700 text-white"}`}
+                >
                   {i + 1}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-base font-medium truncate">{team.name}</div>
+                  <div className="text-base font-medium truncate">
+                    {team.name}
+                  </div>
                 </div>
                 <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
                   {team.num_chips.toLocaleString()}
-                  <img src="/casino-chip.png" alt="chip" className="w-4 h-4 inline-block" />
+                  <img
+                    src="/casino-chip.png"
+                    alt="chip"
+                    className="w-4 h-4 inline-block"
+                  />
                 </div>
               </li>
             </Link>
           ))}
-                </ol>
-            </div>
-        </div>
-    );
+        </ol>
+      </div>
+    </div>
+  );
 }
 
 function StatBox({

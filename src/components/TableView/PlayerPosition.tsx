@@ -35,10 +35,13 @@ export function PlayerPosition({ team, className }: Props) {
       gameState.players.length ===
     currentPlayerIndex;
 
-  const getActionBadge = () => {
-    const currentBet = gameState.bet_money[currentPlayerIndex];
-    const currentHeldMoney = gameState.held_money[currentPlayerIndex];
+  const currentBet = gameState.bet_money[currentPlayerIndex] ?? 0;
+  const currentHeldMoney = gameState.held_money[currentPlayerIndex] ?? 0;
 
+  const isCurrentPlayerHuman =
+    gameState.players[currentPlayerIndex].type === "human";
+
+  const getActionBadge = () => {
     // Check if no action has occurred yet
     if (gameState.index_to_action <= currentPlayerIndex && currentBet === 0)
       return {
@@ -143,7 +146,8 @@ export function PlayerPosition({ team, className }: Props) {
       {/* Player info header */}
       <div className="flex flex-col items-center gap-y-1.5">
         {/* Action indicator */}
-        {currentPlayerIndex === gameState.index_to_action && (
+        {currentPlayerIndex ===
+          (gameState.index_to_action + 2) % gameState.players.length && (
           <Badge variant={"default"} className="rounded-full bg-red-100">
             action
           </Badge>
@@ -156,19 +160,23 @@ export function PlayerPosition({ team, className }: Props) {
             "text-sm font-medium flex flex-col items-center justify-center gap-1.5"
           }
         >
-          <span className="font-extrabold">{team.name}</span>
+          <div className="flex gap-1.5">
+            <span className="font-extrabold">{team.name}</span>
+            {isCurrentPlayerHuman && (
+              <Badge variant={"default"} className="rounded-full bg-sky-200">
+                human
+              </Badge>
+            )}
+          </div>
           <div className="flex gap-1.5">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Badge variant={"default"} className="rounded-full bg-white/90">
-                  {formatChips(gameState.held_money[currentPlayerIndex])} chips
+                  {formatChips(currentHeldMoney)} chips
                 </Badge>
               </TooltipTrigger>
               <TooltipContent>
-                <span>
-                  {formatChips(gameState.held_money[currentPlayerIndex], false)}{" "}
-                  chips
-                </span>
+                <span>{formatChips(currentHeldMoney, false)} chips</span>
               </TooltipContent>
             </Tooltip>
 
@@ -176,7 +184,7 @@ export function PlayerPosition({ team, className }: Props) {
             {isDealer && (
               <Badge
                 variant={"default"}
-                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
+                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold bg-white"
               >
                 D
               </Badge>

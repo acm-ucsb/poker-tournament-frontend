@@ -9,13 +9,20 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useGameState } from "@/providers/GameStateProvider";
+import { LoaderComponent } from "../LoaderComponent";
 
 type Props = {
-  gameState: PokerGameState;
   className?: string;
 };
 
-export function PokerTable({ gameState, className }: Props) {
+export function PokerTable({ className }: Props) {
+  const { gameState } = useGameState();
+
+  if (!gameState) {
+    return <LoaderComponent />;
+  }
+
   // Calculate player positions around the table (elliptical layout)
   const getPlayerPosition = (index: number, totalPlayers: number) => {
     const angle = (index * 360) / totalPlayers - 90; // Start from top
@@ -34,7 +41,7 @@ export function PokerTable({ gameState, className }: Props) {
   return (
     <div className={cn("relative w-full mx-auto", className)}>
       {/* Main table area */}
-      <div className="h-[700px] rounded-full bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-950">
+      <div className="h-[800px] rounded-full bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-950">
         {/* Central area with community cards and pot */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center space-y-4">
           {/* Pot display with main pot and side pots */}
@@ -93,7 +100,7 @@ export function PokerTable({ gameState, className }: Props) {
 
               return (
                 <RevealingCard
-                  key={`${card.rank}${card.suit}`}
+                  key={`${index}-${card.rank}${card.suit}`}
                   card={card}
                   delay={index * 140}
                   className="shadow-lg"

@@ -16,11 +16,9 @@ import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
-import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import { UCSB_ACTIVE_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
 import { Table, Team, Tournament, User } from "@/lib/types";
-import { parseGameState } from "@/lib/util/parseGameState";
-import { table } from "console";
 
 type UserData = User & {
   team:
@@ -149,7 +147,7 @@ export function DataProvider({ children }: DataProviderProps) {
       ? supabase
           .from("tournaments")
           .select("*")
-          .eq("id", UCSB_POKER_TOURNEY_ID)
+          .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID)
           .maybeSingle()
       : null,
     {
@@ -179,10 +177,7 @@ export function DataProvider({ children }: DataProviderProps) {
     error: fetchLeaderboardError,
     mutate: mutateLeaderboard,
   } = useQuery<Team[]>(
-        supabase
-          .from("teams")
-          .select("*")
-          .order("num_chips", { ascending: false }),
+    supabase.from("teams").select("*").order("num_chips", { ascending: false }),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,

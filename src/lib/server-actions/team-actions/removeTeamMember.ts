@@ -3,7 +3,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError } from "../types";
 import { supabaseAdmin } from "@/lib/supabase/supabase-admin";
-import { UCSB_POKER_TOURNEY_ID } from "@/lib/constants";
+import { UCSB_ACTIVE_POKER_TOURNEY_ID } from "@/lib/constants";
 import moment from "moment";
 
 type Params = {
@@ -40,7 +40,7 @@ export async function removeTeamMember(params: Params) {
     const { data: tournament } = await supabase
       .from("tournaments")
       .select("teams_deadline, status")
-      .eq("id", UCSB_POKER_TOURNEY_ID) // hardcoded for now
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID) // hardcoded for now
       .single()
       .throwOnError();
 

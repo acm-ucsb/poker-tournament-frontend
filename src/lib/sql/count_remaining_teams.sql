@@ -1,8 +1,8 @@
 DECLARE
-  total_count INTEGER := 0;
+  total_count BIGINT := 0;
   table_record RECORD;
-  held_money_array INTEGER[];
-  chip_value INTEGER;
+  held_money_array BIGINT[];
+  chip_value BIGINT;
 BEGIN
   -- Loop through all tables
   FOR table_record IN 
@@ -12,7 +12,7 @@ BEGIN
   LOOP
     -- Extract the held_money array from the game_state JSON
     held_money_array := ARRAY(
-      SELECT jsonb_array_elements_text(table_record.game_state->'held_money')::INTEGER
+      SELECT jsonb_array_elements_text(table_record.game_state->'held_money')::BIGINT
     );
     
     -- Count how many players have chips > 0 in this table

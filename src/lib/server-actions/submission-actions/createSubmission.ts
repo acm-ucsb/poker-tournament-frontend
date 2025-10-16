@@ -5,7 +5,7 @@ import { ServerActionError, ServerActionResponse } from "../types";
 import {
   BACKEND_ENGINE_BASE_URL,
   DISQUALIFICATION_MESSAGE,
-  UCSB_POKER_TOURNEY_ID,
+  UCSB_ACTIVE_POKER_TOURNEY_ID,
 } from "@/lib/constants";
 import axios from "axios";
 
@@ -48,7 +48,7 @@ export async function createSubmission(
     const { data: tournament } = await supabase
       .from("tournaments")
       .select("submissions_deadline, status")
-      .eq("id", UCSB_POKER_TOURNEY_ID)
+      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID)
       .single()
       .throwOnError();
 

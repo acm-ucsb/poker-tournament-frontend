@@ -1,5 +1,5 @@
 export type UserType = "human" | "bot";
-export type TableStatus = "not_started" | "active" | "waiting" | "inactive";
+export type TableStatus = "not_started" | "active" | "paused" | "inactive";
 export type TournamentStatus = "not_started" | "active" | "completed";
 
 export type User = {
@@ -31,6 +31,7 @@ export type Table = {
   name: string;
   game_state: PokerGameStateDB; // Will be PokerGameState but stored as JSON in DB
   last_change: any; // type??
+  tournament_id: string | null;
 };
 
 export type Tournament = {

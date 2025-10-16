@@ -39,6 +39,7 @@ export function PlayingCard({
         borderRadius: "0.4rem",
         width: "clamp(3rem, 6vw, 5rem)",
         height: "clamp(4.4rem, 9vw, 7rem)",
+        userSelect: "none",
         ...style, // Merge with any provided style prop
       }}
       className={cn("flex flex-col relative shadow-lg", className)}

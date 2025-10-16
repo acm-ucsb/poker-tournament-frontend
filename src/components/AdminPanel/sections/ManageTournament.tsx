@@ -31,6 +31,11 @@ import {
 } from "@/components/ui/form";
 import { DateTimePicker } from "@/components/DateTimePicker";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
+import {
+  UCSB_ACTIVE_POKER_TOURNEY_ID,
+  UCSB_HUMAN_POKER_TOURNEY_ID,
+} from "@/lib/constants";
+import { IconArrowRight } from "@tabler/icons-react";
 
 const formSchema = z.object({
   teamsDeadline: z
@@ -87,7 +92,7 @@ export function ManageTournament() {
     setDeadlineChangesLoading(false);
   };
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-2">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <h4 className="text-md mb-1 font-medium">Update Deadlines</h4>
@@ -150,11 +155,35 @@ export function ManageTournament() {
           </div>
         </form>
       </Form>
-
       {tourneyData?.status === "active" ? (
-        <ButtonWrapper size={"lg"} variant={"outline"} disabled>
-          Tournament Is Active
-        </ButtonWrapper>
+        <div className="flex gap-2">
+          <ButtonWrapper
+            className="grow"
+            size={"lg"}
+            variant={"outline"}
+            disabled
+          >
+            Tournament Is Active
+          </ButtonWrapper>
+          {tourneyData.id === UCSB_HUMAN_POKER_TOURNEY_ID ? (
+            <ButtonWrapper
+              className="group"
+              href="/dashboard/admin/human-actions"
+            >
+              <div className="flex items-center justify-center gap-2 px-3">
+                Manage Human Actions
+                <IconArrowRight className="group-hover:translate-x-1.5 transition-all" />
+              </div>
+            </ButtonWrapper>
+          ) : (
+            <ButtonWrapper className="group" href="/dashboard/tables">
+              <div className="flex items-center justify-center gap-2 px-3">
+                View All Tables
+                <IconArrowRight className="group-hover:translate-x-1.5 transition-all" />
+              </div>
+            </ButtonWrapper>
+          )}
+        </div>
       ) : (
         <AlertDialog>
           <AlertDialogTrigger asChild>
