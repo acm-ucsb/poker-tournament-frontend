@@ -7,7 +7,7 @@ export function Footer() {
       style={{ height: HEADER_HEIGHT_PX }}
     >
       <p className="text-muted-foreground">
-        Made by UCSB's ACM Development Branch
+        Made by the ACM Development Branch @ UCSB.
       </p>
     </footer>
   );
