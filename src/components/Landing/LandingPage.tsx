@@ -56,9 +56,8 @@ export default function LandingPage() {
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
                 <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
-                  Challenge friends at the table or put your poker bot to the test. 
-                  Compete, win prizes, and have fun!
-                  
+                  Challenge friends at the table or put your poker bot to the
+                  test. Compete, win prizes, and have fun!
                   <span className="block text-[0.85rem] text-[#b0b0b0] font-normal mt-2 tracking-wider italic">
                     Presented by ACM Dev @ UCSB & Poker Club @ UCSB
                   </span>
@@ -86,62 +85,47 @@ export default function LandingPage() {
                       </ButtonWrapper>
                     </Link>
                   ) : (
-                    <>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <ButtonWrapper
-                            size="xl"
-                            className="w-full"
-                            disabled={auth.loadingAuth}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <ButtonWrapper
+                          size="xl"
+                          className="w-full"
+                          disabled={auth.loadingAuth}
+                        >
+                          Sign In & Compete
+                        </ButtonWrapper>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Hey 👋, which bracket will you participate in?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            You only need to sign up online if you're
+                            participating in the bot bracket. If you're only
+                            interested in playing normal poker just show up to
+                            the event and register there.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>
+                            No coding for me
+                          </AlertDialogCancel>
+                          <Link
+                            href="/auth/signin"
+                            style={{
+                              pointerEvents: auth.loadingAuth ? "none" : "auto",
+                            }}
                           >
-                            Sign In & Compete
-                          </ButtonWrapper>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Hey 👋, which bracket will you participate in?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              You only need to sign up online if you're
-                              participating in the bot bracket. If you're only
-                              interested in playing normal poker just show up to
-                              the event and register there.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>
-                              No coding for me
-                            </AlertDialogCancel>
-                            <Link
-                              href="/auth/signin"
-                              style={{
-                                pointerEvents: auth.loadingAuth
-                                  ? "none"
-                                  : "auto",
-                              }}
-                            >
-                              <AlertDialogAction>Continue</AlertDialogAction>
-                            </Link>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      {/* {showSignupPopup && (
-                        <div className="fixed top-0 inset-0 flex items-center justify-center bg-black/50 z-50">
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                          >
-                            
-                          </motion.div>
-                        </div>
-                      )} */}
-                    </>
+                            <AlertDialogAction>Continue</AlertDialogAction>
+                          </Link>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   )}
                 </motion.div>
 
-                <div className="grid grid-cols-3 gap-3 w-full">
+                <div className="grid sm:grid-cols-3 gap-2 w-full">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -149,8 +133,7 @@ export default function LandingPage() {
                   >
                     <Link href="#tournament-format">
                       <Button variant={"outline"} size="lg" className="w-full">
-                        <span className="block md:hidden">Format</span>
-                        <span className="hidden md:block">Tournament Format</span>
+                        Tournament Format
                       </Button>
                     </Link>
                   </motion.div>
@@ -161,8 +144,7 @@ export default function LandingPage() {
                   >
                     <Link href="#tournament-timeline">
                       <Button variant={"outline"} size="lg" className="w-full">
-                        <span className="block md:hidden">Deadlines</span>
-                        <span className="hidden md:block">Deadlines & Events</span>
+                        Deadlines & Events
                       </Button>
                     </Link>
                   </motion.div>
