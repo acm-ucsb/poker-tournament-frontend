@@ -2,9 +2,6 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { User as UserIcon } from "lucide-react";
-import { useGameState } from "@/providers/GameStateProvider";
-import { parseGameState } from "@/lib/util/parseGameState";
-import { PokerGameState, Table } from "@/lib/types";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 import Link from "next/link";
 import { useData } from "@/providers/DataProvider";

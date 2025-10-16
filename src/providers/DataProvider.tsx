@@ -19,8 +19,6 @@ import { Loader2 } from "lucide-react";
 import { UCSB_ACTIVE_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
 import { Table, Team, Tournament, User } from "@/lib/types";
-import { parseGameState } from "@/lib/util/parseGameState";
-import { table } from "console";
 
 type UserData = User & {
   team:

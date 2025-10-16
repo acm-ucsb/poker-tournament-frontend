@@ -25,7 +25,6 @@ import {
   Tournament,
   User,
 } from "@/lib/types";
-import { useData } from "./DataProvider";
 import { parseGameState } from "@/lib/util/parseGameState";
 
 type GameStateContextType = {
@@ -50,6 +49,7 @@ export function GameStateProvider({
   tableId,
 }: GameStateProviderProps) {
   const supabase = createSupabaseClient();
+  const router = useRouter();
 
   const [gameState, setGameState] = useState<PokerGameState | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -65,9 +65,14 @@ export function GameStateProvider({
 
   useEffect(() => {
     if (initialTableData) {
-      parseGameState(initialTableData.game_state).then((populatedState) => {
-        setGameState(populatedState);
-      });
+      parseGameState(initialTableData.game_state)
+        .then((populatedState) => {
+          setGameState(populatedState);
+        })
+        .catch((err) => {
+          toast.error("Unable to read game state", { richColors: true });
+          router.replace("/dashboard/tables");
+        });
 
       setIsLoading(false);
     }
@@ -87,7 +92,12 @@ export function GameStateProvider({
           filter: `id=eq.${tableId}`,
         },
         async ({ new: newGame }: { new: Table }) => {
-          setGameState(await parseGameState(newGame.game_state));
+          try {
+            setGameState(await parseGameState(newGame.game_state));
+          } catch (error) {
+            toast.error("Unable to read game state", { richColors: true });
+            router.replace("/dashboard/tables");
+          }
         }
       )
       .subscribe((status, err) => {
