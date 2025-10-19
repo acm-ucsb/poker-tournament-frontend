@@ -101,23 +101,32 @@ export default function LandingPage() {
                             Hey 👋, which bracket will you participate in?
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            You only need to sign up online if you're
-                            participating in the bot bracket. If you're only
-                            interested in playing normal poker just show up to
-                            the event and register there.
+                            You only need to register on this website if
+                            you're participating in the bot bracket. If
+                            you're interested in playing normal poker please
+                            fill out our{" "}
+                            <Link className="underline text-blue-400" href="https://forms.gle/i93xZK5awUF9N8Pw9">
+                            RSVP form.
+                            </Link>
+                            {" "}We have limited capacity for the human bracket so fill them out ASAP!
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>
-                            No coding for me
+                            Cancel
                           </AlertDialogCancel>
+                          <Link
+                          href="https://forms.gle/i93xZK5awUF9N8Pw9"
+                          >
+                            <AlertDialogAction>Fill out RSVP</AlertDialogAction>
+                          </Link>
                           <Link
                             href="/auth/signin"
                             style={{
                               pointerEvents: auth.loadingAuth ? "none" : "auto",
                             }}
                           >
-                            <AlertDialogAction>Continue</AlertDialogAction>
+                            <AlertDialogAction>Register</AlertDialogAction>
                           </Link>
                         </AlertDialogFooter>
                       </AlertDialogContent>

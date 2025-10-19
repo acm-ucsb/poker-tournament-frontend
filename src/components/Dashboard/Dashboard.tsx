@@ -50,15 +50,14 @@ export function Dashboard({}) {
         {/* <h2 className="text-2xl font-bold mb-4">Dashboard</h2> */}
         {!data?.is_admin && (
           <>
-            {tourneyData?.start_time &&
-            !moment().isAfter(moment(tourneyData.start_time)) ? (
+            {tourneyData?.start_time && (
               <div className="mb-12">
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter text-center mb-4">
                   Registration opens in
                 </h1>
                 <CountdownTimer targetDate={new Date(tourneyData.start_time)} />
               </div>
-            ) : null}
+            )}
             <ActionSteps
               loading={isLoading || auth.loadingAuth}
               steps={[
