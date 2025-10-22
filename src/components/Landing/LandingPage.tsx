@@ -101,24 +101,26 @@ export default function LandingPage() {
                             Hey 👋, which bracket will you participate in?
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            You only need to register on this website if
-                            you're participating in the bot bracket. If
-                            you're interested in playing normal poker please
-                            fill out our{" "}
-                            <Link className="underline text-blue-400" href="https://forms.gle/i93xZK5awUF9N8Pw9">
-                            RSVP form.
-                            </Link>
-                            {" "}We have limited capacity for the human bracket so fill them out ASAP!
+                            You only need to register on this website if you're
+                            participating in the bot bracket. If you're
+                            interested in playing normal poker please fill out
+                            our{" "}
+                            <Link
+                              className="underline text-blue-400"
+                              href="https://forms.gle/i93xZK5awUF9N8Pw9"
+                            >
+                              RSVP form.
+                            </Link>{" "}
+                            We have limited capacity for the human bracket so
+                            fill them out ASAP!
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>
-                            Cancel
-                          </AlertDialogCancel>
-                          <Link
-                          href="https://forms.gle/i93xZK5awUF9N8Pw9"
-                          >
-                            <AlertDialogAction>Fill out RSVP</AlertDialogAction>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <Link href="https://forms.gle/i93xZK5awUF9N8Pw9">
+                            <AlertDialogAction className="w-full">
+                              Human Bracket
+                            </AlertDialogAction>
                           </Link>
                           <Link
                             href="/auth/signin"
@@ -126,7 +128,9 @@ export default function LandingPage() {
                               pointerEvents: auth.loadingAuth ? "none" : "auto",
                             }}
                           >
-                            <AlertDialogAction>Register</AlertDialogAction>
+                            <AlertDialogAction className="w-full">
+                              Bot Bracket
+                            </AlertDialogAction>
                           </Link>
                         </AlertDialogFooter>
                       </AlertDialogContent>
