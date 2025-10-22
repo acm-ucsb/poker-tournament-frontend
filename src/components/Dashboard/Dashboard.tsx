@@ -8,6 +8,7 @@ import { ManageTeam } from "@/components/Dashboard/Steps/ManageTeam";
 import { useAuth } from "@/providers/AuthProvider";
 import { SubmitCode } from "@/components/Dashboard/Steps/SubmitCode";
 import { ReviewRules } from "@/components/Dashboard/Steps/ReviewRules";
+import { ReviewSubGuide } from "@/components/Dashboard/Steps/ReviewSubGuide";
 import { CountdownTimer } from "@/components/Dashboard/CountdownTimer";
 import { ViewTables } from "./Steps/ViewTables";
 import { useLocalStorage } from "@mantine/hooks";
@@ -23,6 +24,13 @@ export function Dashboard({}) {
 
   const [hasAcknowledgedRules] = useLocalStorage({
     key: "ack-tournament-rules",
+    defaultValue: false,
+    deserialize: (value) => value === "true",
+    serialize: (value) => (value ? "true" : "false"),
+  });
+
+  const [hasReadSubmissionGuide] = useLocalStorage({
+    key: "read-submission-guide",
     defaultValue: false,
     deserialize: (value) => value === "true",
     serialize: (value) => (value ? "true" : "false"),
@@ -80,11 +88,20 @@ export function Dashboard({}) {
                   completed: !!data?.team,
                 },
                 {
+                  title: "Review submission guideline",
+                  description:
+                    "Please review the submission guideline before submitting your bot.",
+                  children: <ReviewSubGuide />,
+                  disabled: !data?.team || !hasAcknowledgedRules,
+                  completed: hasReadSubmissionGuide,
+                },
+                {
                   title: "Submit your bot code",
                   description:
                     "You must submit your code in order to participate in the tournament.",
                   children: <SubmitCode />,
                   disabled:
+                    !hasReadSubmissionGuide ||
                     !data?.team ||
                     data?.type === "human" ||
                     !hasAcknowledgedRules, // Disabled if not in a team (step 1)
