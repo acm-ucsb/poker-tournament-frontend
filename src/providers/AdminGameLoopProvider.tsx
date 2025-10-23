@@ -12,8 +12,10 @@ import {
 import { toast } from "sonner";
 import { useData } from "./DataProvider";
 import { usePathname } from "next/navigation";
-import { POLL_INTERVAL_MS } from "@/lib/constants";
+import { BACKEND_ENGINE_BASE_URL, POLL_INTERVAL_MS } from "@/lib/constants";
 import { useWindowEvent } from "@mantine/hooks";
+import axios from "axios";
+import { useAuth } from "./AuthProvider";
 
 type AdminGameLoopProviderProps = {
   children: ReactNode;
@@ -34,7 +36,8 @@ const AdminGameLoopContext = createContext({
 export function AdminGameLoopProvider({
   children,
 }: AdminGameLoopProviderProps) {
-  const { data } = useData();
+  const { data, tourneyData } = useData();
+  const { session } = useAuth();
 
   const [pollIntervalId, setPollIntervalId] = useState<NodeJS.Timeout | null>(
     null
@@ -53,12 +56,39 @@ export function AdminGameLoopProvider({
     }
 
     const intervalId = setInterval(async () => {
-      // TODO: Call API to step to next hand
-      console.log("stepping to next hand...");
-      toast.info("Stepping to next hand...", {
+      toast.loading("Stepping to next hand...", {
         id: "stepping-hand",
         richColors: true,
       });
+
+      try {
+        const response = await axios.post(
+          `${BACKEND_ENGINE_BASE_URL}/admin/tables/move`,
+          null,
+          {
+            params: {
+              table_ids: tourneyData?.tables || null,
+            },
+            headers: {
+              Authorization: `Bearer ${session?.access_token}`,
+            },
+          }
+        );
+
+        if (response.status !== 200) {
+          throw new Error("Failed to step to next hand.");
+        }
+
+        toast.success("Stepped to next hand.", {
+          id: "stepping-hand",
+          richColors: true,
+        });
+      } catch (error: any) {
+        toast.error(`Error: ${String(error)}`, {
+          id: "stepping-hand",
+          richColors: true,
+        });
+      }
     }, POLL_INTERVAL_MS);
 
     setPollIntervalId(intervalId);

@@ -45,6 +45,7 @@ export type Tournament = {
   starting_chips: number;
   start_time: string | null;
   end_time: string | null;
+  tables: string[];
 };
 
 // Poker-specific types

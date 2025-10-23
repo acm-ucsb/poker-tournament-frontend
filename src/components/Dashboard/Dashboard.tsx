@@ -114,13 +114,12 @@ export function Dashboard({}) {
                   completed:
                     !!data?.team?.table ||
                     isHuman ||
-                    (hasTournamentStarted &&
-                      (!data?.team || !data?.team?.has_submitted_code)),
+                    (hasTournamentStarted && !!data?.team?.table),
                   incomplete:
-                    hasTournamentStarted &&
-                    !!data?.team &&
-                    !data?.team?.table &&
-                    data?.team?.has_submitted_code,
+                    !hasTournamentStarted ||
+                    (!!data?.team &&
+                      !data?.team?.table &&
+                      data?.team?.has_submitted_code),
                 },
               ]}
             />
