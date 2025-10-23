@@ -39,8 +39,8 @@ export function TableCard({ table }: Props) {
               <Badge variant={"info"}>Human Bracket</Badge>
             )}
             <Badge variant={"info"}>
-              {table.game_state.players.length} Player
-              {table.game_state.players.length !== 1 ? "s" : ""}
+              {table.game_state?.players?.length} Player
+              {table.game_state?.players?.length !== 1 ? "s" : ""}
             </Badge>
           </div>
         </CardTitle>

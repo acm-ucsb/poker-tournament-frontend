@@ -14,6 +14,8 @@ export const SUBMISSION_MAX_FILE_SIZE = 10485760 as const; // 10 MB (10 * 1024 *
 export const TABLE_SEATS_MAX_COUNT = 9;
 export const TABLE_SEATS_MIN_COUNT = 2;
 export const TABLE_SEATS_MIN_START = 5;
+
+export const POLL_INTERVAL_MS = 10000 as const; // 10 seconds
 // export const TABLE_SEATS_MIN_COUNT = 1; // allow 1 for testing purposes
 // export const TABLE_SEATS_MIN_START = 1; // allow 1 for testing purposes
 
@@ -22,7 +24,8 @@ export const UCSB_BOT_POKER_TOURNEY_ID =
 export const UCSB_HUMAN_POKER_TOURNEY_ID =
   "0f31fbe5-e8d0-4e46-a564-430a919155e6" as const; // hard code for now, implement different tournaments later
 
-export const UCSB_ACTIVE_POKER_TOURNEY_ID = UCSB_BOT_POKER_TOURNEY_ID; // CHANGE THIS TO UCSB_HUMAN_POKER_TOURNEY_ID when switching tournaments
+// export const UCSB_ACTIVE_POKER_TOURNEY_ID = UCSB_BOT_POKER_TOURNEY_ID; // CHANGE THIS TO UCSB_HUMAN_POKER_TOURNEY_ID when switching tournaments
+export const UCSB_ACTIVE_POKER_TOURNEY_ID = UCSB_HUMAN_POKER_TOURNEY_ID; // CHANGE THIS TO UCSB_HUMAN_POKER_TOURNEY_ID when switching tournaments
 
 export const DISQUALIFICATION_MESSAGE =
   "Your team has been disqualified and cannot submit code. Please contact an admin for more information.";

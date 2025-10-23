@@ -22,7 +22,11 @@ import { z } from "zod";
 import { joinTeam, createTeam } from "@/lib/server-actions/index";
 import { useState, useEffect } from "react";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
-import { TEAM_MAX_MEMBERS } from "@/lib/constants";
+import {
+  TEAM_MAX_MEMBERS,
+  TEAM_NAME_MAX_LENGTH,
+  TEAM_NAME_MIN_LENGTH,
+} from "@/lib/constants";
 import moment from "moment";
 import {
   Tooltip,
@@ -37,11 +41,11 @@ const formSchemaTeamId = z.object({
 const formSchemaTeamName = z.object({
   teamName: z
     .string()
-    .min(3, {
-      error: "Team name must be at least 3 characters",
+    .min(TEAM_NAME_MIN_LENGTH, {
+      error: `Team name must be at least ${TEAM_NAME_MIN_LENGTH} characters`,
     })
-    .max(25, {
-      error: "Team name must be at most 25 characters",
+    .max(TEAM_NAME_MAX_LENGTH, {
+      error: `Team name must be at most ${TEAM_NAME_MAX_LENGTH} characters`,
     }),
 });
 

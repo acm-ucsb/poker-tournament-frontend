@@ -34,6 +34,7 @@ export function GlobalNotificationProvider({
         `You have been assigned a table! You can watch your table play, or watch other tables now.`,
         {
           richColors: true,
+          duration: 10000,
         }
       );
     }
@@ -48,9 +49,10 @@ export function GlobalNotificationProvider({
       !data?.is_admin
     ) {
       toast.info(
-        `The tournament has started! Tables have been created and assigned. You can now view your table or watch other tables.`,
+        `The tournament has started! Tables have been created and assigned. You can now view your table if you are a player or watch other tables.`,
         {
           richColors: true,
+          duration: 10000,
         }
       );
     }

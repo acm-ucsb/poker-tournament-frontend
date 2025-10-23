@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { updateDeadlines } from "@/lib/server-actions/admin/updateDeadlines";
 import { toast } from "sonner";
 
@@ -32,10 +32,15 @@ import {
 import { DateTimePicker } from "@/components/DateTimePicker";
 import { ButtonWrapper } from "@/components/ButtonWrapper";
 import {
+  POLL_INTERVAL_MS,
   UCSB_ACTIVE_POKER_TOURNEY_ID,
   UCSB_HUMAN_POKER_TOURNEY_ID,
 } from "@/lib/constants";
 import { IconArrowRight } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
+import { useWindowEvent } from "@mantine/hooks";
+import { usePathname, useRouter } from "next/navigation";
+import { useAdminGameLoop } from "@/providers/AdminGameLoopProvider";
 
 const formSchema = z.object({
   teamsDeadline: z
@@ -56,6 +61,7 @@ const formSchema = z.object({
 
 export function ManageTournament() {
   const { tourneyData, mutate } = useData();
+  const adminGameLoop = useAdminGameLoop();
   const [deadlineChangesLoading, setDeadlineChangesLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -70,7 +76,7 @@ export function ManageTournament() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmitDeadlines = async (values: z.infer<typeof formSchema>) => {
     setDeadlineChangesLoading(true);
 
     const res = await updateDeadlines({
@@ -91,10 +97,11 @@ export function ManageTournament() {
 
     setDeadlineChangesLoading(false);
   };
+
   return (
     <section className="flex flex-col gap-2">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmitDeadlines)}>
           <h4 className="text-md mb-1 font-medium">Update Deadlines</h4>
           <p className="mt-0 text-gray-300 text-sm">
             Enter the deadlines for teams and submissions.
@@ -155,6 +162,8 @@ export function ManageTournament() {
           </div>
         </form>
       </Form>
+
+      <h4 className="text-md mb-1 font-medium">Tournament</h4>
       {tourneyData?.status === "active" ? (
         <div className="flex gap-2">
           <ButtonWrapper
@@ -165,24 +174,13 @@ export function ManageTournament() {
           >
             Tournament Is Active
           </ButtonWrapper>
-          {tourneyData.id === UCSB_HUMAN_POKER_TOURNEY_ID ? (
-            <ButtonWrapper
-              className="group"
-              href="/dashboard/admin/human-actions"
-            >
-              <div className="flex items-center justify-center gap-2 px-3">
-                Manage Human Actions
-                <IconArrowRight className="group-hover:translate-x-1.5 transition-all" />
-              </div>
-            </ButtonWrapper>
-          ) : (
-            <ButtonWrapper className="group" href="/dashboard/tables">
-              <div className="flex items-center justify-center gap-2 px-3">
-                View All Tables
-                <IconArrowRight className="group-hover:translate-x-1.5 transition-all" />
-              </div>
-            </ButtonWrapper>
-          )}
+
+          <ButtonWrapper className="group" href="/dashboard/tables">
+            <div className="flex items-center justify-center gap-2 px-3">
+              View All Tables
+              <IconArrowRight className="group-hover:translate-x-1.5 transition-all" />
+            </div>
+          </ButtonWrapper>
         </div>
       ) : (
         <AlertDialog>
@@ -204,9 +202,9 @@ export function ManageTournament() {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={async () => {
-                  toast.info("Starting tournament, please wait...", {
+                  toast.loading("Starting tournament, please wait...", {
                     richColors: true,
-                    duration: 10000,
+                    id: "start-tournament",
                   });
 
                   const res = await startTournament();
@@ -214,11 +212,13 @@ export function ManageTournament() {
                   if (res.success) {
                     toast.success("Tournament started.", {
                       richColors: true,
+                      id: "start-tournament",
                     });
                     mutate();
                   } else {
                     toast.error(res.error?.message, {
                       richColors: true,
+                      id: "start-tournament",
                     });
                   }
                 }}
@@ -229,6 +229,53 @@ export function ManageTournament() {
           </AlertDialogContent>
         </AlertDialog>
       )}
+
+      {tourneyData?.status === "active" &&
+        (adminGameLoop.intervalId ? (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="grow" size={"lg"} variant={"warning"}>
+                Pause Tables
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will pause all tournament tables and stop play.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={adminGameLoop.onStopTables}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        ) : (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="grow" size={"lg"} variant={"success"}>
+                Start Tables
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will start all tournament tables and begin play.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={adminGameLoop.onStartTables}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        ))}
     </section>
   );
 }

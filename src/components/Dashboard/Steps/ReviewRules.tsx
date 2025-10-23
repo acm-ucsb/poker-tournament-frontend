@@ -64,7 +64,7 @@ export function ReviewRules() {
             <AlertDialogDescription asChild>
               <div className="bg-background rounded-2xl shadow-lg">
                 <div
-                  className="px-5 py-3 rounded-md max-h-[80vh] overflow-y-auto border"
+                  className="px-5 py-3 rounded-md max-h-[70vh] overflow-y-auto border"
                   ref={rulesContainerRef}
                   onScroll={handleScroll}
                 >
@@ -72,24 +72,30 @@ export function ReviewRules() {
                     components={{
                       h1: ({ node, ...props }) => (
                         <h1
-                          className="text-2xl font-bold mt-2 mb-4"
+                          className="text-2xl font-bold mt-2 mb-4 text-left"
                           {...props}
                         />
                       ),
                       h2: ({ node, ...props }) => (
                         <h2
-                          className="text-xl font-bold mt-6 mb-3 pb-1 border-b"
+                          className="text-xl font-bold mt-6 mb-3 pb-1 border-b text-left"
                           {...props}
                         />
                       ),
                       ul: ({ node, ...props }) => (
-                        <ul className="list-disc pl-6 my-3" {...props} />
+                        <ul
+                          className="list-disc pl-6 my-3 text-left"
+                          {...props}
+                        />
                       ),
                       ol: ({ node, ...props }) => (
-                        <ol className="list-decimal pl-6 my-3" {...props} />
+                        <ol
+                          className="list-decimal pl-6 my-3 text-left"
+                          {...props}
+                        />
                       ),
                       li: ({ node, ...props }) => (
-                        <li className="my-1" {...props} />
+                        <li className="my-1 text-left" {...props} />
                       ),
                     }}
                   >

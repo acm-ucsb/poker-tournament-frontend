@@ -86,6 +86,7 @@ export function DataProvider({ children }: DataProviderProps) {
                 has_submitted_code,
                 num_chips,
                 name,
+                type,
                 table:tables (
                   id,
                   created_at,
@@ -163,7 +164,12 @@ export function DataProvider({ children }: DataProviderProps) {
     error: fetchTablesError,
     mutate: mutateTables,
   } = useQuery<Table[]>(
-    auth.user ? supabase.from("tables").select("*") : null,
+    auth.user
+      ? supabase
+          .from("tables")
+          .select("*")
+          .eq("tournament_id", UCSB_ACTIVE_POKER_TOURNEY_ID)
+      : null,
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
@@ -177,7 +183,11 @@ export function DataProvider({ children }: DataProviderProps) {
     error: fetchLeaderboardError,
     mutate: mutateLeaderboard,
   } = useQuery<Team[]>(
-    supabase.from("teams").select("*").order("num_chips", { ascending: false }),
+    supabase
+      .from("teams")
+      .select("*")
+      .eq("tournament_id", UCSB_ACTIVE_POKER_TOURNEY_ID)
+      .order("num_chips", { ascending: false }),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
