@@ -137,10 +137,9 @@ export function SubmitCode() {
           <>
             <p className="mt-0 text-gray-300 text-sm">
               Please ensure that your code follows our{" "}
-              {/* TODO: implement a submission guidelines page */}
               <Link
                 href="/dashboard/submission-guidelines"
-                className="inline-flex items-center gap-1 p-0 m-0 hover:underline text-white font-semibold"
+                className="inline-flex items-center gap-1 p-0 m-0 hover:underline text-green-300 font-semibold"
                 style={{
                   cursor: "pointer",
                 }}

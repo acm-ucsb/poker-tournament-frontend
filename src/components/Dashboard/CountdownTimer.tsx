@@ -29,10 +29,18 @@ export function CountdownTimer({ targetDate }: { targetDate: Date }) {
     return () => clearInterval(timer);
   }, [targetDate]);
 
+  const has_ended = () =>
+    timeLeft.days == 0 &&
+    timeLeft.hours == 0 &&
+    timeLeft.minutes == 0 &&
+    timeLeft.seconds == 0;
+
   const pad = (num: number) => String(num).padStart(2, "0");
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-4 select-none pb-4">
+    <div
+      className={`flex flex-col items-center justify-center space-y-4 select-none pb-4 ${has_ended() ? "opacity-30" : ""}`}
+    >
       <div className="flex items-center justify-center text-4xl sm:text-6xl font-bold tracking-wider">
         <div className="relative flex flex-col items-center">
           <span className="w-[2ch]">{pad(timeLeft.days)}</span>
