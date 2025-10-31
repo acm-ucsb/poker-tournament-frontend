@@ -90,6 +90,14 @@ export function ReviewSubGuide() {
                       li: ({ node, ...props }) => (
                         <li className="my-1" {...props} />
                       ),
+                      a: ({ node, ...props }) => (
+                        <a
+                          className="text-green-500 hover:text-green-600 underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          {...props}
+                        />
+                      ),
                     }}
                   >
                     {submitGuide}

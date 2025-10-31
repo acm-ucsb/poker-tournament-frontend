@@ -18,27 +18,27 @@ export const submitGuide = `
 
 Every turn, your poker bot will be invoked through a system call and receive \`state\` as the input with the \`GameState\` type. The definition of \`GameState\` can be found below and inside \`bot.py\`.
 \`\`\`python
-# cards are defined as a 2 character string [value][suite]
-# where 1st char: a(2-9)tjqk, 2nd char: s d c h
+    # cards are defined as a 2 character string [value][suite]
+    # where 1st char: a(2-9)tjqk, 2nd char: s d c h
 
-class Pot:
-    value: int
-    players: list[str]
+    class Pot:
+        value: int
+        players: list[str]
 
-class GameState:
-    index_to_action: int
-    index_of_small_blind: int
-    players: list[str]
-    player_cards: list[str]
-    held_money: list[int]
-    bet_money: list[int]  # -1 for fold, 0 for check/hasn't bet
-    community_cards: list[str]
-    pots: list[Pot]
-    small_blind: int
-    big_blind: int
-\`\`\`
-Example \`GameState\`:
-\`\`\`JSON
+    class GameState:
+        index_to_action: int
+        index_of_small_blind: int
+        players: list[str]
+        player_cards: list[str]
+        held_money: list[int]
+        bet_money: list[int]  # -1 for fold, 0 for check/hasn't bet
+        community_cards: list[str]
+        pots: list[Pot]
+        small_blind: int
+        big_blind: int
+    \`\`\`
+    Example \`GameState\`:
+    \`\`\`JSON
 {
     "index_to_action": 2,
     "index_of_small_blind": 0,
@@ -89,5 +89,5 @@ Example Interpretation:
 ## Contact & Support
 For technical issues or clarifications
 - Join our [Discord server](https://discord.gg/p6rcUUjWaU)
-- Or email us at: acm.dev.ucsb@gmail.com
+- Or email us at: [acm.dev.ucsb@gmail.com](mailto:acm.dev.ucsb@gmail.com)
 `;
