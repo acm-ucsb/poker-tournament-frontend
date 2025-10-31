@@ -15,8 +15,8 @@ export const submitGuide = `
 
 ## Input Format
 - Your bot will receive the current game state (using the template schemas provided) and is expected to return a single valid poker action on its turn.
+- Every turn, your poker bot will be invoked through a system call and receive \`state\` as the input with the \`GameState\` type. The definition of \`GameState\` can be found below and inside \`bot.py\`.
 
-Every turn, your poker bot will be invoked through a system call and receive \`state\` as the input with the \`GameState\` type. The definition of \`GameState\` can be found below and inside \`bot.py\`.
 
 \`\`\`python
 # cards are defined as a 2 character string [value][suite]
@@ -39,7 +39,8 @@ class GameState:
     big_blind: int
 \`\`\`
 
-Example \`GameState\`:
+**__Example \`GameState\`:__**
+
 
 \`\`\`json
 {
@@ -56,7 +57,7 @@ Example \`GameState\`:
 }
 \`\`\`
 
-Example Interpretation:
+**__Example Interpretation:__**
 - Betting round after the flop.
 - Player 0 (\`team_id0\`) bet \`20\`, Player 1 folded, action is on Player 2.
 - Player 2 has trips with 2s and 7s.

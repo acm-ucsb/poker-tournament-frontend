@@ -2,6 +2,8 @@ import { ButtonWrapper } from "@/components/ButtonWrapper";
 import { useLocalStorage } from "@mantine/hooks";
 import { CheckCircleIcon, ChevronDownIcon } from "lucide-react";
 import Markdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { submitGuide } from "./submitGuide";
 import { useRef, useState, useEffect } from "react";
 import {
@@ -100,6 +102,44 @@ export function ReviewSubGuide() {
                             rel={isInternalDashboardLink ? undefined : "noopener noreferrer"}
                             {...props}
                           />
+                        );
+                      },
+                      pre: ({ node, ...props }) => (
+                        <div className="my-4">
+                          {props.children}
+                        </div>
+                      ),
+                      code: ({ node, inline, className, children, ...props }: any) => {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const language = match ? match[1] : '';
+                        
+                        return !inline && language ? (
+                          <SyntaxHighlighter
+                            style={oneDark}
+                            language={language}
+                            PreTag="div"
+                            className="rounded-lg shadow-lg !my-0"
+                            customStyle={{
+                              margin: 0,
+                              borderRadius: '0.5rem',
+                              fontSize: '0.875rem',
+                              lineHeight: '1.5',
+                            }}
+                            codeTagProps={{
+                              style: {
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+                              }
+                            }}
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code
+                            className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-pink-600 dark:text-pink-400"
+                            {...props}
+                          >
+                            {children}
+                          </code>
                         );
                       },
                     }}
