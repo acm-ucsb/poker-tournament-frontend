@@ -25,6 +25,7 @@ import { useWindowScroll } from "@mantine/hooks";
 import { MyTeam } from "../MyTeam/MyTeam";
 import { AdminPanel } from "../AdminPanel/AdminPanel";
 import { useEffect, useState } from "react";
+import { useForm } from 'react-hook-form';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -317,41 +318,41 @@ export default function LandingPage() {
         <TournamentTimeline
           events={[
             {
-              time: "Oct 26, 12:00 AM",
-              title: "Bot Registration & Team Formation Opens",
+              time: "Nov 1, 12:00 AM",
+              title: "Bot Registration & Team Formation Opens!",
               description:
                 "Sign in with your UCSB email and form teams (up to 4 members).",
             },
             {
-              time: "Nov 3, 11:59 PM",
+              time: "Nov 8, 11:59 PM",
               title: "Bot Registration & Team Formation Closes",
               description: "All teams must be finalized by this time.",
             },
             {
-              time: "Nov 6, 7:00 PM",
+              time: "Nov 13, 7:00 PM",
               title: "Poker Night & Bot Office Hours",
               description:
                 "Get help with building your bot, or just come play poker!",
             },
             {
-              time: "Nov 7, 11:59 PM",
+              time: "Nov 14, 11:59 PM",
               title: "Code Submission Deadline",
               description:
                 "Upload your bot code to the dashboard by this time.",
             },
             {
-              time: "Nov 8, 2:00 PM",
+              time: "Nov 15, 2:00 PM",
               title: "Human Bracket Registration",
               description: "Check in at the registration desk @ Loma Pelona",
             },
             {
-              time: "Nov 8, 2:30 PM",
+              time: "Nov 15, 2:30 PM",
               title: "Tournament Begins",
               description:
                 "First hands are dealt. Human and bot brackets start.",
             },
             {
-              time: "Nov 8, 6:30 PM",
+              time: "Nov 15, 6:30 PM",
               title: "Finals",
               description: "Top humans and bots face off for the championship.",
             },
@@ -412,9 +413,8 @@ export default function LandingPage() {
                     <AccordionTrigger>Use of AI</AccordionTrigger>
                     <AccordionContent>
                       You may use AI tools (like ChatGPT) to help you build your
-                      bot. You are also allowed to create your own ML models to
-                      assist your bot in making decisions. Use of fully trained
-                      poker AI models is plagarism and strictly prohibited.
+                      bot. Use of any existing poker bot code or frameworks is
+                      considered plagarism and strictly prohibited.
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -430,24 +430,37 @@ export default function LandingPage() {
                       your bot compete in real-time through the dashboard.
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="item-2">
+                  <AccordionItem value="item-1">
                     <AccordionTrigger>How do I upload my bot?</AccordionTrigger>
                     <AccordionContent>
                       After signing up, you will have access to a dashboard
                       where you can upload your bot's code.
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="item-1">
+                  <AccordionItem value="item-2">
                     <AccordionTrigger>
                       What programming languages can I use?
                     </AccordionTrigger>
                     <AccordionContent>
-                      We currently support bots written in Python, and C++. We
+                      We currently support bots written in only Python. We
                       will provide a simple bot template which will contain a
                       core defined function you must implement.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
+                    <AccordionTrigger>
+                      What libraries are supported?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      We support most standard Python libraries. However, use of
+                      any libraries that access external APIs or the internet, our system
+                      resources, and other inherently system-level operations are
+                      prohibited. The only external library allowed is NumPy.
+                      If you wish to use specific libraries, please contact us
+                      on Discord (dm or server) for approval.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-4">
                     <AccordionTrigger>
                       Can I update my bot during the tournament?
                     </AccordionTrigger>
@@ -483,7 +496,7 @@ export default function LandingPage() {
                       What does the winner of the final combined table get?
                     </AccordionTrigger>
                     <AccordionContent>
-                      You get glory and bragging rights!
+                      You get glory and bragging rights! And maybe we aren't cooked by AI yet...
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
