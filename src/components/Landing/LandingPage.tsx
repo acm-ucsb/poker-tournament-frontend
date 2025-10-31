@@ -107,8 +107,10 @@ export default function LandingPage() {
                             interested in playing normal poker please fill out
                             our{" "}
                             <Link
-                              className="underline text-blue-400"
+                              className="underline text-green-400"
                               href="https://forms.gle/i93xZK5awUF9N8Pw9"
+                              target="_blank"
+                              rel="noopener noreferrer"
                             >
                               RSVP form.
                             </Link>{" "}
@@ -118,7 +120,11 @@ export default function LandingPage() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <Link href="https://forms.gle/i93xZK5awUF9N8Pw9">
+                          <Link 
+                            href="https://forms.gle/i93xZK5awUF9N8Pw9"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             <AlertDialogAction className="w-full">
                               Human Bracket
                             </AlertDialogAction>
