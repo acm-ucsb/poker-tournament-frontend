@@ -90,14 +90,18 @@ export function ReviewSubGuide() {
                       li: ({ node, ...props }) => (
                         <li className="my-1" {...props} />
                       ),
-                      a: ({ node, ...props }) => (
-                        <a
-                          className="text-green-500 hover:text-green-600 underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          {...props}
-                        />
-                      ),
+                      a: ({ node, href, ...props }) => {
+                        const isInternalDashboardLink = href?.includes('acm-poker-tournament.vercel.app/dashboard');
+                        return (
+                          <a
+                            className="text-green-500 hover:text-green-600 underline"
+                            href={href}
+                            target={isInternalDashboardLink ? undefined : "_blank"}
+                            rel={isInternalDashboardLink ? undefined : "noopener noreferrer"}
+                            {...props}
+                          />
+                        );
+                      },
                     }}
                   >
                     {submitGuide}

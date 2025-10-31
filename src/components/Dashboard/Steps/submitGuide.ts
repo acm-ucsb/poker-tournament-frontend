@@ -17,28 +17,31 @@ export const submitGuide = `
 - Your bot will receive the current game state (using the template schemas provided) and is expected to return a single valid poker action on its turn.
 
 Every turn, your poker bot will be invoked through a system call and receive \`state\` as the input with the \`GameState\` type. The definition of \`GameState\` can be found below and inside \`bot.py\`.
+
 \`\`\`python
-    # cards are defined as a 2 character string [value][suite]
-    # where 1st char: a(2-9)tjqk, 2nd char: s d c h
+# cards are defined as a 2 character string [value][suite]
+# where 1st char: a(2-9)tjqk, 2nd char: s d c h
 
-    class Pot:
-        value: int
-        players: list[str]
+class Pot:
+    value: int
+    players: list[str]
 
-    class GameState:
-        index_to_action: int
-        index_of_small_blind: int
-        players: list[str]
-        player_cards: list[str]
-        held_money: list[int]
-        bet_money: list[int]  # -1 for fold, 0 for check/hasn't bet
-        community_cards: list[str]
-        pots: list[Pot]
-        small_blind: int
-        big_blind: int
-    \`\`\`
-    Example \`GameState\`:
-    \`\`\`JSON
+class GameState:
+    index_to_action: int
+    index_of_small_blind: int
+    players: list[str]
+    player_cards: list[str]
+    held_money: list[int]
+    bet_money: list[int]  # -1 for fold, 0 for check/hasn't bet
+    community_cards: list[str]
+    pots: list[Pot]
+    small_blind: int
+    big_blind: int
+\`\`\`
+
+Example \`GameState\`:
+
+\`\`\`json
 {
     "index_to_action": 2,
     "index_of_small_blind": 0,
@@ -52,6 +55,7 @@ Every turn, your poker bot will be invoked through a system call and receive \`s
     "big_blind": 10
 }
 \`\`\`
+
 Example Interpretation:
 - Betting round after the flop.
 - Player 0 (\`team_id0\`) bet \`20\`, Player 1 folded, action is on Player 2.
