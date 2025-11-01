@@ -49,9 +49,7 @@ export function Dashboard({}) {
 
   const isHuman = data?.type === "human" || data?.team?.type === "human";
   const hasRegistrationOpened =
-    (tourneyData?.start_time &&
-      moment().isAfter(moment(tourneyData.start_time))) ||
-    true;
+    tourneyData?.start_time && moment().isAfter(moment(tourneyData.start_time));
   const hasTournamentStarted = tourneyData?.status !== "not_started";
 
   return (
@@ -132,7 +130,7 @@ export function Dashboard({}) {
                     isHuman ||
                     (hasTournamentStarted && !!data?.team?.table),
                   incomplete:
-                    !hasTournamentStarted ||
+                    (!hasTournamentStarted && data?.team?.has_submitted_code) ||
                     (!!data?.team &&
                       !data?.team?.table &&
                       data?.team?.has_submitted_code),
