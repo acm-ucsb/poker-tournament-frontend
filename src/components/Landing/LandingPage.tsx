@@ -397,7 +397,7 @@ export default function LandingPage() {
                     <AccordionTrigger>Bracket Structure</AccordionTrigger>
                     <AccordionContent>
                       You may compete in both brackets, however prizes will only
-                      be awarded once per individual/team. The top 3 players
+                      be awarded once per individual/team. The top 20% of players
                       from the human bracket and the top 3 bots will receieve
                       prizes. The final round will feature the top 3 humans and
                       top 3 bots competing against each other for a grand prize.
@@ -427,6 +427,14 @@ export default function LandingPage() {
               </TabsContent>
               <TabsContent value="faq" className="pt-6">
                 <Accordion type="single" collapsible>
+                  <AccordionItem value="item-7">
+                    <AccordionTrigger>What if I have no experience in coding or Poker?</AccordionTrigger>
+                    <AccordionContent>
+                      Don't worry! Both brackets are open to all skill levels and backgrounds. We will provide
+                      resources to help you get started with poker basics and bot development.
+                      Join our Discord community to ask questions and get help from us or fellow participants!
+                    </AccordionContent>
+                  </AccordionItem>
                   <AccordionItem value="item-0">
                     <AccordionTrigger>How do I run my bot?</AccordionTrigger>
                     <AccordionContent>
@@ -482,9 +490,8 @@ export default function LandingPage() {
                   <AccordionItem value="item-1">
                     <AccordionTrigger>What are the prizes?</AccordionTrigger>
                     <AccordionContent>
-                      Prizes will be awarded to the top three players & bots
-                      based on their performance in the tournament. Details will
-                      be announced closer to the tournament date.
+                      Over $1000 in cash prizes for bot & human brackets!
+                      And the chance to show off your poker and algorithms skills! 
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2">
