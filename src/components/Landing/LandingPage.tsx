@@ -214,13 +214,13 @@ export default function LandingPage() {
               <div className="grid grid-cols-2 gap-4 mt-4">
                 {[
                   {
-                    title: "Pull Up",
+                    title: "Register",
                     content:
-                      "Check in at the registration desk @ Loma Pelona on Nov 8.",
+                      "Fill out the rsvp form by clicking the Sign in & Compete button above.",
                   },
                   {
-                    title: "Get Seated",
-                    content: "Wait to be seated at a table with other players.",
+                    title: "Pull Up",
+                    content: "Check in at the registration desk @ Loma Pelona on Nov 15.",
                   },
                   {
                     title: "Play Poker",
