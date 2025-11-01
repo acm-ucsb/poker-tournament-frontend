@@ -1,11 +1,14 @@
 import { ButtonWrapper } from "@/components/ButtonWrapper";
 import { useLocalStorage } from "@mantine/hooks";
-import { CheckCircleIcon, ChevronDownIcon, SquareArrowOutUpRight } from "lucide-react";
+import {
+  CheckCircleIcon,
+  ChevronDownIcon,
+  SquareArrowOutUpRight,
+} from "lucide-react";
 import Markdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { submitGuide } from "./submitGuide";
-import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import {
   AlertDialog,
@@ -50,7 +53,11 @@ export function ReviewSubGuide() {
 
   return (
     <section className="flex flex-col gap-3">
-      <a href="https://github.com/acm-ucsb/poker-bot-starter-code" target="_blank" className="w-full">
+      <a
+        href="https://github.com/acm-ucsb/poker-bot-starter-code"
+        target="_blank"
+        className="w-full"
+      >
         <Button className="w-full text-center" variant={"outline"}>
           Starter Code <SquareArrowOutUpRight></SquareArrowOutUpRight>
         </Button>
@@ -100,26 +107,37 @@ export function ReviewSubGuide() {
                         <li className="my-1" {...props} />
                       ),
                       a: ({ node, href, ...props }) => {
-                        const isInternalDashboardLink = href?.includes('acm-poker-tournament.vercel.app/dashboard');
+                        const isInternalDashboardLink = href?.includes(
+                          "acm-poker-tournament.vercel.app/dashboard",
+                        );
                         return (
                           <a
                             className="text-green-500 hover:text-green-600 underline"
                             href={href}
-                            target={isInternalDashboardLink ? undefined : "_blank"}
-                            rel={isInternalDashboardLink ? undefined : "noopener noreferrer"}
+                            target={
+                              isInternalDashboardLink ? undefined : "_blank"
+                            }
+                            rel={
+                              isInternalDashboardLink
+                                ? undefined
+                                : "noopener noreferrer"
+                            }
                             {...props}
                           />
                         );
                       },
                       pre: ({ node, ...props }) => (
-                        <div className="my-4">
-                          {props.children}
-                        </div>
+                        <div className="my-4">{props.children}</div>
                       ),
-                      code: ({ node, inline, className, children, ...props }: any) => {
-                        const match = /language-(\w+)/.exec(className || '');
-                        const language = match ? match[1] : '';
-                        
+                      code: ({
+                        node,
+                        inline,
+                        className,
+                        children,
+                        ...props
+                      }: any) => {
+                        const match = /language-(\w+)/.exec(className || "");
+                        const language = match ? match[1] : "";
                         return !inline && language ? (
                           <SyntaxHighlighter
                             style={oneDark}
@@ -128,17 +146,28 @@ export function ReviewSubGuide() {
                             className="rounded-lg shadow-lg !my-0"
                             customStyle={{
                               margin: 0,
-                              borderRadius: '0.5rem',
-                              fontSize: '0.875rem',
-                              lineHeight: '1.5',
+                              borderRadius: "0.5rem",
+                              fontSize: "0.875rem",
+                              lineHeight: "1.5",
+                              boxSizing: "border-box",
+                              width: "100%",
+                              whiteSpace: "pre",
+                              overflowX: "auto",
+                              minWidth: 0,
                             }}
                             codeTagProps={{
                               style: {
-                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
-                              }
+                                display: "block",
+                                boxSizing: "border-box",
+                                fontFamily:
+                                  'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+                                whiteSpace: "pre-wrap",
+                                wordBreak: 'break-word',
+                                overflowWrap: "normal",
+                              },
                             }}
                           >
-                            {String(children).replace(/\n$/, '')}
+                            {String(children).replace(/\n$/, "")}
                           </SyntaxHighlighter>
                         ) : (
                           <code
