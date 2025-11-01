@@ -1,10 +1,11 @@
 import { ButtonWrapper } from "@/components/ButtonWrapper";
 import { useLocalStorage } from "@mantine/hooks";
-import { CheckCircleIcon, ChevronDownIcon } from "lucide-react";
+import { CheckCircleIcon, ChevronDownIcon, SquareArrowOutUpRight } from "lucide-react";
 import Markdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { submitGuide } from "./submitGuide";
+import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import {
   AlertDialog,
@@ -17,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export function ReviewSubGuide() {
   const [hasReadSubmissionGuide, setHasReadSubmissionGuide] = useLocalStorage({
@@ -48,6 +50,11 @@ export function ReviewSubGuide() {
 
   return (
     <section className="flex flex-col gap-3">
+      <a href="https://github.com/acm-ucsb/poker-bot-starter-code" target="_blank" className="w-full">
+        <Button className="w-full text-center" variant={"outline"}>
+          Starter Code <SquareArrowOutUpRight></SquareArrowOutUpRight>
+        </Button>
+      </a>
       <AlertDialog>
         <AlertDialogTrigger asChild className="w-full">
           {!hasReadSubmissionGuide ? (
