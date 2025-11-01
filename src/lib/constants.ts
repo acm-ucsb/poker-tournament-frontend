@@ -6,7 +6,7 @@ export const HEADER_AVATAR_SIZE_PX = 36 as const;
 
 export const DEFAULT_SIGNIN_REDIRECT_URL = "/dashboard" as const;
 
-export const TEAM_MAX_MEMBERS = 4 as const;
+export const TEAM_MAX_MEMBERS = 3 as const;
 export const TEAM_NAME_MIN_LENGTH = 3 as const;
 export const TEAM_NAME_MAX_LENGTH = 25 as const;
 
