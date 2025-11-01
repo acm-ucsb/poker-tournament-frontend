@@ -267,7 +267,7 @@ export default function LandingPage() {
                   {
                     title: "Sign In",
                     content:
-                      "Create an account using your UCSB Google account.",
+                      "Create an account using your UCSB Google account. Join a team (3 max).",
                   },
                   {
                     title: "Build Your Bot",
@@ -327,7 +327,7 @@ export default function LandingPage() {
               time: "Nov 1, 12:00 AM",
               title: "Bot Registration & Team Formation Opens!",
               description:
-                "Sign in with your UCSB email and form teams (up to 4 members).",
+                "Sign in with your UCSB email and form teams (3 members max).",
             },
             {
               time: "Nov 8, 11:59 PM",
@@ -400,7 +400,7 @@ export default function LandingPage() {
                       be awarded once per individual/team. The top 3 players
                       from the human bracket and the top 3 bots will receieve
                       prizes. The final round will feature the top 3 humans and
-                      top 3 bots competing against each other.
+                      top 3 bots competing against each other for a grand prize.
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
@@ -502,7 +502,8 @@ export default function LandingPage() {
                       What does the winner of the final combined table get?
                     </AccordionTrigger>
                     <AccordionContent>
-                      You get glory and bragging rights! And maybe we aren't cooked by AI yet...
+                      You win our grand prize! Also, glory and bragging rights! 
+                      And maybe we will or won't be cooked by AI...
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
