@@ -8,6 +8,7 @@ import { ManageTeam } from "@/components/Dashboard/Steps/ManageTeam";
 import { useAuth } from "@/providers/AuthProvider";
 import { SubmitCode } from "@/components/Dashboard/Steps/SubmitCode";
 import { ReviewRules } from "@/components/Dashboard/Steps/ReviewRules";
+import { ReviewSubGuide } from "@/components/Dashboard/Steps/ReviewSubGuide";
 import { CountdownTimer } from "@/components/Dashboard/CountdownTimer";
 import { ViewTables } from "./Steps/ViewTables";
 import { useLocalStorage } from "@mantine/hooks";
@@ -23,6 +24,13 @@ export function Dashboard({}) {
 
   const [hasAcknowledgedRules] = useLocalStorage({
     key: "ack-tournament-rules",
+    defaultValue: false,
+    deserialize: (value) => value === "true",
+    serialize: (value) => (value ? "true" : "false"),
+  });
+
+  const [hasReadSubmissionGuide] = useLocalStorage({
+    key: "read-submission-guide",
     defaultValue: false,
     deserialize: (value) => value === "true",
     serialize: (value) => (value ? "true" : "false"),
@@ -57,15 +65,14 @@ export function Dashboard({}) {
         {/* <h2 className="text-2xl font-bold mb-4">Dashboard</h2> */}
         {!data?.is_admin && (
           <>
-            {tourneyData?.start_time &&
-            !moment().isAfter(moment(tourneyData.start_time)) ? (
+            {tourneyData?.start_time && (
               <div className="mb-12">
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter text-center mb-4">
                   Registration opens in
                 </h1>
                 <CountdownTimer targetDate={new Date(tourneyData.start_time)} />
               </div>
-            ) : null}
+            )}
             <ActionSteps
               loading={isLoading || auth.loadingAuth}
               steps={[
@@ -88,11 +95,20 @@ export function Dashboard({}) {
                   completed: !!data?.team,
                 },
                 {
+                  title: "Review submission guideline",
+                  description:
+                    "Please review the submission guideline before submitting your bot.",
+                  children: <ReviewSubGuide />,
+                  disabled: !data?.team || !hasAcknowledgedRules,
+                  completed: hasReadSubmissionGuide,
+                },
+                {
                   title: "Submit your bot code",
                   description:
                     "You must submit your code in order to participate in the tournament.",
                   children: <SubmitCode />,
                   disabled:
+                    !hasReadSubmissionGuide ||
                     !data?.team ||
                     !hasAcknowledgedRules ||
                     isHuman ||
