@@ -4,25 +4,9 @@ import { createSupabaseServerClient } from "@/lib/supabase/supabase-server";
 import { ServerActionError, ServerActionResponse } from "../types";
 import {
   BACKEND_ENGINE_BASE_URL,
-  TABLE_SEATS_MIN_START,
   UCSB_ACTIVE_POKER_TOURNEY_ID,
 } from "@/lib/constants";
-import {
-  uniqueNamesGenerator,
-  Config,
-  adjectives,
-  colors,
-  animals,
-} from "unique-names-generator";
-import { calculateOptimalTableAssignment } from "@/lib/utils";
 import axios from "axios";
-
-const config: Config = {
-  dictionaries: [adjectives, colors, animals],
-  length: 3,
-  separator: " ",
-  style: "capital",
-};
 
 export async function startTournament(): Promise<ServerActionResponse<null>> {
   /**
@@ -99,25 +83,37 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
       });
     }
 
-    // TODO: Send request to FastAPI backend to create tables and assign seats
-    const res = await axios.post(
-      `${BACKEND_ENGINE_BASE_URL}/admin/tables/create`,
-      {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        validateStatus: function () {
-          return true; // Don't throw errors for any status code, just handle them manually
-        },
-      }
-    );
+    try {
+      // TODO: Send request to FastAPI backend to create tables and assign seats
+      const res = await axios.post(
+        `${BACKEND_ENGINE_BASE_URL}/admin/tables/create`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
 
-    // Update tournament status to 'active'
-    await supabase
-      .from("tournaments")
-      .update({ status: "active" })
-      .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID)
-      .throwOnError();
+      console.log(res);
+
+      // Update tournament status to 'active'
+      await supabase
+        .from("tournaments")
+        .update({ status: "active" })
+        .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID)
+        .throwOnError();
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to start tournament.",
+        },
+      };
+    }
 
     return {
       success: true,

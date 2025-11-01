@@ -120,20 +120,14 @@ export function Dashboard({}) {
                   description:
                     "Join your assigned table or spectate other games in the tournament.",
                   children: <ViewTables />,
-                  disabled:
-                    (!hasAcknowledgedRules ||
-                      !hasRegistrationOpened ||
-                      !hasTournamentStarted) &&
-                    !data?.team?.has_submitted_code,
                   completed:
                     !!data?.team?.table ||
-                    isHuman ||
                     (hasTournamentStarted && !!data?.team?.table),
                   incomplete:
-                    (!hasTournamentStarted && data?.team?.has_submitted_code) ||
-                    (!!data?.team &&
-                      !data?.team?.table &&
-                      data?.team?.has_submitted_code),
+                    hasTournamentStarted &&
+                    !!data?.team &&
+                    !data?.team?.table &&
+                    data?.team?.has_submitted_code,
                 },
               ]}
             />

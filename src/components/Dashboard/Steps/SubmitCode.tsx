@@ -136,20 +136,8 @@ export function SubmitCode() {
         {!isSubmissionDisabled ? (
           <>
             <p className="mt-0 text-gray-300 text-sm">
-              Please ensure that your code follows our{" "}
-              <Link
-                href="/dashboard/submission-guidelines"
-                className="inline-flex items-center gap-1 p-0 m-0 hover:underline text-green-300 font-semibold"
-                style={{
-                  cursor: "pointer",
-                }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                submission guidelines
-                <ExternalLink size={14} />
-              </Link>
-              .
+              Please ensure that your code follows our submission guidelines
+              above.
             </p>
             <p className="mt-0 text-sm">
               Once you submit your code, you will be able to view your previous
