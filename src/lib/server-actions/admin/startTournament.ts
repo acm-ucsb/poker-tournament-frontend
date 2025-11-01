@@ -84,8 +84,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
     }
 
     try {
-      // TODO: Send request to FastAPI backend to create tables and assign seats
-      const res = await axios.post(
+      await axios.post(
         `${BACKEND_ENGINE_BASE_URL}/admin/tables/create`,
         {},
         {
@@ -94,8 +93,6 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
           },
         }
       );
-
-      console.log(res);
 
       // Update tournament status to 'active'
       await supabase
