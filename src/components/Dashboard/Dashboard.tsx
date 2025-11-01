@@ -47,6 +47,13 @@ export function Dashboard({}) {
     return <LoaderComponent />;
   }
 
+  const isHuman = data?.type === "human" || data?.team?.type === "human";
+  const hasRegistrationOpened =
+    (tourneyData?.start_time &&
+      moment().isAfter(moment(tourneyData.start_time))) ||
+    true;
+  const hasTournamentStarted = tourneyData?.status !== "not_started";
+
   return (
     <main className="flex flex-col w-full max-w-7xl self-center pb-6">
       <BreadcrumbBuilder
@@ -83,8 +90,8 @@ export function Dashboard({}) {
                   children: <ManageTeam />,
                   disabled:
                     !hasAcknowledgedRules ||
-                    !tourneyData?.start_time ||
-                    moment().isBefore(moment(tourneyData.start_time)), // Disabled until rules are acknowledged and if registration is not opened
+                    !hasRegistrationOpened ||
+                    hasTournamentStarted, // Disabled until rules are acknowledged and if registration is not opened
                   completed: !!data?.team,
                 },
                 {
@@ -103,9 +110,12 @@ export function Dashboard({}) {
                   disabled:
                     !hasReadSubmissionGuide ||
                     !data?.team ||
-                    data?.type === "human" ||
-                    !hasAcknowledgedRules, // Disabled if not in a team (step 1)
+                    !hasAcknowledgedRules ||
+                    isHuman ||
+                    !hasRegistrationOpened ||
+                    hasTournamentStarted, // Disabled until team is joined/created and if registration is not opened
                   completed: !!data?.team?.has_submitted_code,
+                  incomplete: isHuman,
                 },
                 {
                   title: "View tournament tables",
@@ -113,16 +123,19 @@ export function Dashboard({}) {
                     "Join your assigned table or spectate other games in the tournament.",
                   children: <ViewTables />,
                   disabled:
-                    !data?.team ||
-                    !data.team.has_submitted_code ||
-                    !hasAcknowledgedRules,
+                    (!hasAcknowledgedRules ||
+                      !hasRegistrationOpened ||
+                      !hasTournamentStarted) &&
+                    !data?.team?.has_submitted_code,
                   completed:
-                    !!data?.team?.table &&
-                    tourneyData?.status !== "not_started",
+                    !!data?.team?.table ||
+                    isHuman ||
+                    (hasTournamentStarted && !!data?.team?.table),
                   incomplete:
-                    tourneyData?.status !== "not_started" &&
-                    !data?.team?.table &&
-                    data?.team?.has_submitted_code,
+                    !hasTournamentStarted ||
+                    (!!data?.team &&
+                      !data?.team?.table &&
+                      data?.team?.has_submitted_code),
                 },
               ]}
             />

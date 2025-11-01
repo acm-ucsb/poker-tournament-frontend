@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AuthProvider } from "./AuthProvider";
 import { DataProvider } from "./DataProvider";
 import { GlobalNotificationProvider } from "./GlobalNotificationProvider";
+import { AdminGameLoopProvider } from "./AdminGameLoopProvider";
 type Props = {
   children: ReactNode;
 };
@@ -20,7 +21,9 @@ export function AppProvider({ children }: Props) {
         disableTransitionOnChange
       >
         <DataProvider>
-          <GlobalNotificationProvider>{children}</GlobalNotificationProvider>
+          <GlobalNotificationProvider>
+            <AdminGameLoopProvider>{children}</AdminGameLoopProvider>
+          </GlobalNotificationProvider>
         </DataProvider>
       </ThemeProvider>
     </AuthProvider>

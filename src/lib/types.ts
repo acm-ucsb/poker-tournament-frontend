@@ -22,6 +22,7 @@ export type Team = {
   owner_id: string;
   is_disqualified: boolean;
   type: UserType;
+  tournament_id: string | null;
 };
 
 export type Table = {
@@ -44,6 +45,7 @@ export type Tournament = {
   starting_chips: number;
   start_time: string | null;
   end_time: string | null;
+  tables: string[];
 };
 
 // Poker-specific types

@@ -16,6 +16,7 @@ export function TournamentStats() {
     supabase
       .from("teams")
       .select("*", { count: "exact", head: true })
+      .eq("tournament_id", tourneyData?.id)
       .neq("num_chips", 0),
     {
       refreshInterval: 1000,
@@ -247,38 +248,48 @@ export function LeaderboardTracker() {
       <div className="mt-3">
         {/* Height for 5 items: 5 * 3.5rem (item height + padding) + 4 * 0.5rem (space-y-2) = 19.5rem */}
         <ol className={`space-y-2 pr-2 h-[19.5rem] overflow-y-auto`}>
-          {teams.map((team, i) => (
-            <Link
-              key={team.id}
-              href={team.table_id ? `/dashboard/tables/${team.table_id}` : "#"}
-              title={
-                team.table_id
-                  ? `Go to table ${team.table_id}`
-                  : "No table assigned"
+          {teams
+            .sort((a, b) => {
+              // sort by chips, then by name
+              if (b.num_chips !== a.num_chips) {
+                return b.num_chips - a.num_chips;
               }
-            >
-              <li className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-[var(--secondary)] transition-colors cursor-pointer">
-                <div
-                  className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? "bg-yellow-400 text-yellow-900" : i === 1 ? "bg-gray-300 text-gray-800" : i === 2 ? "bg-orange-400 text-orange-900" : "bg-gray-700 text-white"}`}
-                >
-                  {i + 1}
-                </div>
-                <div className="min-w-0">
-                  <div className="text-base font-medium truncate">
-                    {team.name}
+              return a.name.localeCompare(b.name);
+            })
+            .map((team, i) => (
+              <Link
+                key={team.id}
+                href={
+                  team.table_id ? `/dashboard/tables/${team.table_id}` : "#"
+                }
+                title={
+                  team.table_id
+                    ? `Go to table ${team.table_id}`
+                    : "No table assigned"
+                }
+              >
+                <li className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:bg-[var(--secondary)] transition-colors cursor-pointer">
+                  <div
+                    className={`flex items-center justify-center w-9 h-9 rounded-full font-bold ${i === 0 ? "bg-yellow-400 text-yellow-900" : i === 1 ? "bg-gray-300 text-gray-800" : i === 2 ? "bg-orange-400 text-orange-900" : "bg-gray-700 text-white"}`}
+                  >
+                    {i + 1}
                   </div>
-                </div>
-                <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
-                  {team.num_chips.toLocaleString()}
-                  <img
-                    src="/casino-chip.png"
-                    alt="chip"
-                    className="w-4 h-4 inline-block"
-                  />
-                </div>
-              </li>
-            </Link>
-          ))}
+                  <div className="min-w-0">
+                    <div className="text-base font-medium truncate">
+                      {team.name}
+                    </div>
+                  </div>
+                  <div className="ml-auto font-mono font-semibold text-sm flex items-center gap-2">
+                    {team.num_chips.toLocaleString()}
+                    <img
+                      src="/casino-chip.png"
+                      alt="chip"
+                      className="w-4 h-4 inline-block"
+                    />
+                  </div>
+                </li>
+              </Link>
+            ))}
         </ol>
       </div>
     </div>

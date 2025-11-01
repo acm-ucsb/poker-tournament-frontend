@@ -100,7 +100,11 @@ export async function createTeam(
     // create new team + add user to it
     const { data: newTeam } = await supabase
       .from("teams")
-      .insert({ name: teamName, owner_id: user.id })
+      .insert({
+        name: teamName,
+        owner_id: user.id,
+        tournament_id: UCSB_ACTIVE_POKER_TOURNEY_ID,
+      })
       .select("*")
       .single()
       .throwOnError();
