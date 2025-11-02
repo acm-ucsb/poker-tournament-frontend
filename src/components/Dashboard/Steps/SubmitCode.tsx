@@ -138,7 +138,7 @@ export function SubmitCode() {
             <p className="mt-0 text-gray-300 text-sm">
               Please ensure that your code follows our{" "}
               <Link
-                href="/dashboard/submission-guidelines"
+                href="https://github.com/acm-ucsb/poker-bot-starter-code/blob/main/README.md"
                 className="inline-flex items-center gap-1 p-0 m-0 hover:underline text-green-300 font-semibold"
                 style={{
                   cursor: "pointer",
