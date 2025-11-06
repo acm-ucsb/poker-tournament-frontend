@@ -65,7 +65,7 @@ export function GameStateProvider({
 
   useEffect(() => {
     if (initialTableData) {
-      parseGameState(initialTableData.game_state)
+      parseGameState(initialTableData.game_state as unknown as string)
         .then((populatedState) => {
           setGameState(populatedState);
         })
@@ -93,7 +93,9 @@ export function GameStateProvider({
         },
         async ({ new: newGame }: { new: Table }) => {
           try {
-            setGameState(await parseGameState(newGame.game_state));
+            setGameState(
+              await parseGameState(newGame.game_state as unknown as string)
+            );
           } catch (error) {
             toast.error("Unable to read game state", { richColors: true });
             router.replace("/dashboard/tables");

@@ -122,6 +122,26 @@ export function PlayerPosition({ team, className }: Props) {
       };
     }
 
+    // Otherwise it's a raise or bet
+    if (maxBetBeforePlayer === 0) {
+      return {
+        action: "bet",
+        amount: currentBet,
+        component: (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant={"default"} className="rounded-full bg-blue-100">
+                bet {formatChips(currentBet)}
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>{formatChips(currentBet, false)} chips</span>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      };
+    }
+
     // Otherwise it's a raise
     return {
       action: "raise",
@@ -147,7 +167,7 @@ export function PlayerPosition({ team, className }: Props) {
       <div className="flex flex-col items-center gap-y-1.5">
         {/* Action indicator */}
         {currentPlayerIndex ===
-          (gameState.index_to_action + 2) % gameState.players.length && (
+          gameState.index_to_action % gameState.players.length && (
           <Badge variant={"default"} className="rounded-full bg-red-100">
             action
           </Badge>

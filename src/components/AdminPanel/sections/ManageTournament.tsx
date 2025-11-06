@@ -59,7 +59,11 @@ const formSchema = z.object({
     }),
 });
 
-export function ManageTournament() {
+type Props = {
+  mutateTeams: () => void;
+};
+
+export function ManageTournament({ mutateTeams }: Props) {
   const { tourneyData, mutate } = useData();
   const adminGameLoop = useAdminGameLoop();
   const [deadlineChangesLoading, setDeadlineChangesLoading] = useState(false);
@@ -214,6 +218,7 @@ export function ManageTournament() {
                       richColors: true,
                       id: "start-tournament",
                     });
+                    mutateTeams();
                     mutate();
                   } else {
                     toast.error(res.error?.message, {

@@ -9,8 +9,13 @@ import {
 } from "../types";
 
 export async function parseGameState(
-  game_state: PokerGameStateDB
+  game_state: string
 ): Promise<PokerGameState> {
+  const gameState =
+    typeof game_state === "string"
+      ? (JSON.parse(game_state) as PokerGameStateDB)
+      : game_state;
+
   // The goal of this helper function is to take the raw game state from the DB and populate specific fields
   // that are stored as IDs or minimal data in the DB, but need to be full objects in the app.
   // Specifically, we need to populate:
@@ -21,7 +26,7 @@ export async function parseGameState(
 
   // Populate players
   const teamsData = await getTeams({
-    teamIds: game_state.players,
+    teamIds: gameState.players,
   });
 
   if (!teamsData.success || !teamsData.data) {
@@ -29,7 +34,7 @@ export async function parseGameState(
   }
 
   const playerCards = [] as [PlayingCard, PlayingCard][];
-  for (const cardPair of game_state.players_cards) {
+  for (const cardPair of gameState.players_cards) {
     // the first letter of each card is the suit, the rest is the rank. convert to PlayingCard object
     const parsedPair: [PlayingCard, PlayingCard] = cardPair.map((cardStr) => {
       return parseCard(cardStr);
@@ -38,7 +43,7 @@ export async function parseGameState(
     playerCards.push(parsedPair);
   }
 
-  const communityCards = game_state.community_cards.map((cardStr) => {
+  const communityCards = gameState.community_cards.map((cardStr) => {
     return parseCard(cardStr);
   });
 
@@ -54,7 +59,7 @@ export async function parseGameState(
             : "showdown";
 
   return {
-    ...game_state,
+    ...gameState,
     players: teamsData.data,
     players_cards: playerCards,
     community_cards: communityCards,
