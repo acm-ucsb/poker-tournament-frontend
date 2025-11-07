@@ -65,7 +65,7 @@ export function GameStateProvider({
 
   useEffect(() => {
     if (initialTableData) {
-      parseGameState(initialTableData.game_state)
+      parseGameState(initialTableData.game_state as unknown as string)
         .then((populatedState) => {
           setGameState(populatedState);
         })
@@ -83,7 +83,7 @@ export function GameStateProvider({
 
     // presence and changes in db
     const subscription = supabasePokerTable
-      .on(
+      .on<Table>(
         "postgres_changes",
         {
           event: "UPDATE",
@@ -91,9 +91,11 @@ export function GameStateProvider({
           table: "tables",
           filter: `id=eq.${tableId}`,
         },
-        async ({ new: newGame }: { new: Table }) => {
+        async ({ new: newGame }) => {
           try {
-            setGameState(await parseGameState(newGame.game_state));
+            setGameState(
+              await parseGameState(newGame.game_state as unknown as string)
+            );
           } catch (error) {
             toast.error("Unable to read game state", { richColors: true });
             router.replace("/dashboard/tables");

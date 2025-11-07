@@ -18,7 +18,8 @@ import { useAuth } from "./AuthProvider";
 import { Loader2 } from "lucide-react";
 import { UCSB_ACTIVE_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
-import { Table, Team, Tournament, User } from "@/lib/types";
+import { PokerGameStateDB, Table, Team, Tournament, User } from "@/lib/types";
+import { parseGameState } from "@/lib/util/parseGameState";
 
 type UserData = User & {
   team:
@@ -203,7 +204,15 @@ export function DataProvider({ children }: DataProviderProps) {
   const tourneyData = fetchedTourneyData ?? null;
   const tourneyError = fetchTourneyError?.message ?? null;
 
-  const tablesData = fetchedTablesData ?? null;
+  const tablesData =
+    fetchedTablesData?.map((table) => ({
+      ...table,
+      game_state:
+        typeof table.game_state === "string"
+          ? (JSON.parse(table.game_state) as PokerGameStateDB)
+          : table.game_state,
+    })) ?? null;
+
   const tablesError = fetchTablesError?.message ?? null;
 
   const leaderboardData = fetchedLeaderboard ?? null;

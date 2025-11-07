@@ -42,7 +42,7 @@ export function TournamentStats() {
           )}
           <StatBox
             label="Blind"
-            value={`${tablesData?.[0].game_state.small_blind} / ${tablesData?.[0].game_state.big_blind}`}
+            value={`${tablesData?.[0]?.game_state.small_blind} / ${tablesData?.[0]?.game_state.big_blind}`}
             icon={
               <img
                 src={encodeURI("/Poker Chip Single.png")}

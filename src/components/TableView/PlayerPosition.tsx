@@ -16,6 +16,7 @@ type Props = {
 
 export function PlayerPosition({ team, className }: Props) {
   const { gameState } = useGameState();
+  // console.log(team, className);
 
   if (!gameState) {
     return <LoaderComponent />;
@@ -41,6 +42,8 @@ export function PlayerPosition({ team, className }: Props) {
   const isCurrentPlayerHuman =
     gameState.players[currentPlayerIndex].type === "human";
 
+  const isCurrentPlayerFolded = currentBet === -1;
+
   const getActionBadge = () => {
     // Check if no action has occurred yet
     if (gameState.index_to_action <= currentPlayerIndex && currentBet === 0)
@@ -57,7 +60,7 @@ export function PlayerPosition({ team, className }: Props) {
     );
 
     // Check for fold
-    if (currentBet === -1) {
+    if (isCurrentPlayerFolded) {
       return {
         action: "fold",
         amount: 0,
@@ -122,6 +125,26 @@ export function PlayerPosition({ team, className }: Props) {
       };
     }
 
+    // Otherwise it's a raise or bet
+    if (maxBetBeforePlayer === 0) {
+      return {
+        action: "bet",
+        amount: currentBet,
+        component: (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant={"default"} className="rounded-full bg-blue-100">
+                bet {formatChips(currentBet)}
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>{formatChips(currentBet, false)} chips</span>
+            </TooltipContent>
+          </Tooltip>
+        ),
+      };
+    }
+
     // Otherwise it's a raise
     return {
       action: "raise",
@@ -147,7 +170,7 @@ export function PlayerPosition({ team, className }: Props) {
       <div className="flex flex-col items-center gap-y-1.5">
         {/* Action indicator */}
         {currentPlayerIndex ===
-          (gameState.index_to_action + 2) % gameState.players.length && (
+          gameState.index_to_action % gameState.players.length && (
           <Badge variant={"default"} className="rounded-full bg-red-100">
             action
           </Badge>
@@ -210,7 +233,13 @@ export function PlayerPosition({ team, className }: Props) {
       </div>
 
       {/* Player cards */}
-      <div className="flex gap-[clamp(0.15rem,0.3vw,0.375rem)]">
+      <div
+        className="flex gap-[clamp(0.15rem,0.3vw,0.375rem)]"
+        style={{
+          opacity: isCurrentPlayerFolded ? 0.5 : 1,
+          transition: "opacity 300ms",
+        }}
+      >
         {gameState.players_cards[currentPlayerIndex] &&
         gameState.players_cards[currentPlayerIndex].length === 2 ? (
           // && gameState.players[currentPlayerIndex].id === data?.team_id

@@ -36,12 +36,30 @@ const AdminGameLoopContext = createContext({
 export function AdminGameLoopProvider({
   children,
 }: AdminGameLoopProviderProps) {
-  const { data, tourneyData } = useData();
+  const { data } = useData();
   const { session } = useAuth();
 
   const [pollIntervalId, setPollIntervalId] = useState<NodeJS.Timeout | null>(
     null
   );
+
+  const onStopTables = () => {
+    if (!data?.is_admin) return;
+
+    toast.loading("Stopping tables...", {
+      id: "stop-tables",
+      richColors: true,
+    });
+
+    if (pollIntervalId) {
+      clearInterval(pollIntervalId);
+      setPollIntervalId(null);
+      toast.success("Tables stopped.", {
+        id: "stop-tables",
+        richColors: true,
+      });
+    }
+  };
 
   const onStartTables = async () => {
     if (!data?.is_admin) return;
@@ -66,14 +84,13 @@ export function AdminGameLoopProvider({
           `${BACKEND_ENGINE_BASE_URL}/admin/tables/move`,
           null,
           {
-            params: {
-              table_ids: tourneyData?.tables || null,
-            },
             headers: {
               Authorization: `Bearer ${session?.access_token}`,
             },
           }
         );
+
+        console.log(response);
 
         if (response.status !== 200) {
           throw new Error("Failed to step to next hand.");
@@ -97,24 +114,6 @@ export function AdminGameLoopProvider({
       id: "start-tables",
       richColors: true,
     });
-  };
-
-  const onStopTables = () => {
-    if (!data?.is_admin) return;
-
-    toast.loading("Stopping tables...", {
-      id: "stop-tables",
-      richColors: true,
-    });
-
-    if (pollIntervalId) {
-      clearInterval(pollIntervalId);
-      setPollIntervalId(null);
-      toast.success("Tables stopped.", {
-        id: "stop-tables",
-        richColors: true,
-      });
-    }
   };
 
   // Reload or close warning
