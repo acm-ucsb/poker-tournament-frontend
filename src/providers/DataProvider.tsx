@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 import { toast } from "sonner";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
@@ -19,7 +19,6 @@ import { Loader2 } from "lucide-react";
 import { UCSB_ACTIVE_POKER_TOURNEY_ID } from "@/lib/constants";
 import { useLocalStorage } from "@mantine/hooks";
 import { PokerGameStateDB, Table, Team, Tournament, User } from "@/lib/types";
-import { parseGameState } from "@/lib/util/parseGameState";
 
 type UserData = User & {
   team:
