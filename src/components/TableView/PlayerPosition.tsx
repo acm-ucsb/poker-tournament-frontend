@@ -8,15 +8,111 @@ import { useGameState } from "@/providers/GameStateProvider";
 import { LoaderComponent } from "../LoaderComponent";
 import { formatChips } from "@/lib/util/util";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   team: Team;
   className?: string;
 };
 
+type PlayerActionData = {
+  action: "fold" | "check" | "call" | "bet" | "raise" | "all-in" | null;
+  amount: number;
+};
+
 export function PlayerPosition({ team, className }: Props) {
   const { gameState } = useGameState();
-  // console.log(team, className);
+
+  // Track player actions for this betting round
+  const [playerActions, setPlayerActions] = useState<PlayerActionData[]>([]);
+  const prevBetMoneyRef = useRef<number[]>([]);
+  const prevIndexToActionRef = useRef<number>(-1);
+  const prevCommunityCardsLengthRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!gameState) return;
+
+    const currentCommunityCardsLength = gameState.community_cards.length;
+    const prevCommunityCardsLength = prevCommunityCardsLengthRef.current;
+
+    // Reset actions when community cards change (new betting round)
+    if (currentCommunityCardsLength !== prevCommunityCardsLength) {
+      setPlayerActions(
+        gameState.players.map(() => ({ action: null, amount: 0 }))
+      );
+      prevBetMoneyRef.current = [...gameState.bet_money];
+      prevIndexToActionRef.current = gameState.index_to_action;
+      prevCommunityCardsLengthRef.current = currentCommunityCardsLength;
+      return;
+    }
+
+    // Detect when index_to_action changes (a player just acted)
+    if (
+      gameState.index_to_action !== prevIndexToActionRef.current &&
+      prevIndexToActionRef.current !== -1
+    ) {
+      const prevBetMoney = prevBetMoneyRef.current;
+      const currentBetMoney = gameState.bet_money;
+
+      // Calculate which player just acted
+      const numPlayers = gameState.players.length;
+      const playerWhoActed =
+        ((prevIndexToActionRef.current % numPlayers) + numPlayers) % numPlayers;
+
+      const prevBet = prevBetMoney[playerWhoActed] ?? 0;
+      const currentBet = currentBetMoney[playerWhoActed] ?? 0;
+
+      // Determine the max bet before this player's action
+      const maxBetBeforeAction = Math.max(
+        ...prevBetMoney.filter((bet) => bet !== -1),
+        0
+      );
+
+      let detectedAction: PlayerActionData = { action: null, amount: 0 };
+
+      if (currentBet === -1) {
+        // Player folded
+        detectedAction = { action: "fold", amount: 0 };
+      } else if (currentBet === 0 && maxBetBeforeAction === 0) {
+        // Player checked (no bet to call)
+        detectedAction = { action: "check", amount: 0 };
+      } else if (currentBet === 0 && maxBetBeforeAction > 0) {
+        // This shouldn't happen in normal poker, but handle as check
+        detectedAction = { action: "check", amount: 0 };
+      } else if (currentBet > 0) {
+        const currentHeldMoney = gameState.held_money[playerWhoActed] ?? 0;
+
+        // Check for all-in
+        if (currentHeldMoney === 0) {
+          detectedAction = { action: "all-in", amount: currentBet };
+        } else if (currentBet === maxBetBeforeAction) {
+          // Player called
+          detectedAction = { action: "call", amount: currentBet };
+        } else if (currentBet > maxBetBeforeAction) {
+          // Player bet or raised
+          if (maxBetBeforeAction === 0) {
+            detectedAction = { action: "bet", amount: currentBet };
+          } else {
+            detectedAction = { action: "raise", amount: currentBet };
+          }
+        }
+      }
+
+      setPlayerActions((prev) => {
+        const updated = [...prev];
+        // Initialize array if needed
+        while (updated.length < gameState.players.length) {
+          updated.push({ action: null, amount: 0 });
+        }
+        updated[playerWhoActed] = detectedAction;
+        return updated;
+      });
+    }
+
+    // Update refs
+    prevBetMoneyRef.current = [...gameState.bet_money];
+    prevIndexToActionRef.current = gameState.index_to_action;
+  }, [gameState]);
 
   if (!gameState) {
     return <LoaderComponent />;
@@ -44,124 +140,158 @@ export function PlayerPosition({ team, className }: Props) {
 
   const isCurrentPlayerFolded = currentBet === -1;
 
+  const inferActionFromGameState = (): PlayerActionData => {
+    // Stateless fallback: infer action from current game state
+    // This is less accurate but allows users who just joined to see something
+    // We only show badges when we're confident about the action
+
+    // Check for fold (always certain)
+    if (currentBet === -1) {
+      return { action: "fold", amount: 0 };
+    }
+
+    // Check for all-in (certain if they have money in and chips are 0)
+    if (currentHeldMoney === 0 && currentBet > 0) {
+      return { action: "all-in", amount: currentBet };
+    }
+
+    // If player has bet money > 0, show "bet"
+    // (can't distinguish call/raise/bet without history, but we know they committed chips)
+    if (currentBet > 0) {
+      return { action: "bet", amount: currentBet };
+    }
+
+    // For bet_money = 0, we can't reliably distinguish between:
+    // - Player who checked
+    // - Player who hasn't acted yet
+    // So we show nothing in the stateless fallback for these cases
+    // The stateful tracking will handle this correctly for live viewers
+
+    return { action: null, amount: 0 };
+  };
+
   const getActionBadge = () => {
-    // Check if no action has occurred yet
-    if (gameState.index_to_action <= currentPlayerIndex && currentBet === 0)
+    // Try to use statefully tracked action first (more accurate)
+    let actionData = playerActions[currentPlayerIndex];
+
+    // Fallback to stateless inference if no tracked action exists
+    if (!actionData || !actionData.action) {
+      actionData = inferActionFromGameState();
+    }
+
+    if (!actionData || !actionData.action) {
       return {
         action: null,
         amount: 0,
         component: null,
       };
-
-    // Calculate the highest bet made BEFORE this player's turn
-    const maxBetBeforePlayer = Math.max(
-      ...gameState.bet_money.slice(0, currentPlayerIndex),
-      0 // Include 0 in case this is the first player
-    );
-
-    // Check for fold
-    if (isCurrentPlayerFolded) {
-      return {
-        action: "fold",
-        amount: 0,
-        component: (
-          <Badge variant={"default"} className="rounded-full bg-blue-100">
-            fold
-          </Badge>
-        ),
-      };
     }
 
-    // Check for check (bet is 0 and there's no bet to match)
-    if (currentBet === 0) {
-      return {
-        action: "check",
-        amount: 0,
-        component: (
-          <Badge variant={"default"} className="rounded-full bg-blue-100">
-            check
-          </Badge>
-        ),
-      };
-    }
+    const { action, amount } = actionData;
 
-    // Check for all-in (player has 0 chips left after betting)
-    if (currentHeldMoney === 0 || currentBet >= currentHeldMoney) {
-      return {
-        action: "all-in",
-        amount: currentBet,
-        component: (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge variant={"default"} className="rounded-full bg-blue-100">
-                all-in {formatChips(currentBet)}
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
-              <span>{formatChips(currentBet, false)} chips</span>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      };
-    }
-
-    // Check for call (matches the highest bet before their turn)
-    if (currentBet === maxBetBeforePlayer) {
-      return {
-        action: "call",
-        amount: currentBet,
-        component: (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge variant={"default"} className="rounded-full bg-blue-100">
-                call {formatChips(currentBet)}
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
-              <span>{formatChips(currentBet, false)} chips</span>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      };
-    }
-
-    // Otherwise it's a raise or bet
-    if (maxBetBeforePlayer === 0) {
-      return {
-        action: "bet",
-        amount: currentBet,
-        component: (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge variant={"default"} className="rounded-full bg-blue-100">
-                bet {formatChips(currentBet)}
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
-              <span>{formatChips(currentBet, false)} chips</span>
-            </TooltipContent>
-          </Tooltip>
-        ),
-      };
-    }
-
-    // Otherwise it's a raise
-    return {
-      action: "raise",
-      amount: currentBet,
-      component: (
-        <Tooltip>
-          <TooltipTrigger asChild>
+    // Return appropriate badge based on action
+    switch (action) {
+      case "fold":
+        return {
+          action: "fold",
+          amount: 0,
+          component: (
             <Badge variant={"default"} className="rounded-full bg-blue-100">
-              raise {formatChips(currentBet)}
+              fold
             </Badge>
-          </TooltipTrigger>
-          <TooltipContent>
-            <span>{formatChips(currentBet, false)} chips</span>
-          </TooltipContent>
-        </Tooltip>
-      ),
-    };
+          ),
+        };
+
+      case "check":
+        return {
+          action: "check",
+          amount: 0,
+          component: (
+            <Badge variant={"default"} className="rounded-full bg-blue-100">
+              check
+            </Badge>
+          ),
+        };
+
+      case "all-in":
+        return {
+          action: "all-in",
+          amount,
+          component: (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant={"default"} className="rounded-full bg-blue-100">
+                  all-in {formatChips(amount)}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{formatChips(amount, false)} chips</span>
+              </TooltipContent>
+            </Tooltip>
+          ),
+        };
+
+      case "call":
+        return {
+          action: "call",
+          amount,
+          component: (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant={"default"} className="rounded-full bg-blue-100">
+                  call {formatChips(amount)}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{formatChips(amount, false)} chips</span>
+              </TooltipContent>
+            </Tooltip>
+          ),
+        };
+
+      case "bet":
+        return {
+          action: "bet",
+          amount,
+          component: (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant={"default"} className="rounded-full bg-blue-100">
+                  bet {formatChips(amount)}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{formatChips(amount, false)} chips</span>
+              </TooltipContent>
+            </Tooltip>
+          ),
+        };
+
+      case "raise":
+        return {
+          action: "raise",
+          amount,
+          component: (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant={"default"} className="rounded-full bg-blue-100">
+                  raise {formatChips(amount)}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{formatChips(amount, false)} chips</span>
+              </TooltipContent>
+            </Tooltip>
+          ),
+        };
+
+      default:
+        return {
+          action: null,
+          amount: 0,
+          component: null,
+        };
+    }
   };
 
   return (
