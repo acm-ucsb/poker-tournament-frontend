@@ -6,7 +6,7 @@ export const rules = `
 1. **Tournament Format**: This tournament is organized by ACM Development and follows a structured format where teams submit poker bots that compete against each other.
 
 2. **Team Composition**:
-   - Teams may consist of up to 4 members.
+   - Teams may consist of up to **3 members.**
    - Each team must designate one member as the team owner.
    - All team members must be registered participants in the tournament.
 
