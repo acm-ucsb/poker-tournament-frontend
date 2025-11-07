@@ -42,6 +42,9 @@ export function Tables() {
               .map((table) => (
                 <TableCard key={table.id} table={table} />
               ))}
+            {tablesData?.length === 0 && (
+              <p className="text-gray-400 mb-1">No tables available.</p>
+            )}
           </div>
 
           <div className="lg:col-span-1 lg:ml-6">

@@ -47,6 +47,8 @@ export async function getTeams(
       };
     }
 
+    const orderMap = teamIds.map((id, index) => ({ id, order: index }));
+
     // check if team with team id exists
     const { data: teams } = await supabase
       .from("teams")
@@ -61,6 +63,12 @@ export async function getTeams(
         status: 400,
       });
     }
+
+    teams.sort((a, b) => {
+      const aOrder = orderMap.find((item) => item.id === a.id)?.order || 0;
+      const bOrder = orderMap.find((item) => item.id === b.id)?.order || 0;
+      return aOrder - bOrder;
+    });
 
     return {
       success: true,

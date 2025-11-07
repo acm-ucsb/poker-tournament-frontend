@@ -83,7 +83,7 @@ export function GameStateProvider({
 
     // presence and changes in db
     const subscription = supabasePokerTable
-      .on(
+      .on<Table>(
         "postgres_changes",
         {
           event: "UPDATE",
@@ -91,7 +91,7 @@ export function GameStateProvider({
           table: "tables",
           filter: `id=eq.${tableId}`,
         },
-        async ({ new: newGame }: { new: Table }) => {
+        async ({ new: newGame }) => {
           try {
             setGameState(
               await parseGameState(newGame.game_state as unknown as string)
