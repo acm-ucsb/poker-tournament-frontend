@@ -10,3 +10,4 @@ export * from "./admin/startTournament";
 export * from "./admin/updateDeadlines";
 export * from "./admin/getTeamSubmission";
 export * from "./admin/toggleQualification";
+export * from "./admin/increaseBlinds";

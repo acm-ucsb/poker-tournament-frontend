@@ -12,7 +12,11 @@ import {
 import { toast } from "sonner";
 import { useData } from "./DataProvider";
 import { usePathname } from "next/navigation";
-import { BACKEND_ENGINE_BASE_URL, POLL_INTERVAL_MS } from "@/lib/constants";
+import {
+  BACKEND_ENGINE_BASE_URL,
+  POLL_INTERVAL_MS,
+  UCSB_ACTIVE_POKER_TOURNEY_ID,
+} from "@/lib/constants";
 import { useWindowEvent } from "@mantine/hooks";
 import axios from "axios";
 import { useAuth } from "./AuthProvider";
@@ -81,7 +85,7 @@ export function AdminGameLoopProvider({
 
       try {
         const response = await axios.post(
-          `${BACKEND_ENGINE_BASE_URL}/admin/tables/move`,
+          `${BACKEND_ENGINE_BASE_URL}/admin/tables/move?tournament_id=${UCSB_ACTIVE_POKER_TOURNEY_ID}`,
           null,
           {
             headers: {
@@ -89,8 +93,6 @@ export function AdminGameLoopProvider({
             },
           }
         );
-
-        console.log(response);
 
         if (response.status !== 200) {
           throw new Error("Failed to step to next hand.");
