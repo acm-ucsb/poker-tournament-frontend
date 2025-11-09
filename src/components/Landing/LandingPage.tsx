@@ -330,11 +330,6 @@ export default function LandingPage() {
                 "Sign in with your UCSB email and form teams (3 members max).",
             },
             {
-              time: "Nov 8, 11:59 PM",
-              title: "Bot Registration & Team Formation Closes",
-              description: "All teams must be finalized by this time.",
-            },
-            {
               time: "Nov 13, 7:00 PM",
               title: "Poker Night & Bot Office Hours",
               description:
@@ -342,9 +337,9 @@ export default function LandingPage() {
             },
             {
               time: "Nov 14, 11:59 PM",
-              title: "Code Submission Deadline",
+              title: "Registration, Team Formation & Code Submission Deadline",
               description:
-                "Upload your bot code to the dashboard by this time.",
+                "Register, form your team, and upload your bot code to the dashboard by the deadline!",
             },
             {
               time: "Nov 15, 2:00 PM",
