@@ -4,7 +4,7 @@ import { AppProvider } from "@/providers/AppProvider";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
-import { GoogleTagManager } from "@next/third-parties/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import "./globals.css";
 
@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <GoogleTagManager gtmId="G-KTMJ339EVQ" />
+      <GoogleAnalytics gaId="G-KTMJ339EVQ" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
