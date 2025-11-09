@@ -38,6 +38,11 @@ export function PokerTable({ className }: Props) {
     };
   };
 
+  const currentSmallBlind = gameState.small_blind;
+  const currentBigBlind = gameState.big_blind;
+
+  const currentBlinds = `${currentSmallBlind} / ${currentBigBlind}`;
+
   return (
     <div className={cn("relative w-full mx-auto", className)}>
       {/* Main table area */}
@@ -107,6 +112,23 @@ export function PokerTable({ className }: Props) {
                 />
               );
             })}
+          </div>
+
+          {/* Blind display */}
+          <div
+            className="
+      "
+          >
+            <div className="bg-gray-900/90 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-700">
+              <div className="text-center">
+                <div className="text-xs text-gray-300 uppercase tracking-wide">
+                  Blinds
+                </div>
+                <div className="text-lg font-bold text-white">
+                  {currentBlinds}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

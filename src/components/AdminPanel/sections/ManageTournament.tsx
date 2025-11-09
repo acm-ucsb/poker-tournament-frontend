@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 
 import { useEffect, useState } from "react";
-import { updateDeadlines } from "@/lib/server-actions/admin/updateDeadlines";
+import { updateDeadlines } from "@/lib/server-actions";
 import { toast } from "sonner";
 
 import {
@@ -41,6 +41,8 @@ import { Button } from "@/components/ui/button";
 import { useWindowEvent } from "@mantine/hooks";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdminGameLoop } from "@/providers/AdminGameLoopProvider";
+import { increaseBlinds } from "@/lib/server-actions";
+import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 
 const formSchema = z.object({
   teamsDeadline: z
@@ -64,7 +66,8 @@ type Props = {
 };
 
 export function ManageTournament({ mutateTeams }: Props) {
-  const { tourneyData, mutate } = useData();
+  const supabase = createSupabaseClient();
+  const { tourneyData, mutate, tablesData } = useData();
   const adminGameLoop = useAdminGameLoop();
   const [deadlineChangesLoading, setDeadlineChangesLoading] = useState(false);
 
@@ -101,6 +104,12 @@ export function ManageTournament({ mutateTeams }: Props) {
 
     setDeadlineChangesLoading(false);
   };
+
+  const currentSmallBlind = tablesData?.[0]?.game_state.small_blind || 25;
+  const currentBigBlind = tablesData?.[0]?.game_state.big_blind || 50;
+
+  const currentBlinds = `${currentSmallBlind} / ${currentBigBlind}`;
+  const nextBlinds = `${currentSmallBlind * 2} / ${currentBigBlind * 2}`;
 
   return (
     <section className="flex flex-col gap-2">
@@ -281,6 +290,74 @@ export function ManageTournament({ mutateTeams }: Props) {
             </AlertDialogContent>
           </AlertDialog>
         ))}
+
+      {tourneyData?.status === "active" && (
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <ButtonWrapper size={"lg"} variant={"destructive"}>
+              Increment Blinds
+            </ButtonWrapper>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action will increment the blinds for all tables in the
+                tournament.
+                <br />
+                <span className="text-red-400">
+                  Blinds will increase from{" "}
+                  <span className="font-bold">{currentBlinds}</span> to{" "}
+                  <span className="font-bold">{nextBlinds}</span>
+                </span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={async () => {
+                  toast.loading("Increasing blinds, please wait...", {
+                    richColors: true,
+                    id: "increase-blinds",
+                  });
+
+                  const res = await increaseBlinds();
+
+                  if (res.success) {
+                    toast.success(
+                      `Blinds increased from ${currentBlinds} to ${nextBlinds}`,
+                      {
+                        richColors: true,
+                        id: "increase-blinds",
+                      }
+                    );
+                    mutate();
+
+                    // Broadcast blind increase
+                    supabase
+                      .channel(`tournament:${UCSB_ACTIVE_POKER_TOURNEY_ID}`)
+                      .send({
+                        type: "broadcast",
+                        event: "tournament:increase-blinds",
+                        payload: {
+                          currentBlinds,
+                          nextBlinds,
+                        },
+                      });
+                  } else {
+                    toast.error(res.error?.message, {
+                      richColors: true,
+                      id: "increase-blinds",
+                    });
+                  }
+                }}
+              >
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </section>
   );
 }

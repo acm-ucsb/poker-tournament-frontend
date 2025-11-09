@@ -8,7 +8,7 @@ import {
 } from "@/lib/constants";
 import axios from "axios";
 
-export async function startTournament(): Promise<ServerActionResponse<null>> {
+export async function increaseBlinds(): Promise<ServerActionResponse<null>> {
   try {
     const supabase = await createSupabaseServerClient();
     const {
@@ -20,7 +20,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
 
     if (!user || !session) {
       throw new ServerActionError({
-        message: "You must be logged in to start a tournament.",
+        message: "You must be logged in to increase blinds on game tables.",
         code: "UNAUTHORIZED",
         status: 401,
       });
@@ -28,7 +28,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
 
     if (!user.email?.includes("@ucsb.edu")) {
       throw new ServerActionError({
-        message: "You must use a UCSB email to start a tournament.",
+        message: "You must use a UCSB email to increase blinds on game tables.",
         code: "FORBIDDEN",
         status: 403,
       });
@@ -43,7 +43,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
 
     if (!userRole?.is_admin) {
       throw new ServerActionError({
-        message: "You must be an admin to start a tournament.",
+        message: "You must be an admin to increase blinds on game tables.",
         code: "FORBIDDEN",
         status: 403,
       });
@@ -66,9 +66,9 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
     }
 
     // check if tournament is already active
-    if (tournament.status !== "not_started") {
+    if (tournament.status === "not_started") {
       throw new ServerActionError({
-        message: "Tournament is already active or has ended.",
+        message: "Tournament has not started yet, blinds cannot be increased.",
         code: "BAD_REQUEST",
         status: 400,
       });
@@ -76,7 +76,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
 
     try {
       await axios.post(
-        `${BACKEND_ENGINE_BASE_URL}/admin/tables/create?tournament_id=${UCSB_ACTIVE_POKER_TOURNEY_ID}`,
+        `${BACKEND_ENGINE_BASE_URL}/admin/increase_blind?tournament_id=${UCSB_ACTIVE_POKER_TOURNEY_ID}`,
         {},
         {
           headers: {
@@ -84,13 +84,6 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
           },
         }
       );
-
-      // Update tournament status to 'active'
-      await supabase
-        .from("tournaments")
-        .update({ status: "active" })
-        .eq("id", UCSB_ACTIVE_POKER_TOURNEY_ID)
-        .throwOnError();
     } catch (error) {
       console.error(error);
       return {
@@ -98,7 +91,7 @@ export async function startTournament(): Promise<ServerActionResponse<null>> {
         data: null,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to start tournament.",
+          message: "Failed to increase blinds.",
         },
       };
     }
