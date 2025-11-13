@@ -134,7 +134,7 @@ Cards are represented as 2-character strings:
 ## Bot-Specific Considerations
 
 ### State Management
-- Bots are stateless between calls - track history if needed
+- Bots themselves carry no memory (any stored variables will be lost) - track history if needed
 - Don't rely on global variables or previous hand information
 - Process all necessary information from the current game state
 
