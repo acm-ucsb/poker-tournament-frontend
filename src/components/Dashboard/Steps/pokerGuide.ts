@@ -71,7 +71,7 @@ Texas Hold'em is a community card poker game where players try to make the best 
 ### Betting Rules
 - **No-Limit**: Players can bet any amount up to their entire stack
 - **Minimum Bet**: Must be at least the size of the big blind
-- **Minimum Raise**: Must be at least 2x the size of the previous largest bet or raise
+- **Minimum Raise**: Must be at least 2x the size of the previous largest bet (largest value in bet_money).
 - **Check**: Allowed when no bet has been made in the current round
 - **All-In**: Player can bet their entire remaining stack at any time
 
@@ -134,7 +134,7 @@ Cards are represented as 2-character strings:
 ## Bot-Specific Considerations
 
 ### State Management
-- Bots themselves carry no memory (any stored variables will be lost) - track history if needed
+- Bots themselves carry no memory (any stored variables will be lost, except those used in the Memory class) - track history if needed
 - Don't rely on global variables or previous hand information
 - Process all necessary information from the current game state
 

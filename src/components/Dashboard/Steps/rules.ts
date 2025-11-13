@@ -46,7 +46,8 @@ export const rules = `
 
 1. **AI and External Tools**:
    - The use of AI tools (such as ChatGPT, Copilot, Claude, etc.) to assist in coding is explicitly ALLOWED.
-   - External libraries and resources may be used as long as they are properly cited and included in the submission.
+   - No external code libraries or pre-written code from third-party sources are permitted unless explicitly allowed by the submission guidelines.
+      - Allowed libraries are found [here](https://docs.google.com/document/d/1Q78tdVFAZIFt0ZWEgNG65nDDAlbt6rcG5o21waeZprA/edit?usp=sharing)..
 
 2. **Collaboration**:
    - Collaboration is only permitted among registered members of the same team.
@@ -116,5 +117,5 @@ By participating in this tournament, all teams acknowledge that they have read, 
 
 ---
 
-_Last Updated: August 12, 2025_
+_Last Updated: November 13, 2025_
 `;
