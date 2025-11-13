@@ -330,12 +330,6 @@ export default function LandingPage() {
                 "Sign in with your UCSB email and form teams (3 members max).",
             },
             {
-              time: "Nov 13, 7:00 PM",
-              title: "Poker Night & Bot Office Hours",
-              description:
-                "Get help with building your bot, or just come play poker!",
-            },
-            {
               time: "Nov 14, 11:59 PM",
               title: "Registration, Team Formation & Code Submission Deadline",
               description:
@@ -344,16 +338,22 @@ export default function LandingPage() {
             {
               time: "Nov 15, 2:00 PM",
               title: "Human Bracket Registration",
-              description: "Check in at the registration desk @ Loma Pelona",
+              description: "Check in at the registration desk @ Loma Pelona 1108",
             },
             {
               time: "Nov 15, 2:30 PM",
-              title: "Tournament Begins",
+              title: "Human Tournament Begins",
               description:
-                "First hands are dealt. Human and bot brackets start.",
+                "First hands are dealt. Human brackets start.",
             },
             {
-              time: "Nov 15, 6:30 PM",
+              time: "Nov 15, 4:00 PM",
+              title: "Bot Tournament Begins",
+              description:
+                "Watch your bot compete live on the dashboard against other bots!",
+            },
+            {
+              time: "Nov 15, 5:30 PM",
               title: "Finals",
               description: "Top humans and bots face off for the championship.",
             },
