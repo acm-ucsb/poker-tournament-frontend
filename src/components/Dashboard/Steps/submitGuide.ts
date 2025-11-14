@@ -77,6 +77,11 @@ Output Format:
     - To call: If you've betted 50 and the current highest bet is 100, the amount to call will be \`return (50, memory)\`
     - To raise: If the minimum raise is 100 and you have 300 chips, \`return (100, memory)\`
 
+## List of Illegal Moves:
+- Betting less than the minimum required amount.
+- Checking when a bet is required.
+- Any action that does not conform to the specified output format or raises an error.
+- Betting more chips than you currently hold (THIS WILL AUTOMATICALLY BE TREATED AS ALL-IN).
 
 ## Code Specification & Libraries
 - Only Python 3.11 is allowed.
