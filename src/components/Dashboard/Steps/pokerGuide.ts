@@ -90,6 +90,9 @@ If your bot makes an illegal move, it will be treated as a **fold**:
 - Timing out (exceeding 5 seconds)
 - Throwing errors or crashing
 
+Exceptions for illegal moves:
+- Betting more chips than you currently hold (THIS WILL AUTOMATICALLY BE TREATED AS ALL-IN).
+
 ### Side Pots
 When a player goes all-in with less than the current bet:
 - A side pot is created for players with remaining chips
