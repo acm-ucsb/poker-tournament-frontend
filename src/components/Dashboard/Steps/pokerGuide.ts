@@ -79,7 +79,7 @@ Texas Hold'em is a community card poker game where players try to make the best 
 Your bot must return a valid bet amount on its turn:
 - **Fold**: Return \`-1\` or any negative number
 - **Check/Call**: Return \`0\` (when checking) or the amount needed to call
-- **Raise/Bet**: Return an amount >= minimum bet/raise. This amount represents how much more you want to add to the pot from your current stack.
+- **Raise/Bet**: Return an amount >= minimum bet/raise. This amount represents how much more you want to add to your total bet from your current stack.
 - **All-In**: Return your entire remaining stack
 
 ### Illegal Actions
