@@ -35,7 +35,7 @@ class Pot:
 class GameState:
     index_to_action: int # your index, for example, bet_money[index_to_action] is your bot's current betting amount
     index_of_small_blind: int
-    players: list[str] # list of bots' id, ordered according to their seats
+    players: list[str] # list of bots' id, ordered according to their seats (8 MAX at the table)
     player_cards: list[str] # list of your cards
     held_money: list[int]
     bet_money: list[int]  # -1 for fold, 0 for check/hasn't bet, positive int for amount bet total
