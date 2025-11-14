@@ -56,6 +56,15 @@ export default function LandingPage() {
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl text-white">
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 border border-yellow-500/40 rounded-full">
+                    <Trophy className="w-4 h-4 text-yellow-400" />
+                    <span className="text-white font-semibold">$1,000+ Prizes</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-500/40 rounded-full">
+                    <span className="text-white font-semibold">Jane Street Merch</span>
+                  </div>
+                </div>
                 <p className="max-w-[600px] text-gray-300 md:text-xl mt-4">
                   Challenge friends at the table or put your poker bot to the
                   test. Compete, win prizes, and have fun!
