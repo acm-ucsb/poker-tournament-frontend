@@ -20,6 +20,7 @@ import {
 import { useWindowEvent } from "@mantine/hooks";
 import axios from "axios";
 import { useAuth } from "./AuthProvider";
+import { createSupabaseClient } from "@/lib/supabase/supabase-client";
 
 type AdminGameLoopProviderProps = {
   children: ReactNode;
@@ -42,6 +43,7 @@ export function AdminGameLoopProvider({
 }: AdminGameLoopProviderProps) {
   const { data } = useData();
   const { session } = useAuth();
+  const supabase = createSupabaseClient();
 
   const [pollIntervalId, setPollIntervalId] = useState<NodeJS.Timeout | null>(
     null
@@ -103,6 +105,7 @@ export function AdminGameLoopProvider({
           richColors: true,
         });
       } catch (error: any) {
+        supabase.auth.refreshSession();
         toast.error(`Error: ${String(error)}`, {
           id: "stepping-hand",
           richColors: true,

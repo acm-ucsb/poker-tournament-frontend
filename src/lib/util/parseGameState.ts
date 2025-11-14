@@ -82,3 +82,17 @@ function parseCard(cardStr: string): PlayingCard {
 
   return { suit, rank };
 }
+
+export function unparseCard(card: PlayingCard): string {
+  const suitMap: Record<CardSuit, string> = {
+    hearts: "h",
+    diamonds: "d",
+    clubs: "c",
+    spades: "s",
+  };
+
+  const suitStr = suitMap[card.suit];
+  const rankStr = card.rank.toLowerCase();
+
+  return `${rankStr}${suitStr}`;
+}

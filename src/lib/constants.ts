@@ -11,9 +11,9 @@ export const TEAM_NAME_MIN_LENGTH = 3 as const;
 export const TEAM_NAME_MAX_LENGTH = 25 as const;
 
 export const SUBMISSION_MAX_FILE_SIZE = 10485760 as const; // 10 MB (10 * 1024 * 1024 bytes)
-export const TABLE_SEATS_MAX_COUNT = 9;
-export const TABLE_SEATS_MIN_COUNT = 2;
-export const TABLE_SEATS_MIN_START = 5;
+// export const TABLE_SEATS_MAX_COUNT = 9;
+// export const TABLE_SEATS_MIN_COUNT = 2;
+// export const TABLE_SEATS_MIN_START = 5;
 
 export const POLL_INTERVAL_MS = 10000 as const; // 10 seconds
 // export const TABLE_SEATS_MIN_COUNT = 1; // allow 1 for testing purposes
