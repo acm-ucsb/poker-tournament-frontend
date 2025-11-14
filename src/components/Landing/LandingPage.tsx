@@ -345,12 +345,12 @@ export default function LandingPage() {
                 "Register, form your team, and upload your bot code to the dashboard by the deadline!",
             },
             {
-              time: "Nov 15, 2:00 PM",
+              time: "Nov 15, 1:30 PM",
               title: "Human Bracket Registration",
               description: "Check in at the registration desk @ Loma Pelona 1108",
             },
             {
-              time: "Nov 15, 2:30 PM",
+              time: "Nov 15, 2:00 PM",
               title: "Human Tournament Begins",
               description:
                 "First hands are dealt. Human brackets start.",
@@ -473,7 +473,7 @@ export default function LandingPage() {
                       We support most standard Python libraries. However, use of
                       any libraries that access external APIs or the internet, our system
                       resources, and other inherently system-level operations are
-                      prohibited. The only external library allowed is NumPy.
+                      prohibited.
                       If you wish to use specific libraries, please contact us
                       on Discord (dm or server) for approval.
                     </AccordionContent>
