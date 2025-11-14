@@ -13,6 +13,8 @@ import {
   findHandWinners,
   findEliminatedPlayers,
 } from "@/lib/util/gameStateUtil";
+import { getBestHandDescription } from "@/lib/util/pokerHandEvaluator";
+import { unparseCard } from "@/lib/util/parseGameState";
 
 type Props = {
   tableId: string;
@@ -42,10 +44,21 @@ export function TableView({ tableId }: Props) {
       if (winners.length > 0) {
         // Display toast notification for each winner
         winners.forEach((winner) => {
+          const playerCards = laggedGameState.players_cards[
+            winner.playerIndex
+          ].map((c) => unparseCard(c));
+          const communityCards = laggedGameState.community_cards.map((c) =>
+            unparseCard(c)
+          );
+          const winningHand = getBestHandDescription(
+            playerCards,
+            communityCards
+          );
+
           const message =
             winners.length > 1
-              ? `${winner.playerName} won ${formatChips(winner.chipsWon, false)} chips (split pot)`
-              : `${winner.playerName} won the hand with ${formatChips(winner.chipsWon, false)} chips!`;
+              ? `${winner.playerName} won ${formatChips(winner.chipsWon, false)} chips (split pot) with ${winningHand}!`
+              : `${winner.playerName} won ${formatChips(winner.chipsWon, false)} chips with ${winningHand}!`;
 
           toast.success(message, {
             richColors: true,
