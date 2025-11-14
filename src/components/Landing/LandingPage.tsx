@@ -57,7 +57,7 @@ export default function LandingPage() {
                   Mann vs. Machine: Poker Bot Tournament
                 </h1>
                 <div className="flex flex-wrap gap-3 mt-4">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 border border-yellow-500/40 rounded-full">
+                  <div className="flex items-center gap-2 px-8 py-2 bg-yellow-500/20 border border-yellow-500/40 rounded-full">
                     <Trophy className="w-4 h-4 text-yellow-400" />
                     <span className="text-white font-semibold">$1,000+ Prizes</span>
                   </div>
