@@ -66,9 +66,9 @@ export function Dashboard({}) {
             {tourneyData?.start_time && (
               <div className="mb-12">
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter text-center mb-4">
-                  Registration opens in
+                  Submission Deadline
                 </h1>
-                <CountdownTimer targetDate={new Date(tourneyData.start_time)} />
+                <CountdownTimer targetDate={new Date(tourneyData.submissions_deadline)} />
               </div>
             )}
             <ActionSteps
