@@ -17,13 +17,13 @@ To ensure smooth gameplay and fair evaluation, all teams must follow the submiss
 
 ## Submission Rules
 - You should only submit one file.
-- Do not modify the \`bet(state: GameState) -> int\` function signature or class definitions in the code template.
+- Do not modify the \`bet(state: GameState, memory: Memory | None=None) -> tuple[int, Memory | None]\` function signature or class definitions in the code template.
 - Do not modify the required function signatures or class definitions in the template.
 
 ## Input Format
 - Your bot will receive the current game state (using the template schemas provided) and is expected to return a single valid poker action on its turn.
 
-Every turn, your poker bot will be invoked through a system call and receive \`state\` as the input with the \`GameState\` type. The definition of \`GameState\` can be found below and inside \`bot.py\`.
+Every turn, your poker bot will be invoked through a system call and receive \`state\` with the \`GameState\` type and \`memory\` with the \`Memory\` type as the input. The definition of \`GameState\` can be found below and inside \`bot.py\`.
 \`\`\`python
 # cards are defined as a 2 character string [value][suite]
 # where 1st char: a(2-9)tjqk, 2nd char: s d c h
@@ -38,7 +38,7 @@ class GameState:
     players: list[str] # list of bots' id, ordered according to their seats
     player_cards: list[str] # list of your cards
     held_money: list[int]
-    bet_money: list[int]  # -1 for fold, 0 for check/hasn't bet
+    bet_money: list[int]  # -1 for fold, 0 for check/hasn't bet, positive int for amount bet total
     community_cards: list[str]
     pots: list[Pot] # a list of dicts that contain "value" and "players". "value" is the amount in that pot, "players" are the eligible players to win that pot.
     small_blind: int
@@ -63,6 +63,19 @@ Interpreting the example:
 - Betting round after the flop.
 - Player 0 (\`team_id0\`) bet \`20\`, Player 1 (\`team_id1\`) folded, action is on Player 2 (\`team_id2\`).
 - You have triples with 2 spade (\`2s\`), 2 hearts (\`2h\`), and 2 diamonds (\`2d\`).
+
+Output Format:
+- Your bot should return a tuple of two elements: \`(action: int, memory: Memory | None)\`.
+    - \`action\`: An integer representing your poker action:
+        - **Fold**: Return \`-1\` or any negative number
+        - **Check**: Return \`0\` (when checking)
+        - **Call/Raise/Bet**: Return an amount >= minimum bet/raise representing the amount you want to add to the pot from your current stack.
+    - \`memory\`: An optional memory object that can be used to store state between calls. You may alter the Memory class as needed.
+- Example return values:
+    - To fold: \`return (-1, memory)\`
+    - To check: \`return (0, memory)\`
+    - To call: If you've betted 50 and the current highest bet is 100, the amount to call will be \`return (50, memory)\`
+    - To raise: If the minimum raise is 100 and you have 300 chips, \`return (100, memory)\`
 
 
 ## Code Specification & Libraries
