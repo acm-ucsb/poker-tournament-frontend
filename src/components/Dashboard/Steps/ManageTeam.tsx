@@ -268,7 +268,7 @@ export function ManageTeam() {
           <p className="mt-0 text-gray-300 text-sm">
             You are currently
             <span>
-              {data.team.owner.id === auth.user?.id
+              {data.team.owner?.id === auth.user?.id
                 ? " the owner "
                 : " a member "}
             </span>
@@ -310,7 +310,7 @@ export function ManageTeam() {
                     : undefined,
               }}
             >
-              {data.team.owner.id === auth.user?.id &&
+              {data.team.owner?.id === auth.user?.id &&
               !isTeamManagementDisabled ? (
                 <Button className="w-full" disabled={isTeamManagementDisabled}>
                   <Settings2 />
