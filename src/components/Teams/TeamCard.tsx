@@ -51,8 +51,10 @@ export function TeamCard({ team, mutate }: Props) {
             </Badge>
             {team.table_id ? (
               <Badge variant="success">Seated</Badge>
-            ) : (
+            ) : team.num_chips > 0 ? (
               <Badge variant="warning">Not Seated</Badge>
+            ) : (
+              <Badge variant="error">Eliminated</Badge>
             )}
             {team.is_disqualified && (
               <Badge variant="error">Disqualified</Badge>

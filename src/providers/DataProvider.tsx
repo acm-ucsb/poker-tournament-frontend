@@ -173,6 +173,7 @@ export function DataProvider({ children }: DataProviderProps) {
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
+      refreshInterval: 5000,
     }
   );
 
