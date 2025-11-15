@@ -12,9 +12,11 @@ import { formatChips } from "@/lib/util/util";
 import {
   findHandWinners,
   findEliminatedPlayers,
+  findPlayerChanges,
 } from "@/lib/util/gameStateUtil";
 import { getBestHandDescription } from "@/lib/util/pokerHandEvaluator";
 import { unparseCard } from "@/lib/util/parseGameState";
+import { useRouter } from "next/navigation";
 
 type Props = {
   tableId: string;
@@ -27,12 +29,26 @@ export function TableView({ tableId }: Props) {
   const [laggedGameState, setLaggedGameState] = useState<PokerGameState | null>(
     null
   );
+  const router = useRouter();
 
-  const tableName = tablesData?.find((table) => table.id === tableId)?.name;
+  const table = tablesData?.find((table) => table.id === tableId);
+  const tableName = table?.name;
   const title =
     data?.team?.table?.id === tableId ? `Your Table` : `Table ${tableName}`;
 
+  // Redirect if table not found, or table has been closed
+  useEffect(() => {
+    if (!data || !tablesData || !table) {
+      toast.info("Table not found, or the table has been closed.", {
+        richColors: true,
+      });
+
+      router.replace("/dashboard/tables");
+    }
+  }, [table]);
+
   // Notifications for game updates (hand winner, table joined, etc.)
+  // TODO: implement player joined notification
   useEffect(() => {
     if (!gameState) return;
 
@@ -44,26 +60,30 @@ export function TableView({ tableId }: Props) {
       if (winners.length > 0) {
         // Display toast notification for each winner
         winners.forEach((winner) => {
-          const playerCards = laggedGameState.players_cards[
-            winner.playerIndex
-          ].map((c) => unparseCard(c));
-          const communityCards = laggedGameState.community_cards.map((c) =>
-            unparseCard(c)
-          );
-          const winningHand = getBestHandDescription(
-            playerCards,
-            communityCards
-          );
+          try {
+            const playerCards = laggedGameState.players_cards[
+              winner.playerIndex
+            ].map((c) => unparseCard(c));
+            const communityCards = laggedGameState.community_cards.map((c) =>
+              unparseCard(c)
+            );
+            const winningHand = getBestHandDescription(
+              playerCards,
+              communityCards
+            );
 
-          const message =
-            winners.length > 1
-              ? `${winner.playerName} won ${formatChips(winner.chipsWon, false)} chips (split pot) with ${winningHand}!`
-              : `${winner.playerName} won ${formatChips(winner.chipsWon, false)} chips with ${winningHand}!`;
+            const message =
+              winners.length > 1
+                ? `${winner.playerName} won ${formatChips(winner.chipsWon, false)} chips (split pot) with ${winningHand}!`
+                : `${winner.playerName} won ${formatChips(winner.chipsWon, false)} chips with ${winningHand}!`;
 
-          toast.success(message, {
-            richColors: true,
-            duration: 5000,
-          });
+            toast.success(message, {
+              richColors: true,
+              duration: 10000,
+            });
+          } catch (error) {
+            console.log("Error generating winning hand description:", error);
+          }
         });
       }
 
@@ -79,15 +99,43 @@ export function TableView({ tableId }: Props) {
             `${player.playerName} has been eliminated from the table!`,
             {
               richColors: true,
-              duration: 7000,
+              duration: 10000,
             }
           );
+        });
+      }
+
+      // Show notification for players who joined or left the table
+      // Pass eliminatedPlayers to avoid duplicate notifications for eliminated players
+      const playerChanges = findPlayerChanges(
+        laggedGameState,
+        gameState,
+        eliminatedPlayers
+      );
+
+      if (playerChanges.length > 0) {
+        playerChanges.forEach((change) => {
+          if (change.changeType === "joined") {
+            toast.info(`${change.playerName} joined the table!`, {
+              richColors: true,
+              duration: 10000,
+            });
+          } else {
+            toast.warning(`${change.playerName} left the table!`, {
+              richColors: true,
+              duration: 10000,
+            });
+          }
         });
       }
     }
 
     setLaggedGameState(gameState);
   }, [gameState]);
+
+  if (!data || !tablesData || !table) {
+    return <LoaderComponent />;
+  }
 
   return (
     <main className="flex flex-col w-full max-w-7xl self-center pb-6 grow">

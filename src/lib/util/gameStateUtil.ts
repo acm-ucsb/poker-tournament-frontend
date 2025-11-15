@@ -11,6 +11,12 @@ export type EliminatedPlayer = {
   playerName: string;
 };
 
+export type PlayerChange = {
+  playerId: string;
+  playerName: string;
+  changeType: "joined" | "left";
+};
+
 /**
  * Find the winner(s) of a hand by comparing old and new game states
  * @param oldState - Previous game state
@@ -96,4 +102,54 @@ export function findEliminatedPlayers(
   }
 
   return eliminated;
+}
+
+/**
+ * Detect when players join or leave the table by comparing old and new game states
+ * Note: This excludes eliminated players from "left" events
+ * @param oldState - Previous game state
+ * @param newState - Current game state
+ * @param eliminatedPlayers - Array of eliminated players to exclude from left events
+ * @returns Array of player changes (joins and leaves)
+ */
+export function findPlayerChanges(
+  oldState: PokerGameState,
+  newState: PokerGameState,
+  eliminatedPlayers: EliminatedPlayer[]
+): PlayerChange[] {
+  const changes: PlayerChange[] = [];
+
+  // Create set of eliminated player IDs to exclude from "left" events
+  const eliminatedPlayerIds = new Set(
+    eliminatedPlayers.map((p) => oldState.players[p.playerIndex].id)
+  );
+
+  // Create sets of player IDs for easy lookup
+  const oldPlayerIds = new Set(oldState.players.map((p) => p.id));
+  const newPlayerIds = new Set(newState.players.map((p) => p.id));
+
+  // Find players who left (in old state but not in new state)
+  // Exclude eliminated players since they have their own notification
+  for (const player of oldState.players) {
+    if (!newPlayerIds.has(player.id) && !eliminatedPlayerIds.has(player.id)) {
+      changes.push({
+        playerId: player.id,
+        playerName: player.name,
+        changeType: "left",
+      });
+    }
+  }
+
+  // Find players who joined (in new state but not in old state)
+  for (const player of newState.players) {
+    if (!oldPlayerIds.has(player.id)) {
+      changes.push({
+        playerId: player.id,
+        playerName: player.name,
+        changeType: "joined",
+      });
+    }
+  }
+
+  return changes;
 }
