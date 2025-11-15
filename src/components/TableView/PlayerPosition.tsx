@@ -28,6 +28,7 @@ export function PlayerPosition({ team, className }: Props) {
   const prevBetMoneyRef = useRef<number[]>([]);
   const prevIndexToActionRef = useRef<number>(-1);
   const prevCommunityCardsLengthRef = useRef<number>(0);
+  const prevPotTotalRef = useRef<number>(0);
 
   useEffect(() => {
     if (!gameState) return;
@@ -35,14 +36,31 @@ export function PlayerPosition({ team, className }: Props) {
     const currentCommunityCardsLength = gameState.community_cards.length;
     const prevCommunityCardsLength = prevCommunityCardsLengthRef.current;
 
-    // Reset actions when community cards change (new betting round)
-    if (currentCommunityCardsLength !== prevCommunityCardsLength) {
+    // Calculate current and previous pot totals
+    const currentPotTotal = gameState.pots.reduce(
+      (sum, pot) => sum + pot.value,
+      0
+    );
+    const prevPotTotal = prevPotTotalRef.current;
+
+    // Reset actions when:
+    // 1. Community cards change (new betting round), OR
+    // 2. Pot total decreases significantly (hand ended and pot was distributed)
+    //    This handles the case where everyone goes all-in or folds and no new cards come out
+    const potWasDistributed =
+      prevPotTotal > 0 && currentPotTotal < prevPotTotal * 0.5;
+
+    if (
+      currentCommunityCardsLength !== prevCommunityCardsLength ||
+      potWasDistributed
+    ) {
       setPlayerActions(
         gameState.players.map(() => ({ action: null, amount: 0 }))
       );
       prevBetMoneyRef.current = [...gameState.bet_money];
       prevIndexToActionRef.current = gameState.index_to_action;
       prevCommunityCardsLengthRef.current = currentCommunityCardsLength;
+      prevPotTotalRef.current = currentPotTotal;
       return;
     }
 
@@ -59,7 +77,6 @@ export function PlayerPosition({ team, className }: Props) {
       const playerWhoActed =
         ((prevIndexToActionRef.current % numPlayers) + numPlayers) % numPlayers;
 
-      const prevBet = prevBetMoney[playerWhoActed] ?? 0;
       const currentBet = currentBetMoney[playerWhoActed] ?? 0;
 
       // Determine the max bet before this player's action
@@ -112,6 +129,7 @@ export function PlayerPosition({ team, className }: Props) {
     // Update refs
     prevBetMoneyRef.current = [...gameState.bet_money];
     prevIndexToActionRef.current = gameState.index_to_action;
+    prevPotTotalRef.current = currentPotTotal;
   }, [gameState]);
 
   if (!gameState) {
