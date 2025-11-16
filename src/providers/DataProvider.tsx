@@ -188,6 +188,7 @@ export function DataProvider({ children }: DataProviderProps) {
       .from("teams")
       .select("*")
       .eq("tournament_id", UCSB_ACTIVE_POKER_TOURNEY_ID)
+      .eq("has_submitted_code", true)
       .order("num_chips", { ascending: false }),
     {
       revalidateOnFocus: true,
