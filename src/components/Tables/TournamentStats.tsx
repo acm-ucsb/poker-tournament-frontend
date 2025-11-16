@@ -17,6 +17,7 @@ export function TournamentStats() {
       .from("teams")
       .select("*", { count: "exact", head: true })
       .eq("tournament_id", tourneyData?.id)
+      .eq("has_submitted_code", true)
       .neq("num_chips", 0),
     {
       refreshInterval: 1000,
